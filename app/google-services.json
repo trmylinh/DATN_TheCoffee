@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1044496875060",
+    "firebase_url": "https://thecoffee-19732-default-rtdb.firebaseio.com",
+    "project_id": "thecoffee-19732",
+    "storage_bucket": "thecoffee-19732.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1044496875060:android:f17e1cd15d3a6068839461",
+        "android_client_info": {
+          "package_name": "com.example.thecoffee"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1044496875060-pdhjmau5rmktsmcae34kgep488rldgq8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.thecoffee",
+            "certificate_hash": "90628b464e6c84957e1dc5188279a584067568de"
+          }
+        },
+        {
+          "client_id": "1044496875060-b5d6dv8r1vrgv5ar6bnmdu6h3n7ntnik.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0pmzbGMEXX_p_F5k-h0GWsBnM82voPFk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1044496875060-b5d6dv8r1vrgv5ar6bnmdu6h3n7ntnik.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

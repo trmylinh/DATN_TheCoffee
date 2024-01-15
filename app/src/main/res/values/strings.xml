@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">TheCoffee</string>
+    <string name="splashscreen">SplashScreen</string>
+    <string name="backgroundloginscreen">BackgroundLoginScreen</string>
+    <string name="iconclose">IconClose</string>
+    <string name="titleHeader">Chào mừng bạn đến với</string>
+    <string name="codePhone">+84</string>
+    <string name="placeholderPhone">Nhập số điện thoại</string>
+    <string name="scope">|</string>
+    <string name="LogIn">Đăng nhập</string>
+    <string name="textOr">Hoặc</string>
+    <string name="LoginwithGG">Tiếp tục bằng Google</string>
+    <string name="default_web_client_id">1044496875060-b5d6dv8r1vrgv5ar6bnmdu6h3n7ntnik.apps.googleusercontent.com</string>
+    <string name="title_user_info">Tạo tài khoản</string>
+    <string name="hint_first_name">Nhập tên của bạn *</string>
+    <string name="hint_last_name">Nhập họ của bạn</string>
+    <string name="hint_email">Email của bạn</string>
+    <string name="hint_phone">Số điện thoại của bạn *</string>
+    <string name="hint_birthday">Chọn ngày sinh</string>
+    <string name="hint_gender">Chưa chọn giới tính</string>
+    <string name="terms_and_conditions">Tôi đồng ý với các Điều khoản và điều kiện của The Coffee House</string>
+    <string name="create_account">Tạo tài khoản</string>
+</resources>

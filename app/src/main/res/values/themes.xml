@@ -1,0 +1,20 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.TheCoffee" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+        <!--        Primary brand color-->
+        <!--   Color for the app bar and other primary UI elements. -->
+        <item name="colorPrimary">@color/beige_50</item>
+
+        <!--   A darker variant of the primary color, used for
+           the status bar (on Android 5.0+) and contextual app bars. -->
+        <item name="colorPrimaryDark">@color/orange_900</item>
+
+        <!--   a secondary color for controls like checkboxes and text fields. -->
+        <item name="colorAccent">@color/orange_700</item>
+    </style>
+
+    <style name="Theme.TheCoffee" parent="Base.Theme.TheCoffee" />
+</resources>
