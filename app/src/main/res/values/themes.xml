@@ -14,6 +14,7 @@
 
         <!--   a secondary color for controls like checkboxes and text fields. -->
         <item name="colorAccent">@color/orange_700</item>
+        <item name="android:windowFullscreen">true</item>
     </style>
 
     <style name="Theme.TheCoffee" parent="Base.Theme.TheCoffee" />

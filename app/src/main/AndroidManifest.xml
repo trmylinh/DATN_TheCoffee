@@ -22,16 +22,8 @@
         android:theme="@style/Theme.TheCoffee"
         tools:targetApi="31">
         <activity
-            android:name=".UserInfoActivity"
-            android:exported="false" />
-        <activity
-            android:name=".LoginActivity"
-            android:exported="false" />
-        <activity android:name=".MainActivity" />
-        <activity
-            android:name=".SplashActivity"
-            android:exported="true"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
+            android:name=".MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

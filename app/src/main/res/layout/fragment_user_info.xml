@@ -51,7 +51,7 @@
             android:id="@+id/edtTextFirstName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/custom_default_border"
+            android:background="@drawable/edittext_border_selector"
             android:hint="@string/hint_first_name"
             android:inputType="textPersonName"
             android:paddingHorizontal="@dimen/_10sdp"
@@ -63,7 +63,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/edtTextFirstName"
             android:layout_marginTop="@dimen/_10sdp"
-            android:background="@drawable/custom_default_border"
+            android:background="@drawable/edittext_border_selector"
             android:hint="@string/hint_last_name"
             android:inputType="textPersonName"
             android:paddingHorizontal="@dimen/_10sdp"
@@ -75,7 +75,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/edtTextLastName"
             android:layout_marginTop="@dimen/_10sdp"
-            android:background="@drawable/custom_default_border"
+            android:background="@drawable/edittext_border_selector"
             android:hint="@string/hint_email"
             android:inputType="textEmailAddress"
             android:paddingHorizontal="@dimen/_10sdp"
@@ -87,7 +87,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/edtTextEmail"
             android:layout_marginTop="@dimen/_10sdp"
-            android:background="@drawable/custom_default_border"
+            android:background="@drawable/edittext_border_selector"
             android:hint="@string/hint_phone"
             android:inputType="phone"
             android:paddingHorizontal="@dimen/_10sdp"
@@ -99,7 +99,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/edtTextPhone"
             android:layout_marginTop="@dimen/_10sdp"
-            android:background="@drawable/custom_default_border"
+            android:background="@drawable/edittext_border_selector"
             android:orientation="horizontal"
             android:paddingVertical="@dimen/_10sdp">
 
@@ -125,7 +125,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/btnDatePicker"
             android:layout_marginTop="@dimen/_10sdp"
-            android:background="@drawable/custom_default_border"
+            android:background="@drawable/edittext_border_selector"
             android:entries="@array/gender_options"
             android:paddingVertical="@dimen/_10sdp" />
 
@@ -133,6 +133,7 @@
             android:id="@+id/checkBoxTerms"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:buttonTintMode="multiply"
             android:layout_below="@+id/spinnerGender"
             android:layout_marginTop="@dimen/_10sdp"
             android:text="@string/terms_and_conditions" />
