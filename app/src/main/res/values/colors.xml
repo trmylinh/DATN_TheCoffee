@@ -5,7 +5,10 @@
     <color name="beige_50">#FFF7E6</color>
     <color name="orange_900">#F58333</color>
     <color name="orange_700">#E57905</color>
+    <color name="grey_50">#FAFAFA</color>
     <color name="grey_200">#ECECEC</color>
     <color name="grey_400">#BFBDBD</color>
+    <color name="grey_500">#A1A1A1</color>
     <color name="grey_800">#505050</color>
+    <color name="transparent">#00000000</color>
 </resources>

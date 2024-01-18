@@ -20,6 +20,11 @@
     <string name="hint_gender">Chưa chọn giới tính</string>
     <string name="terms_and_conditions">Tôi đồng ý với các Điều khoản và điều kiện của The Coffee House</string>
     <string name="create_account">Tạo tài khoản</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="home">Trang chủ</string>
+    <string name="order">Đặt hàng</string>
+    <string name="store">Cửa hàng</string>
+    <string name="voucher">Ưu đãi</string>
+    <string name="other">Khác</string>
+<!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -18,16 +18,17 @@ class SplashFragment : Fragment() {
     private lateinit var navController: NavController
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // splash screen
-        Handler(Looper.getMainLooper()).postDelayed({
-            findNavController().navigate(R.id.action_splashFragment_to_homeFragment)
-        }, 3000)
+
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        // splash screen
+        Handler(Looper.getMainLooper()).postDelayed({
+            findNavController().navigate(R.id.action_splashFragment_to_homeFragment)
+        }, 3000)
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_splash, container, false)
     }

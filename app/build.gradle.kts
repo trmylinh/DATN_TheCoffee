@@ -118,4 +118,7 @@ dependencies {
     // Jetpack Compose Integration
     implementation("androidx.navigation:navigation-compose:$nav_version")
 
+    // chip-navigation-bar
+//    implementation("com.github.ismaeldivita:chip-navigation-bar:1.4.0")
+
 }

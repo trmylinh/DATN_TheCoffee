@@ -76,6 +76,11 @@ class LoginFragment : Fragment() {
         binding.btnLogInGG.setOnClickListener {
             handleGoogleSignIn()
         }
+
+        binding.btnClose.setOnClickListener {
+            // back lai HomeFragment
+            findNavController().popBackStack();
+        }
     }
 
     private fun handleGoogleSignIn() {

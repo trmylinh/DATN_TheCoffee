@@ -21,6 +21,9 @@
         <action
             android:id="@+id/action_loginFragment_to_userInfoFragment"
             app:destination="@id/userInfoFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
     </fragment>
     <fragment
         android:id="@+id/homeFragment"
@@ -40,4 +43,24 @@
             android:id="@+id/action_userInfoFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/orderFragment"
+        android:name="com.example.thecoffee.views.OrderFragment"
+        android:label="fragment_order"
+        tools:layout="@layout/fragment_order" />
+    <fragment
+        android:id="@+id/storeFragment"
+        android:name="com.example.thecoffee.views.StoreFragment"
+        android:label="fragment_store"
+        tools:layout="@layout/fragment_store" />
+    <fragment
+        android:id="@+id/voucherFragment"
+        android:name="com.example.thecoffee.views.VoucherFragment"
+        android:label="fragment_voucher"
+        tools:layout="@layout/fragment_voucher" />
+    <fragment
+        android:id="@+id/otherFragment"
+        android:name="com.example.thecoffee.views.OtherFragment"
+        android:label="fragment_other"
+        tools:layout="@layout/fragment_other" />
 </navigation>

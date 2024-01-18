@@ -18,4 +18,11 @@
     </style>
 
     <style name="Theme.TheCoffee" parent="Base.Theme.TheCoffee" />
+    <style name="BottomNavigation">
+        <item name="background">@color/white_900</item>
+        <item name="backgroundTint">@null</item>
+        <item name="itemIconTint">@color/grey_500</item>
+        <item name="itemTextColor">@color/grey_500</item>
+        <item name="labelVisibilityMode">auto</item>
+    </style>
 </resources>
