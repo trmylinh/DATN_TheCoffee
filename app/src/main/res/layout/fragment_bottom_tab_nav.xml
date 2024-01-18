@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".views.BottomTabNavFragment">
+
+   <com.google.android.material.bottomnavigation.BottomNavigationView
+       android:id="@+id/bottom_nav_view"
+       app:menu="@menu/menu_item_bottom_nav"
+       app:itemTextColor="@color/custom_bottom_tab"
+       app:itemIconTint="@color/custom_bottom_tab"
+       android:layout_alignParentBottom="true"
+       app:labelVisibilityMode="labeled"
+       android:layout_width="match_parent"
+       android:layout_height="@dimen/_50sdp"
+       android:scrollIndicators="left"/>
+
+</RelativeLayout>

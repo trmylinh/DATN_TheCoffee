@@ -27,7 +27,7 @@ class SplashFragment : Fragment() {
     ): View? {
         // splash screen
         Handler(Looper.getMainLooper()).postDelayed({
-            findNavController().navigate(R.id.action_splashFragment_to_homeFragment)
+            findNavController().navigate(R.id.action_splashFragment_to_bottomTabNavFragment)
         }, 3000)
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_splash, container, false)
