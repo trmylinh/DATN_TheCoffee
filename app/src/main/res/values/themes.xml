@@ -25,4 +25,9 @@
         <item name="itemTextColor">@color/grey_500</item>
         <item name="labelVisibilityMode">auto</item>
     </style>
+
+<!--    <style name="SplashScreenTheme" parent="Theme.Material3.DayNight.NoActionBar">-->
+<!--        <item name="android:windowBackground">@drawable/splash_image</item>-->
+<!--        <item name="android:statusBarColor">@color/white_900</item>-->
+<!--    </style>-->
 </resources>
