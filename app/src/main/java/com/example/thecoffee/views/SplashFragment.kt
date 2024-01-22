@@ -10,27 +10,27 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.example.thecoffee.MainActivity
 import com.example.thecoffee.R
 
 class SplashFragment : Fragment() {
     private lateinit var navController: NavController
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // splash screen
-        Handler(Looper.getMainLooper()).postDelayed({
-            findNavController().navigate(R.id.action_splashFragment_to_bottomTabNavFragment)
-        }, 3000)
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_splash, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        Handler(Looper.getMainLooper()).postDelayed({
+            findNavController().navigate(R.id.action_splashFragment_to_homeFragment)
+        }, 3000)
     }
 
 }

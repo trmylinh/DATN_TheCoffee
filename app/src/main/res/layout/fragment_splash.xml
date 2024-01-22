@@ -11,9 +11,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
         android:layout_marginHorizontal="@dimen/_80sdp"
-        android:src="@drawable/logo_splash"
-        android:contentDescription="@string/splashscreen"/>
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/splashscreen"
+        android:scaleType="fitCenter"
+        android:src="@drawable/logo_splash" />
 </RelativeLayout>
