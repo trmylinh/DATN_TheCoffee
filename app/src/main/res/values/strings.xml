@@ -27,4 +27,19 @@
     <string name="other">Khác</string>
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="txtUsername">Chào bạn mới!</string>
+    <string name="slogan">Đăng nhập để sử dụng những ưu đãi chỉ \n \t \t \t \t \t dành riêng cho app bạn nhé !</string>
+    <string name="image_voucher">image_voucher</string>
+    <string name="image_noti">image_noti</string>
+    <string name="icon_coffee_cup">icon_coffee_cup</string>
+    <string name="delivery">Giao hàng</string>
+    <string name="icon_delivery">icon_delivery</string>
+    <string name="icon_take_away">icon_take_away</string>
+    <string name="take_away">Mang đi</string>
+    <string name="icon_order">icon_order</string>
+    <string name="order_view">Đơn hàng</string>
+    <string name="icon_review">icon_review</string>
+    <string name="review">Góp ý</string>
+    <string name="icon_beans">icon_beans</string>
+    <string name="beans">Đổi Bean</string>
 </resources>
