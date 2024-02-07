@@ -38,7 +38,6 @@ class LoginFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var database: FirebaseDatabase
     private lateinit var mGoogleSignInClient: GoogleSignInClient
-//    private val loginViewModel: LoginViewModel by viewModels()
 
     private lateinit var loginViewModel: LoginViewModel
     companion object {
@@ -49,8 +48,6 @@ class LoginFragment : Fragment() {
         val authRepository = AuthenticationRepository()
         val viewModelFactory = MyViewModelFactory(authRepository)
         loginViewModel = ViewModelProvider(this, viewModelFactory)[LoginViewModel::class.java]
-//        loginViewModel = ViewModelProviders.of(this)[LoginViewModel::class.java]
-
     }
 
     override fun onCreateView(
@@ -58,17 +55,11 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentLoginBinding.inflate(inflater, container, false)
-//        loginViewModel = ViewModelProviders.of(requireActivity())[LoginViewModel::class.java]
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-//        loginViewModel = ViewModelProviders.of(this)[LoginViewModel::class.java]
-//        loginViewModel = activity?.run {
-//            ViewModelProviders.of(this)[LoginViewModel::class.java]
-//        } ?: throw  Exception("Invalid Activity")
 
         binding.edtPhoneNumber.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
@@ -77,17 +68,6 @@ class LoginFragment : Fragment() {
                 binding.layoutEdtPhone.setBackgroundResource(R.drawable.custom_default_border)
             }
         }
-
-        auth = FirebaseAuth.getInstance()
-//        database = FirebaseDatabase.getInstance()
-//
-//        val currentUser = auth.currentUser
-//
-//        if(currentUser != null){
-//            Toast.makeText(context, "current user : ${currentUser.displayName}", Toast.LENGTH_SHORT).show()
-//        } else {
-//            Toast.makeText(context, "not current user", Toast.LENGTH_SHORT).show()
-//        }
 
         initGoogleSignInClient()
 
@@ -108,7 +88,6 @@ class LoginFragment : Fragment() {
         mGoogleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
     }
     private fun signInUsingGoogle() {
-        Log.e("Google", "click sign in");
         val signInGoogleIntent = mGoogleSignInClient.signInIntent
         startActivityForResult(signInGoogleIntent, RC_SIGN_IN)
     }
@@ -126,8 +105,7 @@ class LoginFragment : Fragment() {
                     getGoogleAuthCredential(account)
                 }
             } catch (e : Exception){
-                Log.e("Error Login", "${e.message}")
-                Toast.makeText(context, "Google sign in failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Google sign in failed: ${e.message}", Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -144,13 +122,13 @@ class LoginFragment : Fragment() {
             when (authenticatedUser) {
                 is ResponseState.Error -> {
                     authenticatedUser.message?.let {
-                        Toast.makeText(context, "Authentication failed", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Authentication failed", Toast.LENGTH_LONG).show()
                     }
                 }
                 is ResponseState.Success -> {
                     if (authenticatedUser.data != null) {
                         findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
-                        Toast.makeText(context, "Authentication success", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Authentication success", Toast.LENGTH_LONG).show()
                     }
                 }
                 is ResponseState.Loading -> {
@@ -158,17 +136,6 @@ class LoginFragment : Fragment() {
                 }
             }
         }
-//        val credential : AuthCredential = GoogleAuthProvider.getCredential(idToken, null)
-//        auth.signInWithCredential(credential)
-//            .addOnCompleteListener(requireActivity()) { task ->
-//                if (task.isSuccessful){
-//                    val user = auth.currentUser
-//                    Toast.makeText(context, "Signed in as ${user?.displayName}", Toast.LENGTH_SHORT).show()
-//                    findNavController().navigate(R.id.action_loginFragment_to_userInfoFragment)
-//                } else {
-//                    Toast.makeText(context, "Authentication failed", Toast.LENGTH_SHORT).show()
-//                }
-//            }
     }
 
 }

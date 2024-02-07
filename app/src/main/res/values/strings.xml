@@ -42,4 +42,9 @@
     <string name="review">Góp ý</string>
     <string name="icon_beans">icon_beans</string>
     <string name="beans">Đổi Bean</string>
+    <string name="item_sale">Quà Chill</string>
+    <string name="name_drink">name_drink</string>
+    <string name="more">Xem thêm</string>
+    <string name="name_voucher_bean">Mua 1 Tặng 1 \nTrà sữa Oolong</string>
+    <string name="title_category">Danh mục</string>
 </resources>

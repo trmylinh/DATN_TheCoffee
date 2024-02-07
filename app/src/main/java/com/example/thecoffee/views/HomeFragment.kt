@@ -9,16 +9,26 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.AbsListView
+import android.widget.LinearLayout
 import android.widget.PopupWindow
+import android.widget.Toast
+import androidx.compose.ui.graphics.Paint
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.denzcoskun.imageslider.constants.ScaleTypes
 import com.denzcoskun.imageslider.models.SlideModel
 import com.example.thecoffee.R
+import com.example.thecoffee.adapter.ItemDrinkHomeRecyclerAdapter
+import com.example.thecoffee.adapter.ItemDrinkHomeRecyclerInterface
+import com.example.thecoffee.data.models.Category
+import com.example.thecoffee.data.models.Drink
 import com.example.thecoffee.databinding.FragmentHomeBinding
 import com.example.thecoffee.viewmodel.LoginViewModel
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
@@ -42,13 +52,11 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         navController = Navigation.findNavController(view)
-
-//        binding.btnLogIn.setOnClickListener {
-//            findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
-////            val view = layoutInflater.inflate(R.layout.fragment_login, null, false)
-////            val popupWindow = PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-////            popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0)
-//        }
+        val auth = Firebase.auth
+        val user = auth.currentUser
+        if(user != null){
+            binding.textHelloUser.text = "Xin chào, ${user.displayName}"
+        }
 
         // image slide show
         val imageList = ArrayList<SlideModel>()  // create image list
@@ -60,19 +68,55 @@ class HomeFragment : Fragment() {
 
         binding.imageSlider.setImageList(imageList, ScaleTypes.FIT)
 
+
+        //fake data item drink home
+        val list = mutableListOf<Drink>()
+        val category = mutableListOf<Category>()
+
+        category.add(Category("1", "cake", R.drawable.img))
+        list.add(Drink("1", "Bear 1", "Delicious", R.drawable.img, 35000, 4000, category[0]))
+        list.add(Drink("2", "Bear 2", "Delicious", R.drawable.img, 35000, 4000, category[0]))
+        list.add(Drink("3", "Bear 3", "Delicious", R.drawable.img, 35000, 4000, category[0]))
+        list.add(Drink("4", "Bear 4", "Delicious", R.drawable.img, 35000, 4000, category[0]))
+        list.add(Drink("5", "Bear 5", "Delicious", R.drawable.img, 35000, 4000, category[0]))
+        list.add(Drink("6", "Bear 6", "Delicious", R.drawable.img, 35000, 4000, category[0]))
+        list.add(Drink("7", "Bear 7", "Delicious", R.drawable.img, 35000, 4000, category[0]))
+        list.add(Drink("8", "Bear 8", "Delicious", R.drawable.img, 35000, 4000, category[0]))
+        list.add(Drink("9", "Bear 9", "Delicious", R.drawable.img, 35000, 4000, category[0]))
+
+        val adapter = ItemDrinkHomeRecyclerAdapter(list, object: ItemDrinkHomeRecyclerInterface{
+            override fun onClickItemDrink(position: Int) {
+                Toast.makeText(requireContext(), "Choose ${list[position].name}", Toast.LENGTH_LONG).show()
+            }
+        })
+        binding.recyclerViewItemDrinkHome.adapter = adapter
+        binding.recyclerViewItemDrinkHome.layoutManager = LinearLayoutManager(
+            requireContext(),
+            LinearLayoutManager.HORIZONTAL,
+            false)
+
+        binding.recyclerViewItemRecommend.adapter = adapter
+        binding.recyclerViewItemRecommend.layoutManager = LinearLayoutManager(
+            requireContext(),
+            LinearLayoutManager.HORIZONTAL,
+            false)
+
         //detect scroll up/down
         binding.homeContent.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
-            if (scrollY < oldScrollY) {
-                binding.textView.text = "Scroll up"
-            } else {
-
-            }
+//            if (scrollY < oldScrollY) {
+//                binding.textView.text = "Scroll up"
+//            } else {
+//
+//            }
         }
 
         binding.btnNoti.setOnClickListener {
             navController.navigate(R.id.action_homeFragment_to_loginFragment)
 //            findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
         }
+
+        binding.more.paintFlags = android.graphics.Paint.UNDERLINE_TEXT_FLAG
+
     }
 
 
