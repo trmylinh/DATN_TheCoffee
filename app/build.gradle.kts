@@ -38,6 +38,7 @@ android {
     }
     
     buildFeatures {
+        dataBinding = true
         viewBinding = true
     }
 
@@ -52,6 +53,7 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.6")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.6")
+    implementation("com.google.firebase:firebase-firestore-ktx:24.10.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -102,12 +104,9 @@ dependencies {
     // Add the dependency for the Realtime Database library
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation("com.google.firebase:firebase-database")
+    implementation("com.google.firebase:firebase-firestore")
 
     val nav_version = "2.7.6"
-
-    // Kotlin
-    implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
-    implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
 
     // Feature module Support
     implementation("androidx.navigation:navigation-dynamic-features-fragment:$nav_version")
@@ -118,7 +117,28 @@ dependencies {
     // Jetpack Compose Integration
     implementation("androidx.navigation:navigation-compose:$nav_version")
 
-    // chip-navigation-bar
-//    implementation("com.github.ismaeldivita:chip-navigation-bar:1.4.0")
+    // image slide show
+    implementation("com.github.denzcoskun:ImageSlideshow:0.1.2")
+
+    // ViewModel and LiveData
+    val lifecycle_version = "2.7.0"
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
+
+    //Kodein Dependency Injection
+    implementation("org.kodein.di:kodein-di-generic-jvm:6.2.1")
+    implementation("org.kodein.di:kodein-di-framework-android-x:6.2.1")
+
+    //RxJava
+    implementation("io.reactivex.rxjava2:rxjava:2.2.5")
+    implementation("io.reactivex.rxjava2:rxandroid:2.1.0")
+
+    //fragment extension
+    val fragment_version = "1.4.0"
+    implementation("androidx.fragment:fragment-ktx:$fragment_version")
+
+
 
 }

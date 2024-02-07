@@ -28,12 +28,11 @@ class MainActivity : AppCompatActivity() {
         navController = findNavController(this, R.id.nav_host_fragment_container)
         NavigationUI.setupWithNavController(binding.bottomNavView, navController)
 
-//        val decorView = window.decorView
-//        val uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION  or View.SYSTEM_UI_FLAG_FULLSCREEN
-//        decorView.systemUiVisibility = uiOptions
-
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            binding.bottomNavView.visibility = if (destination.id == R.id.splashFragment) View.GONE else View.VISIBLE
+            binding.bottomNavView.visibility = if (
+                destination.id == R.id.splashFragment
+                || destination.id == R.id.loginFragment)
+                View.GONE else View.VISIBLE
         }
 
     }
