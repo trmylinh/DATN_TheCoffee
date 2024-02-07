@@ -41,7 +41,7 @@
             android:gravity="center"
             android:text="@string/titleHeader"
             android:textColor="@color/black_900"
-            android:textSize="18sp"
+            android:textSize="@dimen/_15sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -92,7 +92,7 @@
                     android:layout_marginVertical="@dimen/_5sdp"
                     android:layout_marginEnd="@dimen/_5sdp"
                     android:text="@string/codePhone"
-                    android:textSize="18sp" />
+                    android:textSize="@dimen/_15sdp" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -101,7 +101,7 @@
                     android:layout_marginEnd="@dimen/_5sdp"
                     android:text="@string/scope"
                     android:textColor="@color/grey_400"
-                    android:textSize="25sp" />
+                    android:textSize="@dimen/_20sdp" />
 
                 <EditText
                     android:id="@+id/edtPhoneNumber"
@@ -113,7 +113,7 @@
                     android:hint="@string/placeholderPhone"
                     android:inputType="phone"
                     android:singleLine="true"
-                    android:textSize="18sp" />
+                    android:textSize="@dimen/_15sdp" />
             </LinearLayout>
 
             <com.google.android.material.button.MaterialButton
@@ -124,8 +124,9 @@
                 android:background="@drawable/custom_button"
                 android:enabled="false"
                 android:text="@string/LogIn"
+                android:textAllCaps="false"
                 android:textColor="@color/white_900"
-                android:textSize="18sp"
+                android:textSize="@dimen/_15sdp"
                 app:backgroundTint="@null" />
 
             <TextView
@@ -134,7 +135,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/_20sdp"
                 android:text="@string/textOr"
-                android:textSize="18sp" />
+                android:textSize="@dimen/_15sdp" />
 
             <LinearLayout
                 android:id="@+id/btnLogInGG"
@@ -155,7 +156,7 @@
                     android:src="@drawable/icon_google" />
                 <TextView
                     android:clickable="false"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/_15sdp"
                     android:text="@string/LoginwithGG"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>

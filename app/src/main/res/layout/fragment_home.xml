@@ -1,21 +1,390 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black_50"
+    android:orientation="vertical"
     tools:context=".views.HomeFragment">
 
-    <Button
-        android:id="@+id/btnLogIn"
+    <!--    header-->
+    <LinearLayout
+        android:id="@+id/header_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/orange_700"
-        android:text="@string/LogIn"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:orientation="horizontal"
+        android:paddingVertical="@dimen/_2sdp">
+
+        <ImageView
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:layout_gravity="center_vertical"
+            android:contentDescription="@string/icon_coffee_cup"
+            android:src="@drawable/icon_coffee_cup" />
+
+        <TextView
+            android:id="@+id/text_hello_user"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_weight="1"
+            android:text="@string/txtUsername"
+            android:textColor="@color/black_900"
+            android:textSize="@dimen/_11sdp" />
+
+        <ImageButton
+            android:id="@+id/btn_voucher"
+            android:layout_width="@dimen/_35sdp"
+            android:layout_height="@dimen/_35sdp"
+            android:background="@drawable/round_corner"
+            android:backgroundTint="@color/white_900"
+            android:contentDescription="@string/image_voucher"
+            android:elevation="@dimen/_2sdp"
+            android:padding="@dimen/_8sdp"
+            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/icon_voucher_color" />
+
+        <ImageButton
+            android:id="@+id/btn_noti"
+            android:layout_width="@dimen/_35sdp"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:background="@drawable/round_corner"
+            android:backgroundTint="@color/white_900"
+            android:contentDescription="@string/image_noti"
+            android:elevation="@dimen/_2sdp"
+            android:padding="@dimen/_8sdp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/icon_bell" />
+    </LinearLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/home_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:scrollbarSize="0dp"
+        android:scrollbars="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!--            slider-->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_150sdp"
+                android:layout_marginHorizontal="@dimen/_10sdp"
+                app:cardBackgroundColor="@color/orange_700"
+                app:cardCornerRadius="@dimen/_10sdp">
+
+                <com.denzcoskun.imageslider.ImageSlider
+                    android:id="@+id/image_slider"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_150sdp"
+                    app:iss_auto_cycle="true"
+                    app:iss_corner_radius="20"
+                    app:iss_delay="1000"
+                    app:iss_period="1000"
+                    app:iss_text_align="CENTER" />
+            </androidx.cardview.widget.CardView>
+
+            <!--            options menu -->
+            <LinearLayout
+                android:id="@+id/option_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:background="@drawable/custom_default_border"
+                android:orientation="horizontal"
+                android:paddingVertical="@dimen/_5sdp">
+
+                <RelativeLayout
+                    android:id="@+id/delivery_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_marginEnd="@dimen/_15sdp">
+
+                    <ImageView
+                        android:id="@+id/icon_delivery"
+                        android:layout_width="@dimen/_40sdp"
+                        android:layout_height="@dimen/_40sdp"
+                        android:contentDescription="@string/icon_delivery"
+                        android:src="@drawable/icon_delivery" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/icon_delivery"
+                        android:layout_centerInParent="true"
+                        android:text="@string/delivery"
+                        android:textColor="@color/black_900"
+                        android:textSize="@dimen/_11sdp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/takeaway_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_15sdp">
+
+                    <ImageView
+                        android:id="@+id/icon_take_away"
+                        android:layout_width="@dimen/_40sdp"
+                        android:layout_height="@dimen/_40sdp"
+                        android:contentDescription="@string/icon_take_away"
+                        android:src="@drawable/icon_take_away" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/icon_take_away"
+                        android:layout_centerInParent="true"
+                        android:text="@string/take_away"
+                        android:textColor="@color/black_900"
+                        android:textSize="@dimen/_11sdp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/beans_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_15sdp">
+
+                    <ImageView
+                        android:id="@+id/icon_beans"
+                        android:layout_width="@dimen/_40sdp"
+                        android:layout_height="@dimen/_40sdp"
+                        android:contentDescription="@string/icon_beans"
+                        android:src="@drawable/icon_beans" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/icon_beans"
+                        android:layout_centerInParent="true"
+                        android:text="@string/beans"
+                        android:textColor="@color/black_900"
+                        android:textSize="@dimen/_11sdp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/order_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_15sdp">
+
+                    <ImageView
+                        android:id="@+id/icon_order"
+                        android:layout_width="@dimen/_40sdp"
+                        android:layout_height="@dimen/_40sdp"
+                        android:contentDescription="@string/icon_order"
+                        android:src="@drawable/icon_order" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/icon_order"
+                        android:layout_centerInParent="true"
+                        android:text="@string/order_view"
+                        android:textColor="@color/black_900"
+                        android:textSize="@dimen/_11sdp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/review_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_10sdp">
+
+                    <ImageView
+                        android:id="@+id/icon_review"
+                        android:layout_width="@dimen/_40sdp"
+                        android:layout_height="@dimen/_40sdp"
+                        android:contentDescription="@string/icon_review"
+                        android:src="@drawable/icon_review" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/icon_review"
+                        android:layout_centerInParent="true"
+                        android:text="@string/review"
+                        android:textColor="@color/black_900"
+                        android:textSize="@dimen/_11sdp" />
+                </RelativeLayout>
+
+            </LinearLayout>
+            <!--            doi bean-->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:background="@drawable/round_corner"
+                android:paddingVertical="@dimen/_10sdp">
+
+                <TextView
+                    android:id="@+id/title_beans"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:text="@string/beans"
+                    android:textColor="@color/black_900"
+                    android:textSize="@dimen/_13sdp" />
+
+                <TextView
+                    android:id="@+id/more"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:text="@string/more"
+                    android:clickable="true"
+                    android:textColor="@color/orange_900"
+                    android:textSize="@dimen/_10sdp"
+                    android:textStyle="bold" />
+
+                <RelativeLayout
+                    android:id="@+id/view_voucher_bean"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/title_beans"
+                    android:layout_marginHorizontal="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@drawable/round_corner"
+                    android:backgroundTint="@color/white_900"
+                    android:padding="@dimen/_10sdp">
+
+                    <ImageView
+                        android:id="@+id/img_voucher_bean"
+                        android:layout_width="@dimen/_80sdp"
+                        android:layout_height="@dimen/_80sdp"
+                        android:src="@drawable/voucher1" />
+
+                    <TextView
+                        android:id="@+id/app_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_10sdp"
+                        android:layout_toRightOf="@id/img_voucher_bean"
+                        android:text="@string/app_name"
+                        android:textColor="@color/black_900" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/app_name"
+                        android:layout_marginStart="@dimen/_10sdp"
+                        android:layout_marginTop="@dimen/_2sdp"
+                        android:layout_toEndOf="@id/img_voucher_bean"
+                        android:text="@string/name_voucher_bean"
+                        android:textColor="@color/black_900" />
+
+                    <TextView
+                        android:id="@+id/bean"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginTop="@dimen/_2sdp"
+                        android:text="BEAN"
+                        android:textColor="@color/grey_600"
+                        android:textSize="@dimen/_12sdp" />
+
+                    <TextView
+                        android:id="@+id/number_bean"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_2sdp"
+                        android:layout_marginEnd="@dimen/_3sdp"
+                        android:layout_toLeftOf="@id/bean"
+                        android:text="9"
+                        android:textColor="@color/green_500"
+                        android:textSize="@dimen/_12sdp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/number_bean"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:background="@drawable/round_corner"
+                        android:paddingHorizontal="@dimen/_15sdp"
+                        android:paddingVertical="@dimen/_5sdp"
+                        android:text="Đổi"
+                        android:clickable="true"
+                        android:textAllCaps="false"
+                        android:textColor="@color/orange_700"
+                        android:textSize="@dimen/_12sdp"
+                        android:textStyle="bold"
+                        app:backgroundTint="@color/orange_100" />
+                </RelativeLayout>
+            </RelativeLayout>
+            <!--            item trong list khuyen mai-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_15sdp"
+                android:layout_marginHorizontal="@dimen/_10sdp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/item_sale"
+                    android:textColor="@color/black_900"
+                    android:textSize="@dimen/_15sdp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewItemDrinkHome"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8sdp" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_15sdp"
+                android:layout_marginHorizontal="@dimen/_10sdp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Gợi ý cho bạn"
+                    android:textColor="@color/black_900"
+                    android:textSize="@dimen/_15sdp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewItemRecommend"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8sdp" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!--    <Button-->
+    <!--        android:id="@+id/btnLogIn"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:backgroundTint="@color/orange_700"-->
+    <!--        android:text="@string/LogIn"-->
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintTop_toTopOf="parent" />-->
+
+
+</LinearLayout>

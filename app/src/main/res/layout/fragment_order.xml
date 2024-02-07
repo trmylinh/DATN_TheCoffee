@@ -1,14 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".views.OrderFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+<!--    header-->
+    <RelativeLayout
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginHorizontal="@dimen/_10sdp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Order Screen" />
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/icon_category"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:src="@drawable/icon_category" />
+        <TextView
+            android:id="@+id/title_category"
+            android:clickable="true"
+            android:layout_toEndOf="@id/icon_category"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:text="@string/title_category"
+            android:textColor="@color/black_900"
+            android:textSize="@dimen/_12sdp"
+            android:focusable="true" />
+        <ImageView
+            android:id="@+id/icon_arrow_down"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_toEndOf="@id/title_category"
+            android:layout_width="@dimen/_15sdp"
+            android:layout_height="@dimen/_15sdp"
+            android:src="@drawable/icon_arrow_down" />
+        <ImageView
+            android:id="@+id/icon_search"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_toStartOf="@id/icon_heart"
+            android:layout_width="@dimen/_15sdp"
+            android:layout_height="@dimen/_15sdp"
+            android:src="@drawable/icon_search" />
+        <ImageView
+            android:id="@+id/icon_heart"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_width="@dimen/_18sdp"
+            android:layout_height="@dimen/_18sdp"
+            android:src="@drawable/icon_heart" />
 
-</FrameLayout>
+    </RelativeLayout>
+
+</LinearLayout>
