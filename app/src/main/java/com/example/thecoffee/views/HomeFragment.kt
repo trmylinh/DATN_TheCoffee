@@ -90,11 +90,13 @@ class HomeFragment : Fragment() {
             }
         })
         binding.recyclerViewItemDrinkHome.adapter = adapter
+        // 1 list
         binding.recyclerViewItemDrinkHome.layoutManager = LinearLayoutManager(
             requireContext(),
             LinearLayoutManager.HORIZONTAL,
             false)
 
+        // 2 list
         binding.recyclerViewItemRecommend.adapter = adapter
         binding.recyclerViewItemRecommend.layoutManager = LinearLayoutManager(
             requireContext(),

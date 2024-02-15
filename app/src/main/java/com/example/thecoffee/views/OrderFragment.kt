@@ -5,56 +5,124 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.Toast
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.thecoffee.R
+import com.example.thecoffee.adapter.ItemCategoryRecyclerAdapter
+import com.example.thecoffee.adapter.ItemCategoryRecyclerInterface
+import com.example.thecoffee.adapter.ItemDrinkHomeRecyclerAdapter
+import com.example.thecoffee.adapter.ItemDrinkHomeRecyclerInterface
+import com.example.thecoffee.data.models.Category
+import com.example.thecoffee.data.models.Drink
+import com.example.thecoffee.databinding.FragmentHomeBinding
+import com.example.thecoffee.databinding.FragmentOrderBinding
+import com.google.android.material.bottomsheet.BottomSheetDialog
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [OrderFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class OrderFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private lateinit var binding: FragmentOrderBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_order, container, false)
+        binding = FragmentOrderBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment OrderFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            OrderFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val categoryList = mutableListOf<Category>()
+        for (i in 1..12) {
+            categoryList.add(Category(i.toString(), "Cà phê - CloudFee $i", R.drawable.img))
+        }
+
+
+        // open bottom sheet category - menu danh muc spham
+        binding.titleCategory.setOnClickListener {
+            val dialogCategory = BottomSheetDialog(requireActivity())
+
+            val adapterBottom = ItemCategoryRecyclerAdapter(categoryList, object: ItemCategoryRecyclerInterface {
+                override fun onClickItemDrink(position: Int) {
+                    dialogCategory.dismiss()
+                    binding.titleCategory.text = categoryList[position].name
                 }
+            })
+
+            val view = layoutInflater.inflate(R.layout.layout_bottom_sheet_category, null)
+
+            val btnClose = view.findViewById<ImageView>(R.id.close_bottom_sheet_category)
+
+            val recyclerViewCategory = view.findViewById<RecyclerView>(R.id.recyclerView_category)
+            recyclerViewCategory.adapter = adapterBottom
+
+            recyclerViewCategory.layoutManager = GridLayoutManager(
+                requireContext(),
+                4,
+                LinearLayoutManager.VERTICAL,
+                false)
+
+            btnClose.setOnClickListener {
+                dialogCategory.dismiss()
             }
+
+            // below line is use to set cancelable to avoid
+            // closing of dialog box when clicking on the screen.
+            dialogCategory.setCancelable(false)
+
+            dialogCategory.setContentView(view)
+
+            dialogCategory.show()
+
+        }
+        binding.iconArrowDown.setOnClickListener {
+            val dialogCategory = BottomSheetDialog(requireActivity())
+
+            val adapterBottom = ItemCategoryRecyclerAdapter(categoryList, object: ItemCategoryRecyclerInterface {
+                override fun onClickItemDrink(position: Int) {
+                    dialogCategory.dismiss()
+                    binding.titleCategory.text = categoryList[position].name
+                }
+            })
+
+            val view = layoutInflater.inflate(R.layout.layout_bottom_sheet_category, null)
+
+            val btnClose = view.findViewById<ImageView>(R.id.close_bottom_sheet_category)
+
+            val recyclerViewCategory = view.findViewById<RecyclerView>(R.id.recyclerView_category)
+            recyclerViewCategory.adapter = adapterBottom
+
+            recyclerViewCategory.layoutManager = GridLayoutManager(
+                requireContext(),
+                4,
+                LinearLayoutManager.VERTICAL,
+                false)
+
+            btnClose.setOnClickListener {
+                dialogCategory.dismiss()
+            }
+
+            // below line is use to set cancelable to avoid
+            // closing of dialog box when clicking on the screen.
+            dialogCategory.setCancelable(false)
+
+            dialogCategory.setContentView(view)
+
+            dialogCategory.show()
+
+        }
+
+
+
+
     }
+
+
 }
