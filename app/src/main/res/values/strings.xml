@@ -25,7 +25,7 @@
     <string name="store">Cửa hàng</string>
     <string name="voucher">Ưu đãi</string>
     <string name="other">Khác</string>
-<!-- TODO: Remove or change this placeholder text -->
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="txtUsername">Chào bạn mới!</string>
     <string name="slogan">Đăng nhập để sử dụng những ưu đãi chỉ \n \t \t \t \t \t dành riêng cho app bạn nhé !</string>
@@ -47,4 +47,5 @@
     <string name="more">Xem thêm</string>
     <string name="name_voucher_bean">Mua 1 Tặng 1 \nTrà sữa Oolong</string>
     <string name="title_category">Danh mục</string>
+    <string name="search_text">Tìm kiếm</string>
 </resources>
