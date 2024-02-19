@@ -18,6 +18,7 @@
             android:id="@+id/icon_category"
             android:layout_width="@dimen/_20sdp"
             android:layout_height="@dimen/_20sdp"
+            android:layout_centerVertical="true"
             android:src="@drawable/icon_category" />
 
         <TextView
@@ -31,7 +32,7 @@
             android:focusable="true"
             android:text="@string/title_category"
             android:textColor="@color/black_900"
-            android:textSize="@dimen/_13sdp" />
+            android:textSize="@dimen/_14sdp" />
 
         <ImageView
             android:id="@+id/icon_arrow_down"
@@ -42,83 +43,54 @@
             android:layout_toEndOf="@id/title_category"
             android:src="@drawable/icon_arrow_down" />
 
-        <!--        <ImageView-->
-        <!--            android:id="@+id/icon_heart"-->
-        <!--            android:layout_centerVertical="true"-->
-        <!--            android:layout_alignParentEnd="true"-->
-        <!--            android:layout_marginStart="@dimen/_5sdp"-->
-        <!--            android:layout_width="@dimen/_18sdp"-->
-        <!--            android:layout_height="@dimen/_18sdp"-->
-        <!--            android:src="@drawable/icon_heart" />-->
+        <ImageView
+            android:id="@+id/icon_search"
+            android:layout_width="@dimen/_18sdp"
+            android:layout_height="@dimen/_18sdp"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginVertical="@dimen/_8sdp"
+            android:layout_toStartOf="@id/icon_heart"
+            android:clickable="true"
+            android:src="@drawable/icon_search"
+            android:focusable="true" />
+
+        <ImageView
+            android:id="@+id/icon_heart"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/icon_heart" />
 
     </RelativeLayout>
-    <androidx.core.widget.NestedScrollView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_item_drink"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_2sdp"
-        android:scrollbarSize="0dp"
-        android:scrollbars="vertical">
-<!--        search-->
-        <RelativeLayout
-            android:elevation="@dimen/_2sdp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_10sdp"
-            android:layout_marginVertical="@dimen/_5sdp"
-            android:background="@drawable/round_corner"
-            android:backgroundTint="@color/white_900">
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        android:layout_marginVertical="@dimen/_5sdp" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/round_corner"
-                android:layout_marginHorizontal="@dimen/_5sdp"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:layout_toStartOf="@id/icon_heart">
+<!--    <androidx.core.widget.NestedScrollView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="@dimen/_2sdp"-->
+<!--        android:scrollbarSize="0dp"-->
+<!--        android:scrollbars="vertical">-->
 
-                <ImageView
-                    android:id="@+id/icon_search"
-                    android:layout_gravity="center_vertical"
-                    android:layout_width="@dimen/_15sdp"
-                    android:layout_height="@dimen/_15sdp"
-                    android:layout_marginStart="@dimen/_10sdp"
-                    android:layout_marginVertical="@dimen/_8sdp"
-                    android:src="@drawable/icon_search" />
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="vertical">-->
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edtSearchDrink"
-                    android:background="@drawable/round_corner"
-                    android:layout_marginVertical="@dimen/_8sdp"
-                    android:hint="@string/search_text"
-                    android:textSize="@dimen/_12sdp"
-                    android:inputType="text"
-                    android:singleLine="true"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="@dimen/_5sdp"
-                    android:layout_marginEnd="@dimen/_10sdp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
+<!--            -->
 
-            <FrameLayout
-                android:id="@+id/icon_heart"
-                android:layout_alignParentEnd="true"
-                android:layout_marginVertical="@dimen/_10sdp"
-                android:layout_marginEnd="@dimen/_5sdp"
-                android:background="@drawable/round_corner"
-                android:backgroundTint="@color/orange_100"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <ImageView
-                    android:layout_gravity="center"
-                    android:layout_margin="@dimen/_8sdp"
-                    android:layout_width="@dimen/_18sdp"
-                    android:layout_height="@dimen/_18sdp"
-                    android:src="@drawable/icon_heart" />
-            </FrameLayout>
-        </RelativeLayout>
-    </androidx.core.widget.NestedScrollView>
+<!--        </LinearLayout>-->
 
 
+<!--    </androidx.core.widget.NestedScrollView>-->
 
 </LinearLayout>

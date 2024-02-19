@@ -3,26 +3,32 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <androidx.cardview.widget.CardView
-        android:id="@+id/card_view"
-        android:clickable="true"
+<!--    <androidx.cardview.widget.CardView-->
+<!--        android:id="@+id/card_view"-->
+<!--        android:clickable="true"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        app:cardCornerRadius="@dimen/_50sdp"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:focusable="true">-->
+<!--&lt;!&ndash;        <ImageView&ndash;&gt;-->
+<!--&lt;!&ndash;            android:id="@+id/image_category"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:layout_width="@dimen/_60sdp"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:layout_height="@dimen/_60sdp"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:src="@drawable/drink1" />&ndash;&gt;-->
+<!--    </androidx.cardview.widget.CardView>-->
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/image_category"
         android:layout_centerHorizontal="true"
-        app:cardCornerRadius="@dimen/_50sdp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:focusable="true">
-        <ImageView
-            android:id="@+id/image_category"
-            android:layout_width="@dimen/_60sdp"
-            android:layout_height="@dimen/_60sdp"
-            android:src="@drawable/drink1" />
-    </androidx.cardview.widget.CardView>
+        android:src="@drawable/drink1"
+        android:layout_width="@dimen/_60sdp"
+        android:layout_height="@dimen/_60sdp"/>
 
     <TextView
         android:id="@+id/name_category"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/card_view"
+        android:layout_below="@id/image_category"
         android:layout_centerInParent="true"
         android:layout_marginVertical="@dimen/_10sdp"
         android:gravity="center"

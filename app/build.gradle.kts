@@ -4,6 +4,7 @@ plugins {
     id("kotlin-kapt")
     id("com.google.devtools.ksp")
     id("com.google.gms.google-services")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -64,6 +65,9 @@ dependencies {
 
     // circle image view
     implementation("de.hdodenhof:circleimageview:3.1.0")
+
+    // card view
+    implementation("androidx.cardview:cardview:1.0.0")
 
     //scalable unit text size
 //    implementation("com.intuit.sdp:ssp-android:1.1.0")
@@ -139,6 +143,13 @@ dependencies {
     val fragment_version = "1.4.0"
     implementation("androidx.fragment:fragment-ktx:$fragment_version")
 
+    // hilt
+    implementation("com.google.dagger:hilt-android:2.44")
+    kapt("com.google.dagger:hilt-compiler:2.44")
 
 
+
+}
+kapt {
+    correctErrorTypes = true
 }
