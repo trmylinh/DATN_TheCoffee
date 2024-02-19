@@ -12,4 +12,6 @@ data class Drink (
     val discount: Int,
 //    val toppings: MutableList<String>?,
     val type: Category
-)
+) {
+
+}
