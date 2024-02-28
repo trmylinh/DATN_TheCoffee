@@ -111,7 +111,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_10sdp"
-                    android:layout_marginEnd="@dimen/_15sdp">
+                    android:layout_marginEnd="@dimen/_12sdp">
 
                     <ImageView
                         android:id="@+id/icon_delivery"
@@ -134,7 +134,7 @@
                     android:id="@+id/takeaway_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/_15sdp">
+                    android:layout_marginEnd="@dimen/_12sdp">
 
                     <ImageView
                         android:id="@+id/icon_take_away"
@@ -157,7 +157,7 @@
                     android:id="@+id/beans_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/_15sdp">
+                    android:layout_marginEnd="@dimen/_12sdp">
 
                     <ImageView
                         android:id="@+id/icon_beans"
@@ -180,7 +180,7 @@
                     android:id="@+id/order_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/_15sdp">
+                    android:layout_marginEnd="@dimen/_12sdp">
 
                     <ImageView
                         android:id="@+id/icon_order"

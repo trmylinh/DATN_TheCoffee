@@ -11,7 +11,7 @@
     <string name="textOr">Hoặc</string>
     <string name="LoginwithGG">Tiếp tục bằng Google</string>
     <string name="default_web_client_id">1044496875060-b5d6dv8r1vrgv5ar6bnmdu6h3n7ntnik.apps.googleusercontent.com</string>
-    <string name="title_user_info">Tạo tài khoản</string>
+    <string name="title_user_info">Cập nhật thông tin</string>
     <string name="hint_first_name">Nhập tên của bạn *</string>
     <string name="hint_last_name">Nhập họ của bạn</string>
     <string name="hint_email">Email của bạn</string>
@@ -19,7 +19,7 @@
     <string name="hint_birthday">Chọn ngày sinh</string>
     <string name="hint_gender">Chưa chọn giới tính</string>
     <string name="terms_and_conditions">Tôi đồng ý với các Điều khoản và điều kiện của The Coffee House</string>
-    <string name="create_account">Tạo tài khoản</string>
+    <string name="create_account">Cập nhật tài khoản</string>
     <string name="home">Trang chủ</string>
     <string name="order">Đặt hàng</string>
     <string name="store">Cửa hàng</string>
@@ -48,4 +48,6 @@
     <string name="name_voucher_bean">Mua 1 Tặng 1 \nTrà sữa Oolong</string>
     <string name="title_category">Danh mục</string>
     <string name="search_text">Tìm kiếm</string>
+    <string name="title_other">Khác</string>
+    <string name="loading">Loading</string>
 </resources>
