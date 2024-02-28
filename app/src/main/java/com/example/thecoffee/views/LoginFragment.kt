@@ -8,19 +8,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.get
 import androidx.navigation.fragment.findNavController
-import com.example.thecoffee.MainActivity
 import com.example.thecoffee.R
-import com.example.thecoffee.data.models.ResponseState
-import com.example.thecoffee.data.repositories.AuthenticationRepository
 import com.example.thecoffee.databinding.FragmentLoginBinding
-import com.example.thecoffee.viewmodel.LoginViewModel
+import com.example.thecoffee.viewmodel.AuthenticationViewModel
 import com.example.thecoffee.viewmodel.MyViewModelFactory
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -28,26 +24,20 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.AuthCredential
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.database.FirebaseDatabase
 
 class LoginFragment : Fragment() {
     private lateinit var binding: FragmentLoginBinding
-
-    private lateinit var auth: FirebaseAuth
-    private lateinit var database: FirebaseDatabase
+    private lateinit var loggedCheck: MutableLiveData<Boolean>
     private lateinit var mGoogleSignInClient: GoogleSignInClient
-
-    private lateinit var loginViewModel: LoginViewModel
+    private lateinit var authenticationViewModel: AuthenticationViewModel
     companion object {
         private const val RC_SIGN_IN = 9001
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val authRepository = AuthenticationRepository()
-        val viewModelFactory = MyViewModelFactory(authRepository)
-        loginViewModel = ViewModelProvider(this, viewModelFactory)[LoginViewModel::class.java]
+        val viewModelFactory = MyViewModelFactory(requireActivity().application)
+        authenticationViewModel = ViewModelProvider(this, viewModelFactory)[AuthenticationViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -60,6 +50,8 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        loggedCheck = authenticationViewModel.getLoggedStatus
 
         binding.edtPhoneNumber.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
@@ -76,7 +68,7 @@ class LoginFragment : Fragment() {
         }
 
         binding.btnClose.setOnClickListener {
-            // back lai HomeFragment
+            // back lai other fragment
             findNavController().popBackStack();
         }
     }
@@ -86,6 +78,7 @@ class LoginFragment : Fragment() {
             .requestEmail()
             .build()
         mGoogleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
+        mGoogleSignInClient.revokeAccess();
     }
     private fun signInUsingGoogle() {
         val signInGoogleIntent = mGoogleSignInClient.signInIntent
@@ -117,24 +110,25 @@ class LoginFragment : Fragment() {
     }
 
     private fun signInWithGoogleAuthCredential(googleAuthCredential: AuthCredential) {
-        loginViewModel.signInWithGoogle(googleAuthCredential)
-        loginViewModel.authenticateUserLiveData.observe(viewLifecycleOwner) { authenticatedUser ->
-            when (authenticatedUser) {
-                is ResponseState.Error -> {
-                    authenticatedUser.message?.let {
-                        Toast.makeText(context, "Authentication failed", Toast.LENGTH_LONG).show()
-                    }
-                }
-                is ResponseState.Success -> {
-                    if (authenticatedUser.data != null) {
-                        findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
-                        Toast.makeText(context, "Authentication success", Toast.LENGTH_LONG).show()
-                    }
-                }
-                is ResponseState.Loading -> {
-
-                }
+        loading(true)
+        authenticationViewModel.signInWithGoogle(googleAuthCredential)
+        authenticationViewModel.getUserData.observe(viewLifecycleOwner){
+                user ->
+            loggedCheck.observe(this){
+                loading(false)
+                    Log.e("it", it.toString())
+                    findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
             }
+        }
+    }
+
+    private fun loading(isLoading: Boolean) {
+        if (isLoading) {
+            binding.btnLogInGG.visibility = View.INVISIBLE
+            binding.progressBarGG.visibility = View.VISIBLE
+        } else {
+            binding.btnLogInGG.visibility = View.VISIBLE
+            binding.progressBarGG.visibility = View.INVISIBLE
         }
     }
 

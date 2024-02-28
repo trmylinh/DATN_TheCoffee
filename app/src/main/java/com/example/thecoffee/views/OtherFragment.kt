@@ -1,60 +1,87 @@
 package com.example.thecoffee.views
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.compose.ui.window.Dialog
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import com.example.thecoffee.R
+import com.example.thecoffee.data.models.ResponseState
+import com.example.thecoffee.databinding.FragmentHomeBinding
+import com.example.thecoffee.databinding.FragmentOtherBinding
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [OtherFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class OtherFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
+    private lateinit var binding: FragmentOtherBinding
+    private lateinit var navController: NavController
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_other, container, false)
+        binding = FragmentOtherBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment OtherFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            OtherFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        navController = Navigation.findNavController(view)
+        val auth = Firebase.auth
+        val user = auth.currentUser
+        if (user != null) {
+            // user -> sign out
+            binding.layoutSignOut.setOnClickListener {
+                val builder = AlertDialog.Builder(context)
+                builder.setCancelable(false)
+                builder.setTitle("Xác nhận")
+                builder.setMessage("Bạn có chắc chắn muốn đăng xuất tài khoản không?")
+                    .setPositiveButton("Xác nhận") { dialog, id ->
+                        auth.signOut().apply {
+                            binding.iconSginOut.setImageResource(R.drawable.icon_sign_in)
+                            binding.textSignOut.text = "Đăng nhập"
+                            binding.layoutSignOut.setOnClickListener {
+                                navController.navigate(R.id.action_otherFragment_to_loginFragment)
+                            }
+                        }
+                    }
+                    .setNegativeButton("Hủy bỏ") { dialog, id ->
+                        dialog.cancel()
+                    }
+                val alertDialog = builder.create()
+                alertDialog.show()
             }
+
+            // user-info
+            binding.layoutUserInfo.setOnClickListener {
+                navController.navigate(R.id.action_otherFragment_to_userInfoFragment)
+            }
+        } else {
+            // user chua login -> login
+            binding.iconSginOut.setImageResource(R.drawable.icon_sign_in)
+            binding.textSignOut.text = "Đăng nhập"
+            binding.layoutSignOut.setOnClickListener {
+                navController.navigate(R.id.action_otherFragment_to_loginFragment)
+            }
+
+            // user-info if user not log in
+            binding.layoutUserInfo.setOnClickListener {
+                navController.navigate(R.id.action_otherFragment_to_userInfoFragment)
+            }
+        }
+
+
     }
+
 }

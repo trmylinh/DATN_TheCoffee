@@ -1,7 +1,10 @@
 package com.example.thecoffee.data.repositories
 
 import android.app.Application
+import android.net.Uri
 import android.provider.Settings.Global.getString
+import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.example.thecoffee.R
 import com.example.thecoffee.data.models.ResponseState
@@ -14,39 +17,164 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthCredential
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.CollectionReference
-import kotlinx.coroutines.tasks.await
+import com.google.firebase.firestore.toObject
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 
-class AuthenticationRepository {
-    private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
-    private val rootRef: FirebaseFirestore = FirebaseFirestore.getInstance()
-    private val usersRef: CollectionReference = rootRef.collection("Users");
+class AuthenticationRepository(_application: Application) {
+    private var application: Application
+    private var firebaseUserMutableLiveData: MutableLiveData<FirebaseUser>
+    private var userLoggedMutableLiveData: MutableLiveData<Boolean>
+    private var userImageUpdated: MutableLiveData<Boolean>
+    private var userNameUpdated: MutableLiveData<Boolean>
+    private var userPhoneUpdated: MutableLiveData<Boolean>
+    private var userMutableLiveData: MutableLiveData<User>
+    private val auth: FirebaseAuth
+    private val storageReference: StorageReference
+    private val firestoreDatabase: FirebaseFirestore
+
+    //    private val usersRef: CollectionReference = rootRef.collection("Users");
+
+    val getFirebaseUser: MutableLiveData<FirebaseUser>
+        get() = firebaseUserMutableLiveData
+
+    val checkLogged : MutableLiveData<Boolean>
+        get() = userLoggedMutableLiveData
+
+    val getUserDetail: MutableLiveData<User>
+        get() = userMutableLiveData
+
+    val checkUserNameUpdated: MutableLiveData<Boolean>
+        get() = userNameUpdated
+
+    val checkUserImageUpdated: MutableLiveData<Boolean>
+        get() = userImageUpdated
+    val checkUserPhoneUpdated: MutableLiveData<Boolean>
+        get() = userPhoneUpdated
+
+    init {
+        application = _application
+        firebaseUserMutableLiveData = MutableLiveData<FirebaseUser>()
+        userLoggedMutableLiveData = MutableLiveData<Boolean>()
+        // userInfo
+        userImageUpdated = MutableLiveData<Boolean>()
+        userNameUpdated = MutableLiveData<Boolean>()
+        userPhoneUpdated = MutableLiveData<Boolean>()
+        userMutableLiveData = MutableLiveData<User>()
+
+        auth = FirebaseAuth.getInstance()
+        if(auth.currentUser != null){
+            firebaseUserMutableLiveData.postValue(auth.currentUser)
+        }
+        storageReference = FirebaseStorage.getInstance().getReference("user_image/"+auth.currentUser?.uid)
+        firestoreDatabase = FirebaseFirestore.getInstance()
+    }
 
     //sign in using Google
-    fun firebaseSignInWithGoogle(googleAuthCredential: AuthCredential) : MutableLiveData<ResponseState<User>> {
-        val authenticatedUserMutableLiveData: MutableLiveData<ResponseState<User>> = MutableLiveData()
-        firebaseAuth.signInWithCredential(googleAuthCredential).addOnCompleteListener { authTask ->
+    fun firebaseSignInWithGoogle(googleAuthCredential: AuthCredential) {
+        val authenticatedUserMutableLiveData: MutableLiveData<ResponseState<User>> =
+            MutableLiveData()
+        auth.signInWithCredential(googleAuthCredential).addOnCompleteListener { authTask ->
             if (authTask.isSuccessful) {
-                var isNewUser = authTask.result?.additionalUserInfo?.isNewUser
-                val firebaseUser: FirebaseUser? = firebaseAuth.currentUser
-                if (firebaseUser != null) {
-                    val uid = firebaseUser.uid
-                    val name = firebaseUser.displayName
-                    val email = firebaseUser.email
-                    val phone = firebaseUser.phoneNumber
-                    val user = User(uid = uid, name = name, email = email, phone = phone)
-                    user.isNew = isNewUser
-                    usersRef.document(uid).set(user)
+                if (auth.currentUser != null) {
+                    firebaseUserMutableLiveData.postValue(auth.currentUser)
+                    userLoggedMutableLiveData.postValue(true)
+                    val userCollection = firestoreDatabase.collection("Users")
+                    val uid = auth.currentUser!!.uid
+                    val name = auth.currentUser!!.displayName
+                    val email = auth.currentUser!!.email
+                    val phone = auth.currentUser!!.phoneNumber
+                    val avt = auth.currentUser!!.photoUrl.toString()
+                    val user = User(uid = uid, name = name, email = email, phone = phone, avt = avt)
+                    userCollection.document(uid).set(user).addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            Toast.makeText(application, "Update user's profile successfully", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(application, it.exception.toString(), Toast.LENGTH_SHORT).show()
+                            Log.e("Firestore", "Error setting user's profile", it.exception)
+                        }
+                    }
                     authenticatedUserMutableLiveData.value = ResponseState.Success(user)
                 }
+                Toast.makeText(application, "Sign in with Google successfully", Toast.LENGTH_SHORT).show()
             } else {
-                authenticatedUserMutableLiveData.value = authTask.exception?.message?.let {
-                    ResponseState.Error(it)
-                }
+                userLoggedMutableLiveData.postValue(false)
+                Toast.makeText(application, authTask.exception!!.message, Toast.LENGTH_SHORT).show()
             }
         }
-        return authenticatedUserMutableLiveData
     }
+
+    fun getUserDetail(userId: String){
+        val reference = firestoreDatabase.collection("Users").document(userId)
+        reference.get().addOnSuccessListener { documentSnapshot ->
+            if (documentSnapshot.exists()) {
+                val user = documentSnapshot.toObject(User::class.java)
+                userMutableLiveData.postValue(user!!)
+            }
+        }.addOnFailureListener {exception ->
+            Log.d("getUserDetail", "Error getting user detail: $exception")
+        }
+    }
+
+    fun updateUserName(userId: String, newName: String) {
+        val userRef = firestoreDatabase.collection("Users").document(userId)
+        userRef.update("name", newName)
+            .addOnCompleteListener { task ->
+                if(task.isSuccessful){
+                    userNameUpdated.postValue(true)
+                    Toast.makeText(application, "Update username successfully", Toast.LENGTH_SHORT).show()
+                    getUserDetail(auth.currentUser!!.uid)
+                } else {
+                    Toast.makeText(application, "Update username failed", Toast.LENGTH_SHORT).show()
+                }
+            }.addOnFailureListener {
+                userNameUpdated.postValue(false)
+                Toast.makeText(application, "Error updating username", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    fun updateUserPhone(userId: String, newPhone: String) {
+        val userRef = firestoreDatabase.collection("Users").document(userId)
+        userRef.update("phone", newPhone)
+            .addOnCompleteListener { task ->
+                if(task.isSuccessful){
+                    userPhoneUpdated.postValue(true)
+                    Toast.makeText(application, "Update user's phone successfully", Toast.LENGTH_SHORT).show()
+                    getUserDetail(auth.currentUser!!.uid)
+                } else {
+                    Toast.makeText(application, "Update user's phone failed", Toast.LENGTH_SHORT).show()
+                }
+            }.addOnFailureListener {
+                userPhoneUpdated.postValue(false)
+                Toast.makeText(application, "Error updating user's phone", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    fun updateUserImage(imageUri: Uri){
+        storageReference.putFile(imageUri).addOnSuccessListener {
+            storageReference.downloadUrl.addOnSuccessListener { uri ->
+                firestoreDatabase.collection("Users").document(auth.currentUser!!.uid)
+                    .update("avt", uri.toString())
+                    .addOnSuccessListener {
+                        userImageUpdated.postValue(true)
+                        Toast.makeText(application, "Upload image successfully!", Toast.LENGTH_SHORT).show()
+                        getUserDetail(auth.currentUser!!.uid)
+                    }.addOnFailureListener {
+                        userImageUpdated.postValue(false)
+                        Toast.makeText(application, "Error updating image", Toast.LENGTH_SHORT).show()
+                    }
+            }
+        }.addOnFailureListener {
+            Toast.makeText(application, "Error uploading image", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
+    // sign out
+    fun signOut(){
+        auth.signOut()
+    }
+
 
 }
 
