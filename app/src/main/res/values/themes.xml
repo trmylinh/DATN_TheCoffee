@@ -6,7 +6,7 @@
 
         <!--        Primary brand color-->
         <!--   Color for the app bar and other primary UI elements. -->
-        <item name="colorPrimary">@color/beige_50</item>
+        <item name="colorPrimary">@color/orange_900</item>
 
         <!--   A darker variant of the primary color, used for
            the status bar (on Android 5.0+) and contextual app bars. -->

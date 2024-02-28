@@ -109,6 +109,7 @@ dependencies {
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation("com.google.firebase:firebase-database")
     implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-storage")
 
     val nav_version = "2.7.6"
 
@@ -147,6 +148,8 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.44")
     kapt("com.google.dagger:hilt-compiler:2.44")
 
+    // glide
+    implementation("com.github.bumptech.glide:glide:4.16.0")
 
 
 }

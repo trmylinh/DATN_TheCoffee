@@ -29,7 +29,7 @@ class ItemDrinkCategoryRecyclerAdapter(
     override fun onBindViewHolder(holder: ItemDrinkCategoryViewHolder, position: Int) {
         holder.itemView.apply {
             run {
-                binding.nameDrink.text = list[position].type.name
+                binding.nameDrink.text = list[position].name
                 binding.imageDrink.setImageResource(list[position].images)
                 binding.priceDrink.text = "${String.format("%,d", list[position].price)}đ"
             }
