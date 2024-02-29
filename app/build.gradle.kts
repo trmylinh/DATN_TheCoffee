@@ -70,21 +70,13 @@ dependencies {
     implementation("androidx.cardview:cardview:1.0.0")
 
     //scalable unit text size
-//    implementation("com.intuit.sdp:ssp-android:1.1.0")
+    implementation("com.intuit.sdp:ssp-android:1.1.0")
 
     //scalable unit size
     implementation("com.intuit.sdp:sdp-android:1.1.0")
 
-    // room database
-    val roomVersion = "2.6.1"
-    implementation("androidx.room:room-runtime:$roomVersion")
-    ksp("androidx.room:room-compiler:$roomVersion")
-
 
     implementation("com.makeramen:roundedimageview:2.3.0")
-
-    //crop image library
-    implementation("com.theartofdev.edmodo:android-image-cropper:2.8.0")
 
     //easy permission
     implementation("pub.devrel:easypermissions:3.0.0")
@@ -135,10 +127,6 @@ dependencies {
     //Kodein Dependency Injection
     implementation("org.kodein.di:kodein-di-generic-jvm:6.2.1")
     implementation("org.kodein.di:kodein-di-framework-android-x:6.2.1")
-
-    //RxJava
-    implementation("io.reactivex.rxjava2:rxjava:2.2.5")
-    implementation("io.reactivex.rxjava2:rxandroid:2.1.0")
 
     //fragment extension
     val fragment_version = "1.4.0"

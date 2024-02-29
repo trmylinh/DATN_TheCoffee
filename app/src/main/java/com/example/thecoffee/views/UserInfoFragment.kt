@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -67,8 +68,8 @@ class UserInfoFragment : Fragment() {
             Glide.with(requireActivity()).load(it.avt).into(binding.imgAvt)
         }
 
-        binding.edtTextFirstName.addTextChangedListener(editTextWatcher)
-        binding.edtTextPhone.addTextChangedListener(editTextWatcher)
+//        binding.edtTextFirstName.addTextChangedListener(editTextWatcher)
+//        binding.edtTextPhone.addTextChangedListener(editTextWatcher)
 
         binding.btnBack.setOnClickListener {
             findNavController().popBackStack();
@@ -81,11 +82,20 @@ class UserInfoFragment : Fragment() {
         }
 
         binding.btnCreateAccount.setOnClickListener {
-
+            onChangeUserName()
+            onChangeUserPhone()
         }
 
 
 
+    }
+
+    private fun checkInput(){
+        val nameInput = binding.edtTextFirstName.text.toString().trim().isNotEmpty()
+        val phoneInput = binding.edtTextPhone.text.toString().trim().isNotEmpty()
+        if(nameInput || phoneInput) {
+
+        }
     }
 
     private val editTextWatcher: TextWatcher = object : TextWatcher {
@@ -137,6 +147,37 @@ class UserInfoFragment : Fragment() {
         }
     }
 
+    private fun onChangeUserName(){
+        val txtUsername = binding.edtTextFirstName.text.toString()
+        if (txtUsername.isNotEmpty()){
+            Log.e("check", firebaseUser.uid)
+            authenticationViewModel.updateUserName(firebaseUser.uid, txtUsername)
+//            showDialog(true)
+//            authenticationViewModel.checkUserNameUpdated.observe(viewLifecycleOwner){
+//                if(it){
+//                    showDialog(false)
+//                }
+//                else {
+//                    showDialog(false)
+//                }
+//            }
+        }
+    }
+    private fun onChangeUserPhone(){
+        val txtPhone = binding.edtTextPhone.text.toString()
+        if (txtPhone.isNotEmpty()){
+            authenticationViewModel.updateUserPhone(firebaseUser.uid, txtPhone)
+//            showDialog(true)
+//            authenticationViewModel.checkUserPhoneUpdated.observe(viewLifecycleOwner){
+//                if(it){
+//                    showDialog(false)
+//                }
+//                else {
+//                    showDialog(false)
+//                }
+//            }
+        }
+    }
 
 
 }

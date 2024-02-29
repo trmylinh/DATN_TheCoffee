@@ -2,20 +2,14 @@ package com.example.thecoffee.data.repositories
 
 import android.app.Application
 import android.net.Uri
-import android.provider.Settings.Global.getString
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
-import com.example.thecoffee.R
 import com.example.thecoffee.data.models.ResponseState
 import com.example.thecoffee.data.models.User
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.GoogleAuthCredential
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.storage.FirebaseStorage
@@ -150,12 +144,20 @@ class AuthenticationRepository(_application: Application) {
             }
     }
 
+    fun checkUserNameChange(userId: String, newName: String){
+        val userRef = firestoreDatabase.collection("Users").whereEqualTo("id", userId)
+
+
+
+    }
+
     fun updateUserImage(imageUri: Uri){
         storageReference.putFile(imageUri).addOnSuccessListener {
             storageReference.downloadUrl.addOnSuccessListener { uri ->
                 firestoreDatabase.collection("Users").document(auth.currentUser!!.uid)
                     .update("avt", uri.toString())
                     .addOnSuccessListener {
+                        checkFullInfoUser()
                         userImageUpdated.postValue(true)
                         Toast.makeText(application, "Upload image successfully!", Toast.LENGTH_SHORT).show()
                         getUserDetail(auth.currentUser!!.uid)
@@ -167,6 +169,11 @@ class AuthenticationRepository(_application: Application) {
         }.addOnFailureListener {
             Toast.makeText(application, "Error uploading image", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    fun checkFullInfoUser(){
+        val userRef = firestoreDatabase.collection("Users").document(auth.currentUser!!.uid).id.toString()
+        Log.e("id", userRef)
     }
 
 
