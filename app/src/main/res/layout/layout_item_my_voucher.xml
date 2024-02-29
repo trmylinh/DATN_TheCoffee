@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/_10sdp"
+    android:background="@drawable/round_corner"
+    android:backgroundTint="@color/white_900">
+    <ImageView
+        android:id="@+id/image_voucher"
+        android:layout_marginStart="@dimen/_5sdp"
+        android:src="@drawable/image_voucher_gift"
+        android:layout_width="@dimen/_100sdp"
+        android:layout_height="@dimen/_100sdp"/>
+    <TextView
+        android:id="@+id/title_voucher"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginHorizontal="@dimen/_15sdp"
+        android:layout_toEndOf="@id/image_voucher"
+        android:text="Giam 35 % + FREESHIP Don Tu 10 Ly Toi Da 500K"
+        android:textSize="@dimen/_13sdp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/text_date"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginHorizontal="@dimen/_15sdp"
+        android:layout_below="@+id/title_voucher"
+        android:text="Het han trong 6 tieng"
+        android:textSize="@dimen/_11sdp"
+        android:textColor="@color/red_900"
+        android:layout_toEndOf="@id/image_voucher"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</RelativeLayout>
