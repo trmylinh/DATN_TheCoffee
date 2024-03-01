@@ -18,6 +18,7 @@ import com.google.firebase.storage.StorageReference
 class AuthenticationRepository(_application: Application) {
     private var application: Application
     private var firebaseUserMutableLiveData: MutableLiveData<FirebaseUser>
+    private val loadingStateMutableLiveData: MutableLiveData<Boolean>
     private var userLoggedMutableLiveData: MutableLiveData<Boolean>
     private var userImageUpdated: MutableLiveData<Boolean>
     private var userNameUpdated: MutableLiveData<Boolean>
@@ -31,6 +32,9 @@ class AuthenticationRepository(_application: Application) {
 
     val getFirebaseUser: MutableLiveData<FirebaseUser>
         get() = firebaseUserMutableLiveData
+
+    val checkLoadingState : MutableLiveData<Boolean>
+        get() = loadingStateMutableLiveData
 
     val checkLogged : MutableLiveData<Boolean>
         get() = userLoggedMutableLiveData
@@ -49,6 +53,7 @@ class AuthenticationRepository(_application: Application) {
     init {
         application = _application
         firebaseUserMutableLiveData = MutableLiveData<FirebaseUser>()
+        loadingStateMutableLiveData = MutableLiveData<Boolean>()
         userLoggedMutableLiveData = MutableLiveData<Boolean>()
         // userInfo
         userImageUpdated = MutableLiveData<Boolean>()
@@ -99,6 +104,7 @@ class AuthenticationRepository(_application: Application) {
     }
 
     fun getUserDetail(userId: String){
+        loadingStateMutableLiveData.postValue(true) // Hiển thị ProgressBar
         val reference = firestoreDatabase.collection("Users").document(userId)
         reference.get().addOnSuccessListener { documentSnapshot ->
             if (documentSnapshot.exists()) {
@@ -107,6 +113,8 @@ class AuthenticationRepository(_application: Application) {
             }
         }.addOnFailureListener {exception ->
             Log.d("getUserDetail", "Error getting user detail: $exception")
+        }.addOnCompleteListener {
+            loadingStateMutableLiveData.postValue(false) // Ẩn ProgressBar khi truy vấn hoàn thành
         }
     }
 

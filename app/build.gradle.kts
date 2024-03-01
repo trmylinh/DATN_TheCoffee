@@ -70,7 +70,7 @@ dependencies {
     implementation("androidx.cardview:cardview:1.0.0")
 
     //scalable unit text size
-    implementation("com.intuit.sdp:ssp-android:1.1.0")
+//    implementation("com.intuit.sdp:ssp-android:1.1.0")
 
     //scalable unit size
     implementation("com.intuit.sdp:sdp-android:1.1.0")

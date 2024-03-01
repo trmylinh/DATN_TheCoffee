@@ -82,20 +82,48 @@
                         android:focusable="true" />
                 </RelativeLayout>
 
-                <EditText
-                    android:id="@+id/edtTextFirstName"
+                <RelativeLayout
+                    android:id="@+id/view_edtName"
                     android:layout_below="@id/layout_img_avt"
+                    android:layout_marginTop="@dimen/_20sdp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/edittext_border_selector"
-                    android:maxLines="1"
-                    android:inputType="text"
-                    android:hint="@string/hint_first_name"
-                    android:textSize="@dimen/_12sdp"
-                    android:layout_marginTop="@dimen/_15sdp"
-                    android:paddingHorizontal="@dimen/_10sdp"
-                    android:paddingVertical="@dimen/_10sdp" />
-
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:id="@+id/edtTextFirstName"
+                        android:cursorVisible="false"
+                        android:focusableInTouchMode="false"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/edittext_border_selector"
+                        android:singleLine="true"
+                        android:inputType="text"
+                        android:hint="@string/hint_first_name"
+                        android:textSize="@dimen/_12sdp"
+                        android:paddingHorizontal="@dimen/_10sdp"
+                        android:paddingVertical="@dimen/_10sdp"
+                        android:layout_centerVertical="true"/>
+                    <ImageView
+                        android:id="@+id/btnEditName"
+                        android:src="@drawable/icon_edit"
+                        android:layout_marginEnd="@dimen/_5sdp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_width="@dimen/_20sdp"
+                        android:layout_height="@dimen/_20sdp"
+                        android:clickable="true"
+                        android:focusable="true" />
+                    <ImageView
+                        android:id="@+id/checkedtName"
+                        android:src="@drawable/icon_check_nobg"
+                        android:layout_marginEnd="@dimen/_5sdp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_width="@dimen/_20sdp"
+                        android:layout_height="@dimen/_20sdp"
+                        android:visibility="gone"
+                        android:clickable="true"
+                        android:focusable="true" />
+                </RelativeLayout>
 
                 <EditText
                     android:id="@+id/edtTextEmail"
@@ -103,8 +131,8 @@
                     android:focusable="false"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/edtTextFirstName"
-                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_below="@+id/view_edtName"
+                    android:layout_marginTop="@dimen/_20sdp"
                     android:background="@drawable/custom_default_border"
                     android:backgroundTint="@color/grey_200"
                     android:hint="@string/hint_email"
@@ -112,34 +140,55 @@
                     android:paddingHorizontal="@dimen/_10sdp"
                     android:paddingVertical="@dimen/_10sdp" />
 
-                <EditText
-                    android:id="@+id/edtTextPhone"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                <RelativeLayout
+                    android:id="@+id/view_edtPhone"
                     android:layout_below="@+id/edtTextEmail"
-                    android:layout_marginTop="@dimen/_10sdp"
-                    android:background="@drawable/edittext_border_selector"
-                    android:hint="@string/hint_phone"
-                    android:textSize="@dimen/_12sdp"
-                    android:inputType="phone"
-                    android:paddingHorizontal="@dimen/_10sdp"
-                    android:paddingVertical="@dimen/_10sdp" />
-
+                    android:layout_marginTop="@dimen/_20sdp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:id="@+id/edtTextPhone"
+                        android:cursorVisible="false"
+                        android:focusableInTouchMode="false"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/edittext_border_selector"
+                        android:hint="@string/hint_phone"
+                        android:textSize="@dimen/_12sdp"
+                        android:inputType="phone"
+                        android:paddingHorizontal="@dimen/_10sdp"
+                        android:paddingVertical="@dimen/_10sdp"
+                        android:layout_centerVertical="true"/>
+                    <ImageView
+                        android:id="@+id/btnEdtPhone"
+                        android:src="@drawable/icon_edit"
+                        android:layout_marginEnd="@dimen/_5sdp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_width="@dimen/_20sdp"
+                        android:layout_height="@dimen/_20sdp"
+                        android:visibility="visible"
+                        android:clickable="true"
+                        android:focusable="true" />
+                    <ImageView
+                        android:id="@+id/checkedtPhone"
+                        android:src="@drawable/icon_check_nobg"
+                        android:layout_marginEnd="@dimen/_5sdp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_width="@dimen/_20sdp"
+                        android:layout_height="@dimen/_20sdp"
+                        android:visibility="gone"
+                        android:clickable="true"
+                        android:focusable="true" />
+                </RelativeLayout>
             </RelativeLayout>
         </androidx.core.widget.NestedScrollView>
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnCreateAccount"
+        <ProgressBar
+            android:id="@+id/loadingUserInfo"
+            android:visibility="gone"
+            android:layout_centerInParent="true"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginVertical="@dimen/_20sdp"
-            android:layout_marginHorizontal="@dimen/_10sdp"
-            android:background="@drawable/custom_button"
-            android:enabled="false"
-            android:text="@string/create_account"
-            android:textColor="@color/white_900"
-            android:textSize="@dimen/_13sdp"
-            app:backgroundTint="@null" />
-
+            android:layout_height="@dimen/_80sdp"/>
     </RelativeLayout>
 </layout>
