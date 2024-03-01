@@ -16,16 +16,22 @@ class AuthenticationViewModel (application: Application) : AndroidViewModel(appl
     private var repository: AuthenticationRepository
     private var userData: MutableLiveData<FirebaseUser>
     private var loggedStatus: MutableLiveData<Boolean>
+    private val loadingState: MutableLiveData<Boolean>
     private var user:MutableLiveData<User>
 
     init {
         repository = AuthenticationRepository(application)
         userData = repository.getFirebaseUser
         loggedStatus = repository.checkLogged
+        loadingState = repository.checkLoadingState
         user = repository.getUserDetail
     }
     val getLoggedStatus: MutableLiveData<Boolean>
         get() = loggedStatus
+
+    val getLoadingState: MutableLiveData<Boolean>
+        get() = loadingState
+
     val getUserData: MutableLiveData<FirebaseUser>
         get() = userData
 

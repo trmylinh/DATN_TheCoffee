@@ -2,20 +2,14 @@ package com.example.thecoffee.data.repositories
 
 import android.app.Application
 import android.net.Uri
-import android.provider.Settings.Global.getString
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
-import com.example.thecoffee.R
 import com.example.thecoffee.data.models.ResponseState
 import com.example.thecoffee.data.models.User
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.GoogleAuthCredential
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.storage.FirebaseStorage
@@ -24,6 +18,7 @@ import com.google.firebase.storage.StorageReference
 class AuthenticationRepository(_application: Application) {
     private var application: Application
     private var firebaseUserMutableLiveData: MutableLiveData<FirebaseUser>
+    private val loadingStateMutableLiveData: MutableLiveData<Boolean>
     private var userLoggedMutableLiveData: MutableLiveData<Boolean>
     private var userImageUpdated: MutableLiveData<Boolean>
     private var userNameUpdated: MutableLiveData<Boolean>
@@ -37,6 +32,9 @@ class AuthenticationRepository(_application: Application) {
 
     val getFirebaseUser: MutableLiveData<FirebaseUser>
         get() = firebaseUserMutableLiveData
+
+    val checkLoadingState : MutableLiveData<Boolean>
+        get() = loadingStateMutableLiveData
 
     val checkLogged : MutableLiveData<Boolean>
         get() = userLoggedMutableLiveData
@@ -55,6 +53,7 @@ class AuthenticationRepository(_application: Application) {
     init {
         application = _application
         firebaseUserMutableLiveData = MutableLiveData<FirebaseUser>()
+        loadingStateMutableLiveData = MutableLiveData<Boolean>()
         userLoggedMutableLiveData = MutableLiveData<Boolean>()
         // userInfo
         userImageUpdated = MutableLiveData<Boolean>()
@@ -105,6 +104,7 @@ class AuthenticationRepository(_application: Application) {
     }
 
     fun getUserDetail(userId: String){
+        loadingStateMutableLiveData.postValue(true) // Hiển thị ProgressBar
         val reference = firestoreDatabase.collection("Users").document(userId)
         reference.get().addOnSuccessListener { documentSnapshot ->
             if (documentSnapshot.exists()) {
@@ -113,6 +113,8 @@ class AuthenticationRepository(_application: Application) {
             }
         }.addOnFailureListener {exception ->
             Log.d("getUserDetail", "Error getting user detail: $exception")
+        }.addOnCompleteListener {
+            loadingStateMutableLiveData.postValue(false) // Ẩn ProgressBar khi truy vấn hoàn thành
         }
     }
 
@@ -156,6 +158,7 @@ class AuthenticationRepository(_application: Application) {
                 firestoreDatabase.collection("Users").document(auth.currentUser!!.uid)
                     .update("avt", uri.toString())
                     .addOnSuccessListener {
+                        checkFullInfoUser()
                         userImageUpdated.postValue(true)
                         Toast.makeText(application, "Upload image successfully!", Toast.LENGTH_SHORT).show()
                         getUserDetail(auth.currentUser!!.uid)
@@ -167,6 +170,11 @@ class AuthenticationRepository(_application: Application) {
         }.addOnFailureListener {
             Toast.makeText(application, "Error uploading image", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    fun checkFullInfoUser(){
+        val userRef = firestoreDatabase.collection("Users").document(auth.currentUser!!.uid).id.toString()
+        Log.e("id", userRef)
     }
 
 
