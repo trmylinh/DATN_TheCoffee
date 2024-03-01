@@ -152,13 +152,6 @@ class AuthenticationRepository(_application: Application) {
             }
     }
 
-    fun checkUserNameChange(userId: String, newName: String){
-        val userRef = firestoreDatabase.collection("Users").whereEqualTo("id", userId)
-
-
-
-    }
-
     fun updateUserImage(imageUri: Uri){
         storageReference.putFile(imageUri).addOnSuccessListener {
             storageReference.downloadUrl.addOnSuccessListener { uri ->
