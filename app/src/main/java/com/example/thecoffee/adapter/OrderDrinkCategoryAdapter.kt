@@ -3,18 +3,30 @@ package com.example.thecoffee.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.thecoffee.data.models.Drink
 import com.example.thecoffee.databinding.LayoutItemDrinkCategoryBinding
 
 interface ItemDrinkCategoryRecyclerInterface {
-    fun onClickItemDrink(position: Int)
+    fun onClickItemDrink(position: Drink)
 }
 class ItemDrinkCategoryRecyclerAdapter(
     val list: List<Drink>,
     val onClickItemDrink: ItemDrinkCategoryRecyclerInterface
 ): RecyclerView.Adapter<ItemDrinkCategoryRecyclerAdapter.ItemDrinkCategoryViewHolder>() {
     private lateinit var binding: LayoutItemDrinkCategoryBinding
-    inner class ItemDrinkCategoryViewHolder(binding: LayoutItemDrinkCategoryBinding) : RecyclerView.ViewHolder (binding.root)
+    inner class ItemDrinkCategoryViewHolder(binding: LayoutItemDrinkCategoryBinding) : RecyclerView.ViewHolder (binding.root){
+        fun bind(drink: Drink){
+            binding.nameDrink.text = drink.name
+            binding.priceDrink.text = drink.price.toString().format("%,d")
+            Glide.with(itemView.context).load(drink.image).into(binding.imageDrink)
+        }
+        init {
+            binding.cardVideBtnAdd.setOnClickListener {
+                onClickItemDrink.onClickItemDrink(list[adapterPosition])
+            }
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemDrinkCategoryViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -27,17 +39,7 @@ class ItemDrinkCategoryRecyclerAdapter(
     }
 
     override fun onBindViewHolder(holder: ItemDrinkCategoryViewHolder, position: Int) {
-        holder.itemView.apply {
-            run {
-                binding.nameDrink.text = list[position].name
-                binding.imageDrink.setImageResource(list[position].images)
-                binding.priceDrink.text = "${String.format("%,d", list[position].price)}đ"
-            }
-
-            holder.itemView.setOnClickListener {
-                onClickItemDrink.onClickItemDrink(position)
-            }
-        }
+        holder.bind(list[position])
     }
 
 }

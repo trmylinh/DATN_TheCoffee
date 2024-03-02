@@ -3,14 +3,13 @@ package com.example.thecoffee.viewmodel
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.thecoffee.data.repositories.AuthenticationRepository
-import java.lang.IllegalArgumentException
 
 class MyViewModelFactory (private val application: Application) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(AuthenticationViewModel::class.java)) {
-            return AuthenticationViewModel(application) as T
+        try {
+            return modelClass.getConstructor(Application::class.java).newInstance(application)
+        } catch (e: Exception) {
+            throw RuntimeException("Cannot create an instance of $modelClass", e)
         }
-        throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
     }
 }
