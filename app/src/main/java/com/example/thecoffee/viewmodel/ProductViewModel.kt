@@ -17,6 +17,7 @@ import com.example.thecoffee.data.models.Drink
 import com.example.thecoffee.data.repositories.ProductRepository
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -24,6 +25,12 @@ class ProductViewModel (application: Application) : AndroidViewModel(application
     private var repository: ProductRepository
     private var _categoryList = MutableLiveData<ArrayList<Category>>()
     private var _drinkList = MutableLiveData<ArrayList<Drink>>()
+//    private val _loadingCategoryResult = MutableLiveData<Boolean>()
+    private val _loadingDrinkResult: MutableLiveData<Boolean>
+//    val loadingCategoryResult: MutableLiveData<Boolean>
+//        get() = _loadingCategoryResult
+    val loadingDrinkResult: MutableLiveData<Boolean>
+        get() = _loadingDrinkResult
 
     val getCategoryList : MutableLiveData<ArrayList<Category>>
         get() = _categoryList
@@ -35,16 +42,15 @@ class ProductViewModel (application: Application) : AndroidViewModel(application
         repository = ProductRepository(application)
         _categoryList = repository.getCategoryList
         _drinkList = repository.getDrinkList
+        _loadingDrinkResult = repository.loadingDrinkResult
     }
 
-    fun getDataCategoryList(){
+    fun getDataCategoryList() {
         repository.getDataCategoryList()
     }
 
     fun getDataDrinkList(categoryId: String){
         repository.getDataDrink(categoryId)
     }
-
-
 
 }

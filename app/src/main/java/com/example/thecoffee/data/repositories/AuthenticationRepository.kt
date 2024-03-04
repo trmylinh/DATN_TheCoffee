@@ -108,7 +108,7 @@ class AuthenticationRepository(_application: Application) {
                     }
                     else {
                         userLoggedMutableLiveData.postValue(false)
-                        Toast.makeText(application, authTask.exception!!.message, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(application, authTask.exception?.message, Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -121,6 +121,7 @@ class AuthenticationRepository(_application: Application) {
         reference.get().addOnSuccessListener { documentSnapshot ->
             if (documentSnapshot.exists()) {
                 val user = documentSnapshot.toObject(User::class.java)
+                Log.e("user", user!!.name.toString())
                 userMutableLiveData.postValue(user!!)
             }
         }.addOnFailureListener { exception ->

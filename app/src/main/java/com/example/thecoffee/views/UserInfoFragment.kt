@@ -61,7 +61,6 @@ class UserInfoFragment : Fragment() {
         // fill data user from db
         showProgressBarForThreeSeconds()
 
-
         binding.btnEditName.setOnClickListener {
             binding.edtTextFirstName.isFocusableInTouchMode = true
             binding.edtTextFirstName.isFocusable = true;

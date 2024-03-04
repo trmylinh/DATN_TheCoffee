@@ -18,7 +18,7 @@ class ItemDrinkCategoryRecyclerAdapter(
     inner class ItemDrinkCategoryViewHolder(binding: LayoutItemDrinkCategoryBinding) : RecyclerView.ViewHolder (binding.root){
         fun bind(drink: Drink){
             binding.nameDrink.text = drink.name
-            binding.priceDrink.text = drink.price.toString().format("%,d")
+            binding.priceDrink.text ="${String.format("%,d", drink.price)}đ"
             Glide.with(itemView.context).load(drink.image).into(binding.imageDrink)
         }
         init {

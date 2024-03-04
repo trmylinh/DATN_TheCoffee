@@ -18,8 +18,7 @@
             android:layout_gravity="center"
             android:id="@+id/image_drink"
             android:layout_width="@dimen/_100sdp"
-            android:layout_height="@dimen/_100sdp"
-            android:src="@drawable/img" />
+            android:layout_height="@dimen/_100sdp" />
     </androidx.cardview.widget.CardView>
 
     <TextView

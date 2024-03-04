@@ -33,9 +33,10 @@ class OrderFragment : Fragment() {
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var productViewModel: ProductViewModel
     private var categoryList = listOf<Category>()
-    private var category: Category = Category()
+    private var categoryIdList = mutableListOf<String>()
     private var drinkList = listOf<Drink>()
     private lateinit var adapterBottom: ItemCategoryRecyclerAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val viewModelFactory = MyViewModelFactory(requireActivity().application)
@@ -43,7 +44,6 @@ class OrderFragment : Fragment() {
             ViewModelProvider(this, viewModelFactory)[ProductViewModel::class.java]
         //
         productViewModel.getDataCategoryList()
-        category.id?.let { productViewModel.getDataDrinkList(it) }
     }
 
     override fun onCreateView(
@@ -57,106 +57,17 @@ class OrderFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // list item theo category
-//        val adapterItemDrinkCategory = ItemDrinkCategoryRecyclerAdapter(
-//            drinkList,
-//            object : ItemDrinkCategoryRecyclerInterface {
-//                override fun onClickItemDrink(position: Int) {
-//                    TODO("Not yet implemented")
-//                }
-//
-//            });
-//        binding.rvItemDrink.adapter = adapterItemDrinkCategory
-//        linearLayoutManager = LinearLayoutManager(
-//            requireContext(),
-//            LinearLayoutManager.VERTICAL,
-//            false
-//        )
-//        binding.rvItemDrink.layoutManager = linearLayoutManager
-
         // open bottom sheet category - menu danh muc spham
-        val dialogCategory = BottomSheetDialog(requireActivity())
-        productViewModel.getCategoryList.observe(viewLifecycleOwner) { categoryItems ->
-            if (categoryItems != null) {
-                categoryList = categoryItems
-                adapterBottom = ItemCategoryRecyclerAdapter(
-                    categoryList,
-                    object : ItemCategoryRecyclerInterface {
-                        override fun onClickItemDrink(position: Category) {
-                            Log.e("name", position.name.toString())
-                            dialogCategory.dismiss()
-                            binding.titleCategory.text = position.name
-                        }
-                    })
-                binding.titleCategory.setOnClickListener {
-                    val view = layoutInflater.inflate(R.layout.layout_bottom_sheet_category, null)
-
-                    val btnClose = view.findViewById<ImageView>(R.id.close_bottom_sheet_category)
-
-                    val recyclerViewCategory = view.findViewById<RecyclerView>(R.id.recyclerView_category)
-                    recyclerViewCategory.adapter = adapterBottom
-
-                    recyclerViewCategory.layoutManager = GridLayoutManager(
-                        requireContext(),
-                        4,
-                        LinearLayoutManager.VERTICAL,
-                        false
-                    )
-
-                    btnClose.setOnClickListener {
-                        dialogCategory.dismiss()
-                    }
-                    // below line is use to set cancelable to avoid
-                    // closing of dialog box when clicking on the screen.
-                    dialogCategory.setCancelable(false)
-
-                    dialogCategory.setContentView(view)
-                    dialogCategory.show()
-                }
+        showMenuCategory()
+        // list item theo category
+        productViewModel.loadingDrinkResult.observe(viewLifecycleOwner){
+            if(it){ // true show processing bar
+                binding.loadingDrinkList.visibility = View.VISIBLE
+            } else {
+                binding.loadingDrinkList.visibility = View.GONE
+                showListDrink()
             }
-
         }
-
-//        binding.iconArrowDown.setOnClickListener {
-//            val dialogCategory = BottomSheetDialog(requireActivity())
-//
-//            val adapterBottom = ItemCategoryRecyclerAdapter(
-//                getCategoryList(),
-//                object : ItemCategoryRecyclerInterface {
-//                    override fun onClickItemDrink(position: Int) {
-//                        dialogCategory.dismiss()
-//                        binding.titleCategory.text = getCategoryList()[position].name
-//                    }
-//                })
-//
-//            val view = layoutInflater.inflate(R.layout.layout_bottom_sheet_category, null)
-//
-//            val btnClose = view.findViewById<ImageView>(R.id.close_bottom_sheet_category)
-//
-//            val recyclerViewCategory = view.findViewById<RecyclerView>(R.id.recyclerView_category)
-//            recyclerViewCategory.adapter = adapterBottom
-//
-//            recyclerViewCategory.layoutManager = GridLayoutManager(
-//                requireContext(),
-//                4,
-//                LinearLayoutManager.VERTICAL,
-//                false
-//            )
-//
-//            btnClose.setOnClickListener {
-//                dialogCategory.dismiss()
-//            }
-//
-//            // below line is use to set cancelable to avoid
-//            // closing of dialog box when clicking on the screen.
-//            dialogCategory.setCancelable(false)
-//
-//            dialogCategory.setContentView(view)
-//
-//            dialogCategory.show()
-//
-//        }
-//        setScrollListener()
 
 
     }
@@ -166,6 +77,67 @@ class OrderFragment : Fragment() {
     private fun scrollToItem(index: Int) {
         linearLayoutManager.scrollToPositionWithOffset(index, 0)
 
+    }
+
+    private fun showMenuCategory() {
+        val layoutBottomSheet = layoutInflater.inflate(R.layout.layout_bottom_sheet_category, null)
+        val dialogCategory = BottomSheetDialog(requireActivity())
+        val recyclerViewCategory = layoutBottomSheet.findViewById<RecyclerView>(R.id.recyclerView_category)
+        val btnClose = layoutBottomSheet.findViewById<ImageView>(R.id.close_bottom_sheet_category)
+
+        btnClose.setOnClickListener {
+            dialogCategory.dismiss()
+        }
+        productViewModel.getCategoryList.observe(viewLifecycleOwner) { categoryItems ->
+            if (categoryItems != null) {
+                categoryList = categoryItems
+                for (item in categoryItems){
+                    categoryIdList.add(item.id.toString())
+                }
+                adapterBottom = ItemCategoryRecyclerAdapter(
+                    categoryList,
+                    object : ItemCategoryRecyclerInterface {
+                        override fun onClickItemDrink(position: Category) {
+                            Log.e("name", position.name.toString())
+                            dialogCategory.dismiss()
+                            binding.titleCategory.text = position.name
+                        }
+                    })
+                recyclerViewCategory.adapter = adapterBottom
+            }
+        }
+
+        binding.titleCategory.setOnClickListener {
+            recyclerViewCategory.layoutManager = GridLayoutManager(
+                requireContext(),
+                4,
+                LinearLayoutManager.VERTICAL,
+                false
+            )
+            // below line is use to set cancelable to avoid
+            // closing of dialog box when clicking on the screen.
+            dialogCategory.setCancelable(false)
+            dialogCategory.setContentView(layoutBottomSheet)
+            dialogCategory.show()
+        }
+    }
+
+    private fun showListDrink() {
+        productViewModel.getDrinkList.observe(viewLifecycleOwner) {
+            val adapter =
+                ItemDrinkCategoryRecyclerAdapter(it, object : ItemDrinkCategoryRecyclerInterface {
+                    override fun onClickItemDrink(position: Drink) {
+                        Log.e("drink", position.name.toString())
+                    }
+                })
+            binding.rvItemDrink.adapter = adapter
+            linearLayoutManager = LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.VERTICAL,
+                false
+            )
+            binding.rvItemDrink.layoutManager = linearLayoutManager
+        }
     }
 
     // scroll view -> category change
@@ -180,64 +152,6 @@ class OrderFragment : Fragment() {
 //                }
 //            }
 //        })
-//    }
-
-//    private fun getCategoryList(callback: (List<Category>) -> Unit) {
-//        val categoryList = mutableListOf<Category>()
-//        productViewModel.loadAllCategoryItems().observe(viewLifecycleOwner, Observer { categoryItems ->
-//            for (item in categoryItems) {
-//                Log.e("id", item.data?.get("name").toString())
-//                categoryList.add(Category(item.data?.get("id").toString(), item.data?.get("name").toString(), R.drawable.img))
-//            }
-//            callback(categoryList)
-//        })
-//    }
-
-//    private fun getListItemDrinkCategory(): List<Drink> {
-//        val listItemDrinkCategory = mutableListOf<Drink>();
-//        for (i in 1..5) {
-//            listItemDrinkCategory.add(
-//                Drink(
-//                    i.toString(),
-//                    "Espresso Hot $i",
-//                    "Ngon",
-//                    R.drawable.img,
-//                    39000,
-//                    0,
-//                    categoryList[0]
-//                )
-//            )
-//        }
-//
-//        for (i in 1..6) {
-//            listItemDrinkCategory.add(
-//                Drink(
-//                    i.toString(),
-//                    "Frosty $i",
-//                    "Ngon",
-//                    R.drawable.voucher1,
-//                    39000,
-//                    0,
-//                    categoryList[1]
-//                )
-//            )
-//        }
-//
-//        for (i in 1..3) {
-//            listItemDrinkCategory.add(
-//                Drink(
-//                    i.toString(),
-//                    "Mochi $i",
-//                    "Ngon",
-//                    R.drawable.image_login_screen,
-//                    39000,
-//                    0,
-//                    categoryList[2]
-//                )
-//            )
-//        }
-//
-//        return listItemDrinkCategory
 //    }
 
 
