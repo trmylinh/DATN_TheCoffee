@@ -49,8 +49,8 @@ class ProductViewModel (application: Application) : AndroidViewModel(application
         repository.getDataCategoryList()
     }
 
-    fun getDataDrinkList(categoryId: String){
-        repository.getDataDrink(categoryId)
+    fun getDataDrinkList(){
+        repository.getDataDrink()
     }
 
 }

@@ -95,10 +95,10 @@ class ProductRepository(_application: Application) {
 //        return@withContext list
 //    }
 
-    fun getDataDrink(categoryID: String) {
+    fun getDataDrink() {
         _loadingDrinkResult.postValue(true)
         db.collection("Drinks")
-            .whereEqualTo("categoryId", categoryID)
+//            .whereEqualTo("categoryId", categoryID)
             .get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful && task.result != null) {
@@ -112,6 +112,7 @@ class ProductRepository(_application: Application) {
                         val discount = document.get("discount").toString().toInt()
                         val categoryId = document.getString("categoryId")
                         list.add(Drink(id, name, desc, image, price, discount, categoryId))
+                        Log.e("list", list.toString())
                     }
                     drinkList.postValue(list)
                 }
