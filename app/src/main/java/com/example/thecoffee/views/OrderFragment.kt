@@ -35,8 +35,7 @@ class OrderFragment : Fragment() {
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var productViewModel: ProductViewModel
     private var categoryList = listOf<Category>()
-    private var categoryIdList = mutableListOf<String>()
-    private var drinkList = mutableMapOf<String, List<Drink>>()
+    private var drinkList = mutableListOf<Drink>()
     private lateinit var adapterBottom: ItemCategoryRecyclerAdapter
     private lateinit var adapterListDrink: ItemDrinkCategoryRecyclerAdapter
 
@@ -138,19 +137,24 @@ class OrderFragment : Fragment() {
     }
 
     fun filterDrink(categoryId: String): List<Drink> {
-        val completableFuture = CompletableFuture<List<Drink>>()
-        productViewModel.getDrinkList.observe(viewLifecycleOwner) {
-            val displayArr = it.filter { item ->
-                item.categoryId == categoryId
-            }
-            completableFuture.complete(displayArr)
-
+//        val completableFuture = CompletableFuture<List<Drink>>()
+//        productViewModel.getDrinkList.observe(viewLifecycleOwner) {
+//            val displayArr = it.filter { item ->
+//                item.categoryId == categoryId
+//            }
+//            completableFuture.complete(displayArr)
+//
+//        }
+//        return completableFuture.get()
+        val displayArr = drinkList.filter { item ->
+            item.categoryId == categoryId
         }
-        return completableFuture.get()
+        return displayArr
     }
 
     private fun showListDrink() {
         productViewModel.getDrinkList.observe(viewLifecycleOwner) {
+            drinkList = it
             adapterListDrink =
                 ItemDrinkCategoryRecyclerAdapter(it, object : ItemDrinkCategoryRecyclerInterface {
                     override fun onClickItemDrink(position: Drink) {
