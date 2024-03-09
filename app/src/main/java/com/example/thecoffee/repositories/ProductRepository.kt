@@ -1,25 +1,18 @@
-package com.example.thecoffee.data.repositories
+package com.example.thecoffee.repositories
 
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.example.thecoffee.data.models.Category
-import com.example.thecoffee.data.models.Drink
-import com.google.android.gms.tasks.Task
+import com.example.thecoffee.models.Category
+import com.example.thecoffee.models.Drink
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 
 class ProductRepository(_application: Application) {
     private var application: Application
     private var categoryList: MutableLiveData<ArrayList<Category>>
     private var drinkList: MutableLiveData<ArrayList<Drink>>
     private val _loadingDrinkResult: MutableLiveData<Boolean>
+    private val _loadingCategoryResult: MutableLiveData<Boolean>
     private var db: FirebaseFirestore = FirebaseFirestore.getInstance()
 
     init {
@@ -27,6 +20,7 @@ class ProductRepository(_application: Application) {
         categoryList = MutableLiveData<ArrayList<Category>>()
         drinkList = MutableLiveData<ArrayList<Drink>>()
         _loadingDrinkResult = MutableLiveData<Boolean>()
+        _loadingCategoryResult = MutableLiveData<Boolean>()
     }
 
     val getCategoryList: MutableLiveData<ArrayList<Category>>
@@ -37,8 +31,11 @@ class ProductRepository(_application: Application) {
 
     val loadingDrinkResult: MutableLiveData<Boolean>
         get() = _loadingDrinkResult
+    val loadingCategoryResult: MutableLiveData<Boolean>
+        get() = _loadingCategoryResult
 
     fun getDataCategoryList(){
+        _loadingCategoryResult.postValue(true)
         db.collection("Categories").get()
             .addOnCompleteListener { task ->
                 if(task.isSuccessful && task.result != null){
@@ -50,6 +47,8 @@ class ProductRepository(_application: Application) {
                         list.add(Category(id, name, image))
                     }
                     categoryList.postValue(list)
+
+                    _loadingCategoryResult.postValue(false)
                 }
             }.addOnFailureListener { error ->
                 Log.d("getDataCategoryList", "Error getDataCategoryList: $error")
@@ -115,8 +114,9 @@ class ProductRepository(_application: Application) {
                         Log.e("list", list.toString())
                     }
                     drinkList.postValue(list)
+
+                    _loadingDrinkResult.postValue(false)
                 }
-                _loadingDrinkResult.postValue(false)
             }
     }
 

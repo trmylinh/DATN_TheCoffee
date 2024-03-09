@@ -16,6 +16,7 @@
 
         <ImageView
             android:layout_gravity="center"
+            android:scaleType="centerCrop"
             android:id="@+id/image_drink"
             android:layout_width="@dimen/_100sdp"
             android:layout_height="@dimen/_100sdp" />

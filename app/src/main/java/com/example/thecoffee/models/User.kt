@@ -1,4 +1,4 @@
-package com.example.thecoffee.data.models
+package com.example.thecoffee.models
 
 import android.net.Uri
 import java.io.Serializable

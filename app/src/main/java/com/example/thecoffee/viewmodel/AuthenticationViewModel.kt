@@ -1,14 +1,11 @@
 package com.example.thecoffee.viewmodel
 
 import android.app.Application
-import android.media.Image
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.example.thecoffee.data.models.ResponseState
-import com.example.thecoffee.data.models.User
-import com.example.thecoffee.data.repositories.AuthenticationRepository
+import com.example.thecoffee.models.User
+import com.example.thecoffee.repositories.AuthenticationRepository
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseUser
 

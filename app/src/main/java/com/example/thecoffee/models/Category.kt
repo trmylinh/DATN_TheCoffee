@@ -1,4 +1,4 @@
-package com.example.thecoffee.data.models
+package com.example.thecoffee.models
 
 class Category (
     val id: String? = null,

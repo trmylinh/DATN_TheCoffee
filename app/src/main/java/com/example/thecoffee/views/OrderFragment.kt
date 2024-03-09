@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,17 +16,12 @@ import com.example.thecoffee.adapter.ItemCategoryRecyclerAdapter
 import com.example.thecoffee.adapter.ItemCategoryRecyclerInterface
 import com.example.thecoffee.adapter.ItemDrinkCategoryRecyclerAdapter
 import com.example.thecoffee.adapter.ItemDrinkCategoryRecyclerInterface
-import com.example.thecoffee.data.models.Category
-import com.example.thecoffee.data.models.Drink
+import com.example.thecoffee.models.Category
+import com.example.thecoffee.models.Drink
 import com.example.thecoffee.databinding.FragmentOrderBinding
-import com.example.thecoffee.viewmodel.AuthenticationViewModel
 import com.example.thecoffee.viewmodel.MyViewModelFactory
 import com.example.thecoffee.viewmodel.ProductViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.launch
 import java.util.concurrent.CompletableFuture
 
 class OrderFragment : Fragment() {
@@ -36,6 +30,7 @@ class OrderFragment : Fragment() {
     private lateinit var productViewModel: ProductViewModel
     private var categoryList = listOf<Category>()
     private var drinkList = mutableListOf<Drink>()
+    private var itemList = mutableListOf<Any>()
     private lateinit var adapterBottom: ItemCategoryRecyclerAdapter
     private lateinit var adapterListDrink: ItemDrinkCategoryRecyclerAdapter
 
@@ -61,18 +56,25 @@ class OrderFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // open bottom sheet category - menu danh muc spham
-        showMenuCategory()
-        // list item theo category
-        productViewModel.loadingDrinkResult.observe(viewLifecycleOwner) {
+        productViewModel.loadingCategoryResult.observe(viewLifecycleOwner) {
             if (it) { // true show processing bar
                 binding.loadingDrinkList.visibility = View.VISIBLE
             } else {
                 binding.loadingDrinkList.visibility = View.GONE
+                showMenuCategory()
+
+            }
+        }
+        // list item theo category
+        productViewModel.loadingDrinkResult.observe(viewLifecycleOwner) {
+            if (it) { // true show processing bar
+//                binding.loadingDrinkList.visibility = View.VISIBLE
+            } else {
+//                binding.loadingDrinkList.visibility = View.GONE
                 showListDrink()
 
             }
         }
-
 
     }
 
@@ -89,6 +91,11 @@ class OrderFragment : Fragment() {
         productViewModel.getCategoryList.observe(viewLifecycleOwner) { categoryItems ->
             if (categoryItems != null) {
                 categoryList = categoryItems
+                for(category in categoryItems){
+                    val list = filterDrink(category.id!!)
+                    itemList.add(category.name!!)
+                    itemList.addAll(list)
+                }
 
                 adapterBottom = ItemCategoryRecyclerAdapter(
                     categoryItems,
@@ -99,22 +106,22 @@ class OrderFragment : Fragment() {
                             binding.titleCategory.text = position.name
 
                             // update adapter drink list - filter theo category
-                            adapterListDrink =
-                                ItemDrinkCategoryRecyclerAdapter(
-                                    list,
-                                    object : ItemDrinkCategoryRecyclerInterface {
-                                        override fun onClickItemDrink(position: Drink) {
-                                            Log.e("drink", position.name.toString())
-                                        }
-                                    })
-
-                            binding.rvItemDrink.adapter = adapterListDrink
-                            linearLayoutManager = LinearLayoutManager(
-                                requireContext(),
-                                LinearLayoutManager.VERTICAL,
-                                false
-                            )
-                            binding.rvItemDrink.layoutManager = linearLayoutManager
+//                            adapterListDrink =
+//                                ItemDrinkCategoryRecyclerAdapter(
+//                                    list,
+//                                    object : ItemDrinkCategoryRecyclerInterface {
+//                                        override fun onClickItemDrink(position: Drink) {
+//                                            Log.e("drink", position.name.toString())
+//                                        }
+//                                    })
+//
+//                            binding.rvItemDrink.adapter = adapterListDrink
+//                            linearLayoutManager = LinearLayoutManager(
+//                                requireContext(),
+//                                LinearLayoutManager.VERTICAL,
+//                                false
+//                            )
+//                            binding.rvItemDrink.layoutManager = linearLayoutManager
                         }
                     })
                 recyclerViewCategory.adapter = adapterBottom
@@ -156,7 +163,7 @@ class OrderFragment : Fragment() {
         productViewModel.getDrinkList.observe(viewLifecycleOwner) {
             drinkList = it
             adapterListDrink =
-                ItemDrinkCategoryRecyclerAdapter(it, object : ItemDrinkCategoryRecyclerInterface {
+                ItemDrinkCategoryRecyclerAdapter(itemList, object : ItemDrinkCategoryRecyclerInterface {
                     override fun onClickItemDrink(position: Drink) {
                         Log.e("drink", position.name.toString())
                     }

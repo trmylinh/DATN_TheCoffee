@@ -1,17 +1,15 @@
-package com.example.thecoffee.data.repositories
+package com.example.thecoffee.repositories
 
 import android.app.Application
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
-import com.example.thecoffee.data.models.ResponseState
-import com.example.thecoffee.data.models.User
+import com.example.thecoffee.models.User
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.toObject
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 
