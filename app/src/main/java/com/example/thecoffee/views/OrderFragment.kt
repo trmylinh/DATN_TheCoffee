@@ -68,9 +68,10 @@ class OrderFragment : Fragment() {
         // list item theo category
         productViewModel.loadingDrinkResult.observe(viewLifecycleOwner) {
             if (it) { // true show processing bar
-//                binding.loadingDrinkList.visibility = View.VISIBLE
+                binding.loadingDrinkList.visibility = View.VISIBLE
             } else {
-//                binding.loadingDrinkList.visibility = View.GONE
+                binding.loadingDrinkList.visibility = View.GONE
+                Log.e("itemList", itemList.toString())
                 showListDrink()
 
             }
@@ -105,6 +106,13 @@ class OrderFragment : Fragment() {
                             dialogCategory.dismiss()
                             binding.titleCategory.text = position.name
 
+
+                            val positionCategoryName = getPositionOfItem(position.name!!)
+                            Log.e("pos", positionCategoryName.toString())
+                            if(positionCategoryName != RecyclerView.NO_POSITION){
+                                Log.e("index", "choose")
+                                linearLayoutManager.scrollToPositionWithOffset(positionCategoryName,0)
+                            }
                             // update adapter drink list - filter theo category
 //                            adapterListDrink =
 //                                ItemDrinkCategoryRecyclerAdapter(
@@ -141,6 +149,7 @@ class OrderFragment : Fragment() {
             dialogCategory.setContentView(layoutBottomSheet)
             dialogCategory.show()
         }
+        setScrollListener()
     }
 
     fun filterDrink(categoryId: String): List<Drink> {
@@ -176,6 +185,31 @@ class OrderFragment : Fragment() {
             false
         )
         binding.rvItemDrink.layoutManager = linearLayoutManager
+    }
+
+    private fun getPositionOfItem(item: String): Int {
+        for (i in 0 until itemList.size){
+            val listItem = itemList[i]
+            if(listItem is String && listItem == item){
+                return i
+            }
+        }
+        return RecyclerView.NO_POSITION
+    }
+
+    private fun setScrollListener(){
+        binding.rvItemDrink.addOnScrollListener(object: RecyclerView.OnScrollListener(){
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                val visiblePosition = linearLayoutManager.findFirstCompletelyVisibleItemPosition()
+                if(visiblePosition != RecyclerView.NO_POSITION){
+                    val firstVisibleItem = itemList[visiblePosition]
+                    if(firstVisibleItem is String && binding.titleCategory.text != firstVisibleItem){
+                        binding.titleCategory.text = firstVisibleItem
+                    }
+                }
+            }
+        })
     }
 
 }
