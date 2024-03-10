@@ -3,18 +3,30 @@ package com.example.thecoffee.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.thecoffee.data.models.Category
+import com.bumptech.glide.Glide
+import com.example.thecoffee.models.Category
 import com.example.thecoffee.databinding.LayoutItemCategoryBinding
 
 interface ItemCategoryRecyclerInterface {
-    fun onClickItemDrink(position: Int)
+    fun onClickItemDrink(position: Category)
 }
 class ItemCategoryRecyclerAdapter(
     val list: List<Category>,
     val onClickItemDrink: ItemCategoryRecyclerInterface
 ): RecyclerView.Adapter<ItemCategoryRecyclerAdapter.ItemCategoryViewHolder>() {
     private lateinit var binding: LayoutItemCategoryBinding
-    inner class ItemCategoryViewHolder(binding: LayoutItemCategoryBinding) : RecyclerView.ViewHolder (binding.root)
+    inner class ItemCategoryViewHolder(val binding: LayoutItemCategoryBinding) : RecyclerView.ViewHolder (binding.root){
+        fun bind(category: Category){
+            Glide.with(itemView.context).load(category.image).into(binding.imageCategory)
+            binding.nameCategory.text = category.name
+        }
+        init {
+            binding.layoutCategory.setOnClickListener {
+                onClickItemDrink.onClickItemDrink(list[adapterPosition])
+            }
+        }
+    }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemCategoryViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -27,15 +39,6 @@ class ItemCategoryRecyclerAdapter(
     }
 
     override fun onBindViewHolder(holder: ItemCategoryViewHolder, position: Int) {
-        holder.itemView.apply {
-            run {
-                binding.nameCategory.text = list[position].name
-                binding.imageCategory.setImageResource(list[position].image)
-            }
-
-            holder.itemView.setOnClickListener {
-                onClickItemDrink.onClickItemDrink(position)
-            }
-        }
+        holder.bind(list[position])
     }
 }

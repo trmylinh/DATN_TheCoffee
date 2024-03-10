@@ -6,7 +6,7 @@
     <data>
         <variable
             name="userInfo"
-            type="com.example.thecoffee.data.models.User" />
+            type="com.example.thecoffee.models.User" />
 
     </data>
 

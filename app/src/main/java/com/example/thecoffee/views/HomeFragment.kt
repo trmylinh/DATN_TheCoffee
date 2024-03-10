@@ -5,17 +5,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.denzcoskun.imageslider.constants.ScaleTypes
 import com.denzcoskun.imageslider.models.SlideModel
 import com.example.thecoffee.R
-import com.example.thecoffee.adapter.ItemDrinkHomeRecyclerAdapter
-import com.example.thecoffee.adapter.ItemDrinkHomeRecyclerInterface
-import com.example.thecoffee.data.models.Category
-import com.example.thecoffee.data.models.Drink
+import com.example.thecoffee.models.Category
+import com.example.thecoffee.models.Drink
 import com.example.thecoffee.databinding.FragmentHomeBinding
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -63,35 +59,35 @@ class HomeFragment : Fragment() {
         val list = mutableListOf<Drink>()
         val category = mutableListOf<Category>()
 
-        category.add(Category("1", "cake", R.drawable.img))
-        list.add(Drink("1", "Bear 1", "Delicious", R.drawable.img, 35000, 4000, "0"))
-        list.add(Drink("2", "Bear 2", "Delicious", R.drawable.img, 35000, 4000, "0"))
-        list.add(Drink("3", "Bear 3", "Delicious", R.drawable.img, 35000, 4000,"0"))
-        list.add(Drink("4", "Bear 4", "Delicious", R.drawable.img, 35000, 4000, "0"))
-        list.add(Drink("5", "Bear 5", "Delicious", R.drawable.img, 35000, 4000, "0"))
-        list.add(Drink("6", "Bear 6", "Delicious", R.drawable.img, 35000, 4000, "0"))
-        list.add(Drink("7", "Bear 7", "Delicious", R.drawable.img, 35000, 4000, "0"))
-        list.add(Drink("8", "Bear 8", "Delicious", R.drawable.img, 35000, 4000, "0"))
-        list.add(Drink("9", "Bear 9", "Delicious", R.drawable.img, 35000, 4000, "0"))
-
-        val adapter = ItemDrinkHomeRecyclerAdapter(list, object: ItemDrinkHomeRecyclerInterface{
-            override fun onClickItemDrink(position: Int) {
-                Toast.makeText(requireContext(), "Choose ${list[position].name}", Toast.LENGTH_LONG).show()
-            }
-        })
-        binding.recyclerViewItemDrinkHome.adapter = adapter
-        // 1 list
-        binding.recyclerViewItemDrinkHome.layoutManager = LinearLayoutManager(
-            requireContext(),
-            LinearLayoutManager.HORIZONTAL,
-            false)
-
-        // 2 list
-        binding.recyclerViewItemRecommend.adapter = adapter
-        binding.recyclerViewItemRecommend.layoutManager = LinearLayoutManager(
-            requireContext(),
-            LinearLayoutManager.HORIZONTAL,
-            false)
+//        category.add(Category("1", "cake", R.drawable.img))
+//        list.add(Drink("1", "Bear 1", "Delicious", R.drawable.img, 35000, 4000, "0"))
+//        list.add(Drink("2", "Bear 2", "Delicious", R.drawable.img, 35000, 4000, "0"))
+//        list.add(Drink("3", "Bear 3", "Delicious", R.drawable.img, 35000, 4000,"0"))
+//        list.add(Drink("4", "Bear 4", "Delicious", R.drawable.img, 35000, 4000, "0"))
+//        list.add(Drink("5", "Bear 5", "Delicious", R.drawable.img, 35000, 4000, "0"))
+//        list.add(Drink("6", "Bear 6", "Delicious", R.drawable.img, 35000, 4000, "0"))
+//        list.add(Drink("7", "Bear 7", "Delicious", R.drawable.img, 35000, 4000, "0"))
+//        list.add(Drink("8", "Bear 8", "Delicious", R.drawable.img, 35000, 4000, "0"))
+//        list.add(Drink("9", "Bear 9", "Delicious", R.drawable.img, 35000, 4000, "0"))
+//
+//        val adapter = ItemDrinkHomeRecyclerAdapter(list, object: ItemDrinkHomeRecyclerInterface{
+//            override fun onClickItemDrink(position: Drink) {
+//                Toast.makeText(requireContext(), "Choose ${list[position].name}", Toast.LENGTH_LONG).show()
+//            }
+//        })
+//        binding.recyclerViewItemDrinkHome.adapter = adapter
+//        // 1 list
+//        binding.recyclerViewItemDrinkHome.layoutManager = LinearLayoutManager(
+//            requireContext(),
+//            LinearLayoutManager.HORIZONTAL,
+//            false)
+//
+//        // 2 list
+//        binding.recyclerViewItemRecommend.adapter = adapter
+//        binding.recyclerViewItemRecommend.layoutManager = LinearLayoutManager(
+//            requireContext(),
+//            LinearLayoutManager.HORIZONTAL,
+//            false)
 
         //detect scroll up/down
         binding.homeContent.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
