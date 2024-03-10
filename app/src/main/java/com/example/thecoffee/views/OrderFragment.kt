@@ -176,8 +176,10 @@ class OrderFragment : Fragment() {
                     override fun onClickItemDrink(position: Drink) {
                         Log.e("drink", position.name.toString())
                     }
+
                 })
         }
+
         binding.rvItemDrink.adapter = adapterListDrink
         linearLayoutManager = LinearLayoutManager(
             requireContext(),

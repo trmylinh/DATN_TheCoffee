@@ -1,5 +1,6 @@
 package com.example.thecoffee.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,6 +29,11 @@ class ItemDrinkCategoryRecyclerAdapter(
         }
         init {
             binding.cardVideBtnAdd.setOnClickListener {
+                val position = adapterPosition
+                if(position != RecyclerView.NO_POSITION){
+                    val drink = list[position] as Drink
+                    onClickItemDrink.onClickItemDrink(drink)
+                }
 //                onClickItemDrink.onClickItemDrink()
             }
         }
