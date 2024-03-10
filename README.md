@@ -1,7 +1,7 @@
 # :iphone: App order drink
 ## Introduction
 * This application is cloned based on **The Coffee House** app.
-* Android app for ordering and managing beverageorders. Customers can easily order drinks from stores and track their orders and view their order history. They can also see product information and promotions from stores.
+* Android app for ordering and managing beverage orders. Customers can easily order drinks from stores and track their orders and view their order history. They can also see product information and promotions from stores.
 ## 🛠️ Technologie
 <img src="https://github.com/devicons/devicon/blob/master/icons/android/android-original.svg" title="TS" alt="React" width="50" height="50"/>&nbsp;
 <img src="https://github.com/devicons/devicon/blob/master/icons/kotlin/kotlin-original.svg" title="kotlin" alt="React" width="50" height="50"/>&nbsp;
