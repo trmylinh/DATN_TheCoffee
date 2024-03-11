@@ -11,11 +11,9 @@ class ProductViewModel (application: Application) : AndroidViewModel(application
     private var repository: ProductRepository
     private var _categoryList = MutableLiveData<ArrayList<Category>>()
     private var _drinkList = MutableLiveData<ArrayList<Drink>>()
-//    private val _loadingCategoryResult = MutableLiveData<Boolean>()
     private val _loadingDrinkResult: MutableLiveData<Boolean>
     private val _loadingCategoryResult: MutableLiveData<Boolean>
-//    val loadingCategoryResult: MutableLiveData<Boolean>
-//        get() = _loadingCategoryResult
+    private val selectedProduct: MutableLiveData<String>
     val loadingDrinkResult: MutableLiveData<Boolean>
         get() = _loadingDrinkResult
 
@@ -28,12 +26,15 @@ class ProductViewModel (application: Application) : AndroidViewModel(application
     val getDrinkList : MutableLiveData<ArrayList<Drink>>
         get() = _drinkList
 
+    val getSeletedProduct: MutableLiveData<String> get() = selectedProduct
+
     init {
         repository = ProductRepository(application)
         _categoryList = repository.getCategoryList
         _drinkList = repository.getDrinkList
         _loadingDrinkResult = repository.loadingDrinkResult
         _loadingCategoryResult = repository.loadingCategoryResult
+        selectedProduct = MutableLiveData<String>()
     }
 
     fun getDataCategoryList() {
@@ -42,6 +43,10 @@ class ProductViewModel (application: Application) : AndroidViewModel(application
 
     fun getDataDrinkList(){
         repository.getDataDrink()
+    }
+
+    fun setSelectProduct(product: Drink){
+        selectedProduct.value = product.name.toString()
     }
 
 }

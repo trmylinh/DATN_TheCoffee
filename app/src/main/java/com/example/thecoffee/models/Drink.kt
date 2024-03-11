@@ -11,6 +11,6 @@ data class Drink (
     val price: Int? = null,
     val discount: Int? = null,
     val categoryId: String? = null
-) {
+): Serializable {
 
 }
