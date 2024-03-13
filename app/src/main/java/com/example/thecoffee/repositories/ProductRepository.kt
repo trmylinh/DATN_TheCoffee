@@ -5,12 +5,14 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.thecoffee.models.Category
 import com.example.thecoffee.models.Drink
+import com.example.thecoffee.models.Topping
 import com.google.firebase.firestore.FirebaseFirestore
 
 class ProductRepository(_application: Application) {
     private var application: Application
     private var categoryList: MutableLiveData<ArrayList<Category>>
     private var drinkList: MutableLiveData<ArrayList<Drink>>
+    private var toppingList: MutableLiveData<ArrayList<Topping>>
     private val _loadingDrinkResult: MutableLiveData<Boolean>
     private val _loadingCategoryResult: MutableLiveData<Boolean>
     private var db: FirebaseFirestore = FirebaseFirestore.getInstance()
@@ -19,6 +21,7 @@ class ProductRepository(_application: Application) {
         application = _application
         categoryList = MutableLiveData<ArrayList<Category>>()
         drinkList = MutableLiveData<ArrayList<Drink>>()
+        toppingList = MutableLiveData<ArrayList<Topping>>()
         _loadingDrinkResult = MutableLiveData<Boolean>()
         _loadingCategoryResult = MutableLiveData<Boolean>()
     }
@@ -28,6 +31,10 @@ class ProductRepository(_application: Application) {
 
     val getDrinkList: MutableLiveData<ArrayList<Drink>>
         get() = drinkList
+
+    val getToppingList: MutableLiveData<ArrayList<Topping>>
+        get() = toppingList
+
 
     val loadingDrinkResult: MutableLiveData<Boolean>
         get() = _loadingDrinkResult
@@ -78,6 +85,24 @@ class ProductRepository(_application: Application) {
 
                     _loadingDrinkResult.postValue(false)
                 }
+            }
+    }
+
+    fun getDataTopping(){
+        db.collection("Toppings").get()
+            .addOnCompleteListener { task ->
+                if(task.isSuccessful && task.result != null){
+                    val list = ArrayList<Topping>()
+                    for(document in task.result){
+                        val id = document.id
+                        val name = document.getString("name")
+                        val price = document.get("price").toString().toInt()
+                        list.add(Topping(id, name, price))
+                    }
+                    toppingList.postValue(list)
+                }
+            }.addOnFailureListener { error ->
+                Log.d("getDataTopping", "Error getDataTopping: $error")
             }
     }
 

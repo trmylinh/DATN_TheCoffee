@@ -140,6 +140,10 @@ dependencies {
     // glide
     implementation("com.github.bumptech.glide:glide:4.16.0")
 
+    // read more - text
+    implementation("com.github.colourmoon:readmore-textview:v1.0.2")
+
+
 
 }
 kapt {

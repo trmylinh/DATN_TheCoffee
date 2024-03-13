@@ -22,9 +22,8 @@ import com.example.thecoffee.models.Drink
 import com.example.thecoffee.databinding.FragmentOrderBinding
 import com.example.thecoffee.viewmodel.MyViewModelFactory
 import com.example.thecoffee.viewmodel.ProductViewModel
-import com.example.thecoffee.viewmodel.SharedViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import java.util.concurrent.CompletableFuture
+
 class OrderFragment : Fragment() {
     private lateinit var binding: FragmentOrderBinding
     private lateinit var linearLayoutManager: LinearLayoutManager
