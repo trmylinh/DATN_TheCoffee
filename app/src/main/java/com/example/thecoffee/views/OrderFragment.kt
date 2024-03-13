@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,12 +23,12 @@ import com.example.thecoffee.databinding.FragmentOrderBinding
 import com.example.thecoffee.viewmodel.MyViewModelFactory
 import com.example.thecoffee.viewmodel.ProductViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import java.util.concurrent.CompletableFuture
 
 class OrderFragment : Fragment() {
     private lateinit var binding: FragmentOrderBinding
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var productViewModel: ProductViewModel
+//    private lateinit var sharedViewModel: SharedViewModel
     private var categoryList = listOf<Category>()
     private var drinkList = mutableListOf<Drink>()
     private var itemList = mutableListOf<Any>()
@@ -39,6 +40,8 @@ class OrderFragment : Fragment() {
         val viewModelFactory = MyViewModelFactory(requireActivity().application)
         productViewModel =
             ViewModelProvider(this, viewModelFactory)[ProductViewModel::class.java]
+//        sharedViewModel =
+//            ViewModelProvider(this, viewModelFactory)[SharedViewModel::class.java]
         //
         productViewModel.getDataCategoryList()
         productViewModel.getDataDrinkList()
@@ -50,6 +53,10 @@ class OrderFragment : Fragment() {
     ): View? {
         binding = FragmentOrderBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -175,9 +182,14 @@ class OrderFragment : Fragment() {
                 ItemDrinkCategoryRecyclerAdapter(itemList, object : ItemDrinkCategoryRecyclerInterface {
                     override fun onClickItemDrink(position: Drink) {
                         Log.e("drink", position.name.toString())
+                        productViewModel.setSelectProduct(position)
+                        val action = OrderFragmentDirections.actionOrderFragmentToItemDrinkDetailFragment(position)
+                        findNavController().navigate(action)
                     }
+
                 })
         }
+
         binding.rvItemDrink.adapter = adapterListDrink
         linearLayoutManager = LinearLayoutManager(
             requireContext(),
