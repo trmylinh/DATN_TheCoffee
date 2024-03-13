@@ -60,15 +60,6 @@ class UserInfoFragment : Fragment() {
 
         // fill data user from db
         showProgressBarForThreeSeconds()
-        authenticationViewModel.getUserDetail.observe(viewLifecycleOwner) {
-            if (it != null) {
-                binding.loadingUserInfo.visibility = View.GONE
-                binding.edtTextFirstName.setText(it.name)
-                binding.edtTextEmail.setText(it.email)
-                binding.edtTextPhone.setText(it.phone)
-                Glide.with(requireActivity()).load(it.avt).into(binding.imgAvt)
-            }
-        }
 
         binding.btnEditName.setOnClickListener {
             binding.edtTextFirstName.isFocusableInTouchMode = true
@@ -119,6 +110,15 @@ class UserInfoFragment : Fragment() {
                 binding.loadingUserInfo.visibility = View.VISIBLE // Hiển thị ProgressBar
             } else {
                 binding.loadingUserInfo.visibility = View.GONE // Ẩn ProgressBar
+                authenticationViewModel.getUserDetail.observe(viewLifecycleOwner) {
+                    if (it != null) {
+                        binding.loadingUserInfo.visibility = View.GONE
+                        binding.edtTextFirstName.setText(it.name)
+                        binding.edtTextEmail.setText(it.email)
+                        binding.edtTextPhone.setText(it.phone)
+                        Glide.with(requireActivity()).load(it.avt).into(binding.imgAvt)
+                    }
+                }
             }
         }
     }

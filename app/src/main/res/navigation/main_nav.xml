@@ -14,7 +14,11 @@
         android:id="@+id/orderFragment"
         android:name="com.example.thecoffee.views.OrderFragment"
         android:label="fragment_order"
-        tools:layout="@layout/fragment_order" />
+        tools:layout="@layout/fragment_order">
+        <action
+            android:id="@+id/action_orderFragment_to_itemDrinkDetailFragment"
+            app:destination="@id/itemDrinkDetailFragment" />
+    </fragment>
     <fragment
         android:id="@+id/storeFragment"
         android:name="com.example.thecoffee.views.StoreFragment"
@@ -29,7 +33,7 @@
         android:id="@+id/otherFragment"
         android:name="com.example.thecoffee.views.OtherFragment"
         android:label="fragment_other"
-        tools:layout="@layout/fragment_other" >
+        tools:layout="@layout/fragment_other">
         <action
             android:id="@+id/action_otherFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
@@ -42,27 +46,41 @@
         android:id="@+id/splashFragment"
         android:name="com.example.thecoffee.views.SplashFragment"
         android:label="fragment_splash"
-        tools:layout="@layout/fragment_splash" >
+        tools:layout="@layout/fragment_splash">
         <action
             android:id="@+id/action_splashFragment_to_homeFragment"
             app:destination="@id/homeFragment"
             app:popUpTo="@id/splashFragment"
-            app:popUpToInclusive="true"/>
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.thecoffee.views.LoginFragment"
         android:label="fragment_login"
-        tools:layout="@layout/fragment_login" >
+        tools:layout="@layout/fragment_login">
         <action
             android:id="@+id/action_loginFragment_to_homeFragment"
             app:destination="@id/homeFragment"
             app:popUpTo="@id/loginFragment"
-            app:popUpToInclusive="true"/>
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/userInfoFragment"
         android:name="com.example.thecoffee.views.UserInfoFragment"
         android:label="fragment_user_info"
         tools:layout="@layout/fragment_user_info" />
+    <fragment
+        android:id="@+id/itemDrinkDetailFragment"
+        android:name="com.example.thecoffee.views.ItemDrinkDetailFragment"
+        android:label="fragment_item_drink_detail"
+        tools:layout="@layout/fragment_item_drink_detail">
+
+        <argument
+            android:name="drink"
+            app:argType="com.example.thecoffee.models.Drink" />
+
+        <action
+            android:id="@+id/action_itemDrinkDetailFragment_to_orderFragment"
+            app:destination="@id/orderFragment" />
+    </fragment>
 </navigation>

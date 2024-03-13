@@ -1,6 +1,4 @@
-package com.example.thecoffee.data.models
-
-import java.lang.reflect.Type
+package com.example.thecoffee.models
 
 sealed class ResponseState<T>(
     val data: T? = null,

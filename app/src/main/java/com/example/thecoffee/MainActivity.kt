@@ -3,18 +3,10 @@ package com.example.thecoffee
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import androidx.navigation.Navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.example.thecoffee.databinding.ActivityMainBinding
-import com.example.thecoffee.views.HomeFragment
-import com.example.thecoffee.views.OrderFragment
-import com.example.thecoffee.views.OtherFragment
-import com.example.thecoffee.views.StoreFragment
-import com.example.thecoffee.views.VoucherFragment
-import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 class MainActivity : AppCompatActivity() {
@@ -31,7 +23,8 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             binding.bottomNavView.visibility = if (
                 destination.id == R.id.splashFragment
-                || destination.id == R.id.loginFragment)
+                || destination.id == R.id.loginFragment
+                || destination.id == R.id.itemDrinkDetailFragment)
                 View.GONE else View.VISIBLE
         }
 

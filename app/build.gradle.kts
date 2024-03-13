@@ -5,6 +5,7 @@ plugins {
     id("com.google.devtools.ksp")
     id("com.google.gms.google-services")
     id("com.google.dagger.hilt.android")
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -138,6 +139,10 @@ dependencies {
 
     // glide
     implementation("com.github.bumptech.glide:glide:4.16.0")
+
+    // read more - text
+    implementation("com.github.colourmoon:readmore-textview:v1.0.2")
+
 
 
 }
