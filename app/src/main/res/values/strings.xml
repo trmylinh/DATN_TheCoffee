@@ -50,4 +50,7 @@
     <string name="search_text">Tìm kiếm</string>
     <string name="title_other">Khác</string>
     <string name="loading">Loading</string>
+    <string name="my_voucher">Voucher của tôi</string>
+    <string name="historyBean">Lịch sử BEAN</string>
+    <string name="my_voucher_layout">Phiếu ưu đãi của bạn</string>
 </resources>

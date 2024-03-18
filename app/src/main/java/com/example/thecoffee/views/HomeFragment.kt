@@ -1,27 +1,42 @@
 package com.example.thecoffee.views
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.denzcoskun.imageslider.constants.ScaleTypes
 import com.denzcoskun.imageslider.models.SlideModel
 import com.example.thecoffee.R
+import com.example.thecoffee.adapter.ItemDrinkCategoryRecyclerAdapter
+import com.example.thecoffee.adapter.ItemDrinkHomeRecyclerAdapter
+import com.example.thecoffee.adapter.ItemDrinkHomeRecyclerInterface
 import com.example.thecoffee.models.Category
 import com.example.thecoffee.models.Drink
 import com.example.thecoffee.databinding.FragmentHomeBinding
+import com.example.thecoffee.viewmodel.MyViewModelFactory
+import com.example.thecoffee.viewmodel.ProductViewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private lateinit var navController: NavController
+    private lateinit var productViewModel: ProductViewModel
+    private var drinkList = mutableListOf<Drink>()
+    private lateinit var adapterListDrink: ItemDrinkHomeRecyclerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val viewModelFactory = MyViewModelFactory(requireActivity().application)
+        productViewModel =
+            ViewModelProvider(this, viewModelFactory)[ProductViewModel::class.java]
+        productViewModel.getDataDrinkBySale()
     }
 
     override fun onCreateView(
@@ -30,8 +45,6 @@ class HomeFragment : Fragment() {
     ): View? {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
-        // Inflate the layout for this fragment
-//        return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -55,39 +68,21 @@ class HomeFragment : Fragment() {
         binding.imageSlider.setImageList(imageList, ScaleTypes.FIT)
 
 
-        //fake data item drink home
-        val list = mutableListOf<Drink>()
-        val category = mutableListOf<Category>()
+        //item drink home
+        productViewModel.getDrinkList.observe(viewLifecycleOwner){
+            drinkList = it
+            adapterListDrink = ItemDrinkHomeRecyclerAdapter(it, object: ItemDrinkHomeRecyclerInterface{
+                override fun onClickItemDrink(position: Drink) {
+                    Log.e("press", position.name.toString())
+                }
+            })
+            binding.recyclerViewItemDrinkHome.adapter = adapterListDrink
+            binding.recyclerViewItemDrinkHome.layoutManager = LinearLayoutManager(
+            requireContext(),
+            LinearLayoutManager.HORIZONTAL,
+            false)
 
-//        category.add(Category("1", "cake", R.drawable.img))
-//        list.add(Drink("1", "Bear 1", "Delicious", R.drawable.img, 35000, 4000, "0"))
-//        list.add(Drink("2", "Bear 2", "Delicious", R.drawable.img, 35000, 4000, "0"))
-//        list.add(Drink("3", "Bear 3", "Delicious", R.drawable.img, 35000, 4000,"0"))
-//        list.add(Drink("4", "Bear 4", "Delicious", R.drawable.img, 35000, 4000, "0"))
-//        list.add(Drink("5", "Bear 5", "Delicious", R.drawable.img, 35000, 4000, "0"))
-//        list.add(Drink("6", "Bear 6", "Delicious", R.drawable.img, 35000, 4000, "0"))
-//        list.add(Drink("7", "Bear 7", "Delicious", R.drawable.img, 35000, 4000, "0"))
-//        list.add(Drink("8", "Bear 8", "Delicious", R.drawable.img, 35000, 4000, "0"))
-//        list.add(Drink("9", "Bear 9", "Delicious", R.drawable.img, 35000, 4000, "0"))
-//
-//        val adapter = ItemDrinkHomeRecyclerAdapter(list, object: ItemDrinkHomeRecyclerInterface{
-//            override fun onClickItemDrink(position: Drink) {
-//                Toast.makeText(requireContext(), "Choose ${list[position].name}", Toast.LENGTH_LONG).show()
-//            }
-//        })
-//        binding.recyclerViewItemDrinkHome.adapter = adapter
-//        // 1 list
-//        binding.recyclerViewItemDrinkHome.layoutManager = LinearLayoutManager(
-//            requireContext(),
-//            LinearLayoutManager.HORIZONTAL,
-//            false)
-//
-//        // 2 list
-//        binding.recyclerViewItemRecommend.adapter = adapter
-//        binding.recyclerViewItemRecommend.layoutManager = LinearLayoutManager(
-//            requireContext(),
-//            LinearLayoutManager.HORIZONTAL,
-//            false)
+        }
 
         //detect scroll up/down
         binding.homeContent.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
@@ -102,6 +97,7 @@ class HomeFragment : Fragment() {
 //            findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
         }
 
+        // xem them - text underline
         binding.more.paintFlags = android.graphics.Paint.UNDERLINE_TEXT_FLAG
 
     }

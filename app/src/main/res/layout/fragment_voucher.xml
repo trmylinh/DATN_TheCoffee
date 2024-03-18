@@ -1,14 +1,192 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/grey_200"
+    android:orientation="vertical"
     tools:context=".views.VoucherFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <!--    header-->
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Voucher Screen" />
+        android:layout_height="wrap_content"
+        android:background="@color/brown_200">
 
-</FrameLayout>
+        <TextView
+            android:id="@+id/title_category"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginVertical="@dimen/_10sdp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:textStyle="bold"
+            android:text="@string/voucher"
+            android:textColor="@color/white_900"
+            android:textSize="@dimen/_15sdp" />
+
+        <LinearLayout
+            android:id="@+id/myVoucher"
+            android:layout_alignParentEnd="true"
+            android:orientation="horizontal"
+            android:background="@drawable/round_corner"
+            android:paddingHorizontal="@dimen/_5sdp"
+            android:paddingVertical="@dimen/_5sdp"
+            android:backgroundTint="@color/white_900"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginVertical="@dimen/_10sdp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true">
+            <ImageView
+                android:src="@drawable/icon_voucher_color"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:layout_width="@dimen/_15sdp"
+                android:layout_height="@dimen/_15sdp"/>
+            <TextView
+                android:id="@+id/text_my_voucher"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/my_voucher"
+                android:textStyle="bold"
+                android:textColor="@color/orange_900"
+                android:textSize="@dimen/_12sdp" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginVertical="@dimen/_15sdp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:backgroundTint="@color/white_900"
+                android:background="@drawable/round_corner"
+                android:orientation="horizontal"
+                android:padding="@dimen/_10sdp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true">
+                <ImageView
+                    android:src="@drawable/icon_gift"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"/>
+                <TextView
+                    android:text="@string/beans"
+                    android:textSize="@dimen/_13sdp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginTop="@dimen/_10sdp"
+                android:backgroundTint="@color/white_900"
+                android:background="@drawable/round_corner"
+                android:orientation="horizontal"
+                android:padding="@dimen/_10sdp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true">
+                <ImageView
+                    android:src="@drawable/icon_bean_color"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"/>
+                <TextView
+                    android:text="@string/historyBean"
+                    android:textSize="@dimen/_13sdp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+            <RelativeLayout
+                android:layout_marginTop="@dimen/_20sdp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/title_my_voucher"
+                    android:text="@string/my_voucher_layout"
+                    android:textSize="@dimen/_15sdp"
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/seeAll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:background="@drawable/round_corner"
+                    android:paddingHorizontal="@dimen/_15sdp"
+                    android:paddingVertical="@dimen/_5sdp"
+                    android:text="Xem tất cả"
+                    android:clickable="true"
+                    android:textAllCaps="false"
+                    android:textColor="@color/orange_700"
+                    android:textSize="@dimen/_10sdp"
+                    android:textStyle="bold"
+                    app:backgroundTint="@color/orange_100" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewMyVoucher"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_below="@+id/seeAll"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_marginTop="@dimen/_15sdp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/title_change_bean"
+                    android:text="@string/beans"
+                    android:textSize="@dimen/_15sdp"
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/seeAllBean"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:background="@drawable/round_corner"
+                    android:paddingHorizontal="@dimen/_15sdp"
+                    android:paddingVertical="@dimen/_5sdp"
+                    android:text="Xem tất cả"
+                    android:clickable="true"
+                    android:textAllCaps="false"
+                    android:textColor="@color/orange_700"
+                    android:textSize="@dimen/_10sdp"
+                    android:textStyle="bold"
+                    app:backgroundTint="@color/orange_100" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewChangeBean"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginBottom="@dimen/_15sdp"
+                    android:layout_below="@+id/seeAllBean"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
+
+
+
+</LinearLayout>

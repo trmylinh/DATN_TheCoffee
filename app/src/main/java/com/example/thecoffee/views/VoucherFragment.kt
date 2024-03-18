@@ -5,56 +5,78 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.thecoffee.R
+import com.example.thecoffee.adapter.ChangeBeanRecyclerAdapter
+import com.example.thecoffee.adapter.ChangeBeanRecyclerInterface
+import com.example.thecoffee.adapter.ItemDrinkHomeRecyclerAdapter
+import com.example.thecoffee.adapter.ItemDrinkHomeRecyclerInterface
+import com.example.thecoffee.adapter.VoucherRecyclerAdapter
+import com.example.thecoffee.adapter.VoucherRecyclerInterface
+import com.example.thecoffee.data.models.Bean
+import com.example.thecoffee.data.models.Voucher
+import com.example.thecoffee.databinding.FragmentHomeBinding
+import com.example.thecoffee.databinding.FragmentVoucherBinding
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [VoucherFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class VoucherFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private lateinit var binding: FragmentVoucherBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        binding = FragmentVoucherBinding.inflate(inflater, container, false)
+        return binding.root
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_voucher, container, false)
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment VoucherFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            VoucherFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val listVoucher = mutableListOf<Voucher>()
+        listVoucher.add(Voucher("1", "29/2/2024", "1/3/2024", "Voucher", "Giam 1 35 % + FREESHIP Don Tu 10 Ly Toi Da 500K", 50000, 500000, "Don Tu 10 Ly"))
+        listVoucher.add(Voucher("2", "29/2/2024", "1/3/2024", "Voucher", "Giam 2 35 % + FREESHIP Don Tu 10 Ly Toi Da 500K", 50000, 500000, "Don Tu 10 Ly"))
+        listVoucher.add(Voucher("3", "29/2/2024", "1/3/2024", "Voucher", "Giam 3 35 % + FREESHIP Don Tu 10 Ly Toi Da 500K", 50000, 500000, "Don Tu 10 Ly"))
+        listVoucher.add(Voucher("4", "29/2/2024", "1/3/2024", "Voucher", "Giam 4 35 % + FREESHIP Don Tu 10 Ly Toi Da 500K", 50000, 500000, "Don Tu 10 Ly"))
+        listVoucher.add(Voucher("5", "29/2/2024", "1/3/2024", "Voucher", "Giam 5 35 % + FREESHIP Don Tu 10 Ly Toi Da 500K", 50000, 500000, "Don Tu 10 Ly"))
+        listVoucher.add(Voucher("6", "29/2/2024", "1/3/2024", "Voucher", "Giam 6 35 % + FREESHIP Don Tu 10 Ly Toi Da 500K", 50000, 500000, "Don Tu 10 Ly"))
+        listVoucher.add(Voucher("7", "29/2/2024", "1/3/2024", "Voucher", "Giam 7 35 % + FREESHIP Don Tu 10 Ly Toi Da 500K", 50000, 500000, "Don Tu 10 Ly"))
+        listVoucher.add(Voucher("8", "29/2/2024", "1/3/2024", "Voucher", "Giam 8 35 % + FREESHIP Don Tu 10 Ly Toi Da 500K", 50000, 500000, "Don Tu 10 Ly"))
+
+        val adapterVoucher = VoucherRecyclerAdapter(listVoucher, object: VoucherRecyclerInterface {
+            override fun onClickItemVoucher(position: Int) {
+                Toast.makeText(requireContext(), "Choose ${listVoucher[position].title}", Toast.LENGTH_LONG).show()
             }
+        })
+        binding.recyclerViewMyVoucher.adapter = adapterVoucher
+        // 1 list
+        binding.recyclerViewMyVoucher.layoutManager = LinearLayoutManager(
+            requireContext(),
+            LinearLayoutManager.VERTICAL,
+            false)
+
+        val listBean = mutableListOf<Bean>()
+        listBean.add(Bean("1", "Mua 2 Tang 1 Tra Xanh Tay Bac", "Change Bean", 99, "29/2/2024", "5/3/2024", 4))
+        listBean.add(Bean("2", "Mua 2 Tang 1 Tra Xanh Tay Bac", "Change Bean", 9, "29/2/2024", "5/3/2024", 4))
+        listBean.add(Bean("3", "Mua 2 Tang 1 Tra Xanh Tay Bac", "Change Bean", 99, "29/2/2024", "5/3/2024", 4))
+        listBean.add(Bean("4", "Mua 2 Tang 1 Tra Xanh Tay Bac", "Change Bean", 9, "29/2/2024", "5/3/2024", 4))
+
+        val adapterBean = ChangeBeanRecyclerAdapter(listBean, object: ChangeBeanRecyclerInterface {
+            override fun onClickItemBean(position: Int) {
+                Toast.makeText(requireContext(), "Choose ${listBean[position].title}", Toast.LENGTH_LONG).show()
+            }
+        })
+        binding.recyclerViewChangeBean.adapter = adapterBean
+        // 1 list
+        binding.recyclerViewChangeBean.layoutManager = LinearLayoutManager(
+            requireContext(),
+            LinearLayoutManager.VERTICAL,
+            false)
     }
+
 }
