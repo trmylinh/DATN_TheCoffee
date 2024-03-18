@@ -46,11 +46,15 @@ class ProductViewModel (application: Application) : AndroidViewModel(application
     }
 
     fun getDataDrinkList(){
-        repository.getDataDrink()
+        repository.getAllDataDrink()
     }
 
     fun getDataToppingList(){
         repository.getDataTopping()
+    }
+
+    fun getDataDrinkBySale(){
+        repository.getDataDrinkBySale()
     }
 
 

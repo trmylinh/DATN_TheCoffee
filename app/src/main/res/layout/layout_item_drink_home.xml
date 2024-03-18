@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="@dimen/_15sdp">
+    android:layout_marginEnd="@dimen/_10sdp">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_view"
@@ -19,6 +19,7 @@
                 android:id="@+id/image_drink"
                 android:layout_width="@dimen/_120sdp"
                 android:layout_height="@dimen/_120sdp"
+                android:scaleType="centerCrop"
                 android:src="@drawable/drink1" />
 
             <TextView
@@ -37,32 +38,58 @@
 
     <TextView
         android:id="@+id/name_drink"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/_120sdp"
+        android:layout_height="@dimen/_30sdp"
         android:layout_below="@id/card_view"
         android:layout_marginTop="@dimen/_10sdp"
         android:text="@string/name_drink"
         android:textColor="@color/black_900"
         android:textSize="@dimen/_12sdp" />
 
-    <TextView
+    <LinearLayout
+        android:id="@+id/view_text_price"
+        android:layout_width="@dimen/_120sdp"
+        android:layout_height="@dimen/_30sdp"
         android:layout_below="@id/name_drink"
-        android:id="@+id/price_dis_drink"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/name_drink"
-        android:textColor="@color/grey_800"
-        android:textSize="@dimen/_12sdp" />
+        android:layout_marginTop="@dimen/_5sdp"
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/price_drink"
-        android:layout_toEndOf="@id/price_dis_drink"
-        android:layout_below="@id/name_drink"
-        android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/price_dis_drink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/name_drink"
+            android:textColor="@color/black_900"
+            android:textSize="@dimen/_12sdp" />
+
+        <TextView
+            android:id="@+id/price_drink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:text="@string/name_drink"
+            android:textColor="@color/grey_800"
+            android:textSize="@dimen/_11sdp" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/btn_add"
+        android:layout_width="@dimen/_120sdp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_5sdp"
-        android:text="@string/name_drink"
-        android:textColor="@color/grey_800"
-        android:textSize="@dimen/_11sdp" />
+        android:layout_below="@+id/view_text_price"
+        android:padding="@dimen/_5sdp"
+        android:background="@drawable/custom_focus_border"
+        android:backgroundTint="@color/orange_100"
+        android:clickable="true"
+        android:focusable="true">
+        <TextView
+            android:text="Chọn"
+            android:textColor="@color/orange_900"
+            android:textStyle="bold"
+            android:layout_gravity="center_horizontal"
+            android:textSize="@dimen/_12sdp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </FrameLayout>
 
 </RelativeLayout>

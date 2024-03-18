@@ -14,6 +14,7 @@ class ProductRepository(_application: Application) {
     private var drinkList: MutableLiveData<ArrayList<Drink>>
     private var toppingList: MutableLiveData<ArrayList<Topping>>
     private val _loadingDrinkResult: MutableLiveData<Boolean>
+    private val _loadingDrinkResultBySale: MutableLiveData<Boolean>
     private val _loadingCategoryResult: MutableLiveData<Boolean>
     private var db: FirebaseFirestore = FirebaseFirestore.getInstance()
 
@@ -24,6 +25,7 @@ class ProductRepository(_application: Application) {
         toppingList = MutableLiveData<ArrayList<Topping>>()
         _loadingDrinkResult = MutableLiveData<Boolean>()
         _loadingCategoryResult = MutableLiveData<Boolean>()
+        _loadingDrinkResultBySale = MutableLiveData<Boolean>()
     }
 
     val getCategoryList: MutableLiveData<ArrayList<Category>>
@@ -38,6 +40,9 @@ class ProductRepository(_application: Application) {
 
     val loadingDrinkResult: MutableLiveData<Boolean>
         get() = _loadingDrinkResult
+
+    val loadingDrinkResultBySale: MutableLiveData<Boolean>
+        get() = _loadingDrinkResultBySale
     val loadingCategoryResult: MutableLiveData<Boolean>
         get() = _loadingCategoryResult
 
@@ -62,7 +67,7 @@ class ProductRepository(_application: Application) {
             }
     }
 
-    fun getDataDrink() {
+    fun getAllDataDrink() {
         _loadingDrinkResult.postValue(true)
         db.collection("Drinks")
 //            .whereEqualTo("categoryId", categoryID)
@@ -88,6 +93,32 @@ class ProductRepository(_application: Application) {
             }
     }
 
+    fun getDataDrinkBySale() {
+        _loadingDrinkResultBySale.postValue(true)
+        db.collection("Drinks")
+            .whereGreaterThan("discount", 0)
+            .get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful && task.result != null) {
+                    val list = ArrayList<Drink>()
+                    for (document in task.result) {
+                        val id = document.id
+                        val name = document.getString("name")
+                        val desc = document.getString("desc")
+                        val image = document.getString("image")
+                        val price = document.get("price").toString().toInt()
+                        val discount = document.get("discount").toString().toInt()
+                        val categoryId = document.getString("categoryId")
+                        list.add(Drink(id, name, desc, image, price, discount, categoryId))
+                        Log.e("list", list.toString())
+                    }
+                    drinkList.postValue(list)
+                    _loadingDrinkResultBySale.postValue(false)
+                }
+
+            }
+    }
+
     fun getDataTopping(){
         db.collection("Toppings").get()
             .addOnCompleteListener { task ->
@@ -105,6 +136,8 @@ class ProductRepository(_application: Application) {
                 Log.d("getDataTopping", "Error getDataTopping: $error")
             }
     }
+
+
 
 
 
