@@ -59,7 +59,14 @@ class UserInfoFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // fill data user from db
-        showProgressBarForThreeSeconds()
+        authenticationViewModel.getLoadingState.observe(viewLifecycleOwner) { isLoading ->
+            if (isLoading) {
+                binding.loadingUserInfo.visibility = View.VISIBLE // Hiển thị ProgressBar
+            } else {
+                binding.loadingUserInfo.visibility = View.GONE // Ẩn ProgressBar
+                getDatUser()
+            }
+        }
 
         binding.btnEditName.setOnClickListener {
             binding.edtTextFirstName.isFocusableInTouchMode = true
@@ -103,24 +110,17 @@ class UserInfoFragment : Fragment() {
     }
 
 
-    private fun showProgressBarForThreeSeconds() {
-        // Hiển thị ProgressBar
-        authenticationViewModel.getLoadingState.observe(viewLifecycleOwner) { isLoading ->
-            if (isLoading) {
-                binding.loadingUserInfo.visibility = View.VISIBLE // Hiển thị ProgressBar
-            } else {
-                binding.loadingUserInfo.visibility = View.GONE // Ẩn ProgressBar
-                authenticationViewModel.getUserDetail.observe(viewLifecycleOwner) {
-                    if (it != null) {
-                        binding.loadingUserInfo.visibility = View.GONE
-                        binding.edtTextFirstName.setText(it.name)
-                        binding.edtTextEmail.setText(it.email)
-                        binding.edtTextPhone.setText(it.phone)
-                        Glide.with(requireActivity()).load(it.avt).into(binding.imgAvt)
-                    }
-                }
+    private fun getDatUser() {
+        authenticationViewModel.getUserDetail.observe(viewLifecycleOwner) {
+            if (it != null) {
+                binding.loadingUserInfo.visibility = View.GONE
+                binding.edtTextFirstName.setText(it.name)
+                binding.edtTextEmail.setText(it.email)
+                binding.edtTextPhone.setText(it.phone)
+                Glide.with(requireActivity()).load(it.avt).into(binding.imgAvt)
             }
         }
+
     }
 
     private val editTextUserNameWatcher: TextWatcher = object : TextWatcher {

@@ -3,9 +3,7 @@ package com.example.thecoffee.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.thecoffee.data.models.Drink
-import com.example.thecoffee.data.models.Voucher
-import com.example.thecoffee.databinding.LayoutItemDrinkCategoryBinding
+import com.example.thecoffee.models.Voucher
 import com.example.thecoffee.databinding.LayoutItemMyVoucherBinding
 
 interface VoucherRecyclerInterface {

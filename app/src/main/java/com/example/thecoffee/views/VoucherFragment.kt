@@ -7,16 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.thecoffee.R
 import com.example.thecoffee.adapter.ChangeBeanRecyclerAdapter
 import com.example.thecoffee.adapter.ChangeBeanRecyclerInterface
-import com.example.thecoffee.adapter.ItemDrinkHomeRecyclerAdapter
-import com.example.thecoffee.adapter.ItemDrinkHomeRecyclerInterface
 import com.example.thecoffee.adapter.VoucherRecyclerAdapter
 import com.example.thecoffee.adapter.VoucherRecyclerInterface
-import com.example.thecoffee.data.models.Bean
-import com.example.thecoffee.data.models.Voucher
-import com.example.thecoffee.databinding.FragmentHomeBinding
+import com.example.thecoffee.models.Bean
+import com.example.thecoffee.models.Voucher
 import com.example.thecoffee.databinding.FragmentVoucherBinding
 
 class VoucherFragment : Fragment() {

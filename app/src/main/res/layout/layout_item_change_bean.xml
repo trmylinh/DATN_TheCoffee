@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
-    android:layout_marginVertical="@dimen/_10sdp"
+    android:layout_marginBottom="@dimen/_10sdp"
     android:paddingVertical="@dimen/_10sdp"
     android:background="@drawable/round_corner"
     android:backgroundTint="@color/white_900"

@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.example.thecoffee.data.models.Bean
-import com.example.thecoffee.data.models.Drink
+import com.example.thecoffee.models.Bean
+import com.example.thecoffee.models.Drink
 import com.example.thecoffee.databinding.LayoutItemChangeBeanBinding
 import com.example.thecoffee.databinding.LayoutItemMyVoucherBinding
 

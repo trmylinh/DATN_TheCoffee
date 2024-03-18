@@ -1,4 +1,4 @@
-package com.example.thecoffee.data.models
+package com.example.thecoffee.models
 
 data class Bean (
     val id: String? = null,
