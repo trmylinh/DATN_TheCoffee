@@ -16,7 +16,12 @@
     <color name="grey_800">#505050</color>
     <color name="transparent">#00000000</color>
     <color name="brown_100">#D4C7B6</color>
+    <color name="brown_200">#C3A48F</color>
     <color name="red_900">#C5030C</color>
     <color name="green_500">#00C61E</color>
+    <color name="green_300">#77D874</color>
+    <color name="green_200">#9EE39B</color>
+    <color name="green_100">#C7EEC4</color>
+
 
 </resources>
