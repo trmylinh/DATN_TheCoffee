@@ -17,14 +17,19 @@ import com.bumptech.glide.Glide
 import com.example.thecoffee.R
 import com.example.thecoffee.adapter.ItemToppingRecyclerAdapter
 import com.example.thecoffee.databinding.FragmentItemDrinkDetailBinding
+import com.example.thecoffee.models.Drink
 import com.example.thecoffee.viewmodel.MyViewModelFactory
 import com.example.thecoffee.viewmodel.ProductViewModel
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import java.io.Serializable
 
 
-class ItemDrinkDetailFragment : Fragment() {
+class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
    private lateinit var binding: FragmentItemDrinkDetailBinding
    private lateinit var productViewModel: ProductViewModel
-   private val args: ItemDrinkDetailFragmentArgs by navArgs()
+   private lateinit var drinkDetail: Serializable
+//   private val args: ItemDrinkDetailFragmentArgs by navArgs()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +44,8 @@ class ItemDrinkDetailFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        drinkDetail = arguments?.getSerializable("dataDrink")!!
+        Log.e("data", drinkDetail.toString())
         binding = FragmentItemDrinkDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -47,7 +54,7 @@ class ItemDrinkDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnBack.setOnClickListener {
-            findNavController().popBackStack();
+            dismiss()
         }
 
         productViewModel.getToppingList.observe(viewLifecycleOwner){
@@ -69,25 +76,25 @@ class ItemDrinkDetailFragment : Fragment() {
 
     private fun getDataDetail() {
         // receive the arguments in a variable
-        val drinkDetail = args.drink
+        val drink = drinkDetail as Drink
 
-        Glide.with(requireActivity()).load(drinkDetail.image).into( binding.imageDrink)
-        binding.nameDrink.text = drinkDetail.name
-        if(drinkDetail.discount!! != 0){
+        Glide.with(requireActivity()).load(drink.image).into( binding.imageDrink)
+        binding.nameDrink.text = drink.name
+        if(drink.discount!! != 0){
             binding.priceDiscountDrink.visibility = View.VISIBLE
             binding.priceDefaultDrink.visibility = View.VISIBLE
 
-            binding.priceDiscountDrink.text = "-${String.format("%,d", drinkDetail.discount)}đ"
-            val priceAfterDiscount = drinkDetail.price!! - drinkDetail.discount!!
+            binding.priceDiscountDrink.text = "-${String.format("%,d", drink.discount)}đ"
+            val priceAfterDiscount = drink.price!! - drink.discount!!
             binding.priceDrink.text = "${String.format("%,d", priceAfterDiscount)}đ"
-            binding.priceDefaultDrink.text = "${String.format("%,d", drinkDetail.price)}đ"
+            binding.priceDefaultDrink.text = "${String.format("%,d", drink.price)}đ"
             binding.priceDefaultDrink.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
         } else {
-            binding.priceDrink.text = "${String.format("%,d", drinkDetail.price)}đ"
+            binding.priceDrink.text = "${String.format("%,d", drink.price)}đ"
         }
 
         // read more - text
-        binding.descDrink.text = drinkDetail.desc
+        binding.descDrink.text = drink.desc
         binding.descDrink.setCollapsedText("Xem thêm")
         binding.descDrink.setExpandedText("Rút gọn")
         binding.descDrink.setCollapsedTextColor(R.color.orange_900)
@@ -95,9 +102,9 @@ class ItemDrinkDetailFragment : Fragment() {
         binding.descDrink.setTrimLength(3)
 
         // radio - price size
-        binding.priceSizeBig.text = "${String.format("%,d", drinkDetail.price!! + 10000)}đ"
-        binding.priceSizeRegular.text = "${String.format("%,d", drinkDetail.price)}đ"
-        binding.priceSizeSmall.text = "${String.format("%,d", drinkDetail.price!! - 10000)}đ"
+        binding.priceSizeBig.text = "${String.format("%,d", drink.price!! + 10000)}đ"
+        binding.priceSizeRegular.text = "${String.format("%,d", drink.price)}đ"
+        binding.priceSizeSmall.text = "${String.format("%,d", drink.price!! - 10000)}đ"
     }
 
 }
