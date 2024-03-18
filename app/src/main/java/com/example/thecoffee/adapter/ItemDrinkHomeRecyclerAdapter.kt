@@ -21,15 +21,15 @@ class ItemDrinkHomeRecyclerAdapter(
         fun bind(drink: Drink){
             Glide.with(itemView.context).load(drink.image).into( binding.imageDrink)
             binding.nameDrink.text = drink.name
-            binding.priceDisDrink.text = drink.price.toString().format("%,d")
             binding.priceDrink.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG // gach ngang text
-            binding.discountDrink.text = drink.discount.toString().format("%,d")
-            binding.priceDisDrink.text = (drink.price!! - drink.discount!!).toString().format("%,d")
+            binding.priceDrink.text = "${String.format("%,d", drink.price)}đ"
+            binding.discountDrink.text = "-${String.format("%,d", drink.discount)}đ"
+            val priceDis = drink.price!! - drink.discount!!
+            binding.priceDisDrink.text =  "${String.format("%,d", priceDis)}đ"
 
-//            d"${String.format("%,d", drink.price)}đ"
         }
         init {
-            binding.cardView.setOnClickListener {
+            binding.btnAdd.setOnClickListener {
                 onClickItemDrink.onClickItemDrink(list[adapterPosition])
             }
         }
