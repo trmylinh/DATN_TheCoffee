@@ -23,26 +23,25 @@ import com.example.thecoffee.databinding.FragmentOrderBinding
 import com.example.thecoffee.viewmodel.MyViewModelFactory
 import com.example.thecoffee.viewmodel.ProductViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import java.util.concurrent.CompletableFuture
 
 class OrderFragment : Fragment() {
     private lateinit var binding: FragmentOrderBinding
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var productViewModel: ProductViewModel
-//    private lateinit var sharedViewModel: SharedViewModel
     private var categoryList = listOf<Category>()
     private var drinkList = mutableListOf<Drink>()
     private var itemList = mutableListOf<Any>()
     private lateinit var adapterBottom: ItemCategoryRecyclerAdapter
     private lateinit var adapterListDrink: ItemDrinkCategoryRecyclerAdapter
+    private val bottomSheetDetail = ItemDrinkDetailFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val viewModelFactory = MyViewModelFactory(requireActivity().application)
         productViewModel =
             ViewModelProvider(this, viewModelFactory)[ProductViewModel::class.java]
-//        sharedViewModel =
-//            ViewModelProvider(this, viewModelFactory)[SharedViewModel::class.java]
-        //
+
         productViewModel.getDataCategoryList()
         productViewModel.getDataDrinkList()
     }
@@ -62,6 +61,16 @@ class OrderFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // list item theo category
+        productViewModel.loadingDrinkResult.observe(viewLifecycleOwner) { loading ->
+            if (loading) { // true show processing bar
+                binding.loadingDrinkList.visibility = View.VISIBLE
+            } else {
+                binding.loadingDrinkList.visibility = View.GONE
+                showListDrink()
+
+            }
+        }
         // open bottom sheet category - menu danh muc spham
         productViewModel.loadingCategoryResult.observe(viewLifecycleOwner) {
             if (it) { // true show processing bar
@@ -69,17 +78,6 @@ class OrderFragment : Fragment() {
             } else {
                 binding.loadingDrinkList.visibility = View.GONE
                 showMenuCategory()
-
-            }
-        }
-        // list item theo category
-        productViewModel.loadingDrinkResult.observe(viewLifecycleOwner) {
-            if (it) { // true show processing bar
-                binding.loadingDrinkList.visibility = View.VISIBLE
-            } else {
-                binding.loadingDrinkList.visibility = View.GONE
-                Log.e("itemList", itemList.toString())
-                showListDrink()
 
             }
         }
@@ -99,7 +97,7 @@ class OrderFragment : Fragment() {
         productViewModel.getCategoryList.observe(viewLifecycleOwner) { categoryItems ->
             if (categoryItems != null) {
                 categoryList = categoryItems
-                for(category in categoryItems){
+                for (category in categoryItems) {
                     val list = filterDrink(category.id!!)
                     itemList.add(category.name!!)
                     itemList.addAll(list)
@@ -109,34 +107,16 @@ class OrderFragment : Fragment() {
                     categoryItems,
                     object : ItemCategoryRecyclerInterface {
                         override fun onClickItemDrink(position: Category) {
-                            val list = filterDrink(position.id!!)
                             dialogCategory.dismiss()
                             binding.titleCategory.text = position.name
 
-
                             val positionCategoryName = getPositionOfItem(position.name!!)
-                            Log.e("pos", positionCategoryName.toString())
-                            if(positionCategoryName != RecyclerView.NO_POSITION){
-                                Log.e("index", "choose")
-                                linearLayoutManager.scrollToPositionWithOffset(positionCategoryName,0)
+                            if (positionCategoryName != RecyclerView.NO_POSITION) {
+                                linearLayoutManager.scrollToPositionWithOffset(
+                                    positionCategoryName,
+                                    0
+                                )
                             }
-                            // update adapter drink list - filter theo category
-//                            adapterListDrink =
-//                                ItemDrinkCategoryRecyclerAdapter(
-//                                    list,
-//                                    object : ItemDrinkCategoryRecyclerInterface {
-//                                        override fun onClickItemDrink(position: Drink) {
-//                                            Log.e("drink", position.name.toString())
-//                                        }
-//                                    })
-//
-//                            binding.rvItemDrink.adapter = adapterListDrink
-//                            linearLayoutManager = LinearLayoutManager(
-//                                requireContext(),
-//                                LinearLayoutManager.VERTICAL,
-//                                false
-//                            )
-//                            binding.rvItemDrink.layoutManager = linearLayoutManager
                         }
                     })
                 recyclerViewCategory.adapter = adapterBottom
@@ -156,19 +136,11 @@ class OrderFragment : Fragment() {
             dialogCategory.setContentView(layoutBottomSheet)
             dialogCategory.show()
         }
+
         setScrollListener()
     }
 
     fun filterDrink(categoryId: String): List<Drink> {
-//        val completableFuture = CompletableFuture<List<Drink>>()
-//        productViewModel.getDrinkList.observe(viewLifecycleOwner) {
-//            val displayArr = it.filter { item ->
-//                item.categoryId == categoryId
-//            }
-//            completableFuture.complete(displayArr)
-//
-//        }
-//        return completableFuture.get()
         val displayArr = drinkList.filter { item ->
             item.categoryId == categoryId
         }
@@ -179,44 +151,46 @@ class OrderFragment : Fragment() {
         productViewModel.getDrinkList.observe(viewLifecycleOwner) {
             drinkList = it
             adapterListDrink =
-                ItemDrinkCategoryRecyclerAdapter(itemList, object : ItemDrinkCategoryRecyclerInterface {
-                    override fun onClickItemDrink(position: Drink) {
-                        Log.e("drink", position.name.toString())
-                        productViewModel.setSelectProduct(position)
-                        val action = OrderFragmentDirections.actionOrderFragmentToItemDrinkDetailFragment(position)
-                        findNavController().navigate(action)
-                    }
+                ItemDrinkCategoryRecyclerAdapter(
+                    itemList,
+                    object : ItemDrinkCategoryRecyclerInterface {
+                        override fun onClickItemDrink(position: Drink) {
+                            Log.e("drink", position.name.toString())
+                            val bundle = Bundle()
+                            bundle.putSerializable("dataDrink", position)
+                            bottomSheetDetail.arguments = bundle
+                            bottomSheetDetail.show(parentFragmentManager, bottomSheetDetail.tag)
+                        }
 
-                })
+                    })
+            binding.rvItemDrink.adapter = adapterListDrink
+            linearLayoutManager = LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.VERTICAL,
+                false
+            )
+            binding.rvItemDrink.layoutManager = linearLayoutManager
         }
-
-        binding.rvItemDrink.adapter = adapterListDrink
-        linearLayoutManager = LinearLayoutManager(
-            requireContext(),
-            LinearLayoutManager.VERTICAL,
-            false
-        )
-        binding.rvItemDrink.layoutManager = linearLayoutManager
     }
 
     private fun getPositionOfItem(item: String): Int {
-        for (i in 0 until itemList.size){
+        for (i in 0 until itemList.size) {
             val listItem = itemList[i]
-            if(listItem is String && listItem == item){
+            if (listItem is String && listItem == item) {
                 return i
             }
         }
         return RecyclerView.NO_POSITION
     }
 
-    private fun setScrollListener(){
-        binding.rvItemDrink.addOnScrollListener(object: RecyclerView.OnScrollListener(){
+    private fun setScrollListener() {
+        binding.rvItemDrink.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 val visiblePosition = linearLayoutManager.findFirstCompletelyVisibleItemPosition()
-                if(visiblePosition != RecyclerView.NO_POSITION){
+                if (visiblePosition != RecyclerView.NO_POSITION) {
                     val firstVisibleItem = itemList[visiblePosition]
-                    if(firstVisibleItem is String && binding.titleCategory.text != firstVisibleItem){
+                    if (firstVisibleItem is String && binding.titleCategory.text != firstVisibleItem) {
                         binding.titleCategory.text = firstVisibleItem
                     }
                 }

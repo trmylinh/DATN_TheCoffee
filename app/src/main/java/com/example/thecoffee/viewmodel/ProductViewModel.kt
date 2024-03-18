@@ -49,12 +49,10 @@ class ProductViewModel (application: Application) : AndroidViewModel(application
         repository.getDataDrink()
     }
 
-    fun setSelectProduct(product: Drink){
-        selectedProduct.value = product.name.toString()
-    }
-
     fun getDataToppingList(){
         repository.getDataTopping()
     }
+
+
 
 }
