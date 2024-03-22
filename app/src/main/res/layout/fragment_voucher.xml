@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/grey_200"
     android:orientation="vertical"
-    tools:context=".views.VoucherFragment">
+    tools:context=".voucher.view.VoucherFragment">
 
     <!--    header-->
     <RelativeLayout
