@@ -2,6 +2,7 @@ package com.example.thecoffee.order.view
 
 import android.graphics.Paint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,12 +19,13 @@ import com.example.thecoffee.base.MyViewModelFactory
 import com.example.thecoffee.order.viewmodel.ProductViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-
 class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
     private lateinit var binding: FragmentItemDrinkDetailBinding
     private lateinit var productViewModel: ProductViewModel
     private lateinit var drinkDetail: Drink
     private var totalPrice = 0
+    private var amount = 1
+    private var listOption = mutableMapOf<String, Int>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,8 +58,8 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
                 ItemToppingRecyclerAdapter(it, object : ItemToppingRecyclerInterface {
                     override fun onTotalChanged(total: Int?) {
                         if (total != null) {
-                            totalPrice += total
-                            updateTotalPriceText(totalPrice)
+                            listOption["topping"] = total
+                            updateTotalPriceText()
                         }
                     }
                 })
@@ -76,32 +78,48 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
             val checkedRadioButton: RadioButton =
                 view.findViewById(binding.radioGroup.checkedRadioButtonId)
             if (checkedRadioButton.id == R.id.radio_regular) {
-                totalPrice = drinkDetail.price!!
-                updateTotalPriceText(totalPrice)
+                listOption["size"] = drinkDetail.price!!
+                updateTotalPriceText()
             }
         }
 
         // handle event change radio button
         binding.radioGroup.setOnCheckedChangeListener { _, checkedId ->
             val radio: RadioButton = view.findViewById(checkedId)
+            var priceSize: Int
             when (radio.id) {
                 R.id.radio_big -> {
-                    totalPrice = drinkDetail.price!! + 10000
-                    updateTotalPriceText(totalPrice)
-                    totalPrice = 0
+                    priceSize = drinkDetail.price!! + 10000
+                    listOption["size"] = priceSize
+                    updateTotalPriceText()
                 }
 
                 R.id.radio_regular -> {
-                    totalPrice = drinkDetail.price!!
-                    updateTotalPriceText(totalPrice)
-                    totalPrice = 0
+                    priceSize = drinkDetail.price!!
+                    listOption["size"] = priceSize
+                    updateTotalPriceText()
                 }
 
                 R.id.radio_small -> {
-                    totalPrice = drinkDetail.price!! - 10000
-                    updateTotalPriceText(totalPrice)
-                    totalPrice = 0
+                    priceSize = drinkDetail.price!! - 10000
+                    listOption["size"] = priceSize
+                    updateTotalPriceText()
                 }
+            }
+        }
+
+        // handle amount of item
+        binding.viewPlus.setOnClickListener {
+            amount++
+            binding.amount.text = amount.toString()
+            binding.totalPrice.text = "${String.format("%,d", totalPrice*amount)}đ"
+        }
+
+        binding.viewMinus.setOnClickListener{view ->
+            if (amount > 1){
+                amount--
+                binding.amount.text = amount.toString()
+                binding.totalPrice.text = "${String.format("%,d", totalPrice*amount)}đ"
             }
         }
     }
@@ -139,8 +157,15 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
 
     }
 
-    private fun updateTotalPriceText(price: Int) {
-        binding.totalPrice.text = "${String.format("%,d", price)}đ"
+    private fun updateTotalPriceText() {
+        if (listOption.isNotEmpty()) {
+            totalPrice = 0
+            for ((key, value) in listOption){
+                totalPrice += value
+                Log.e("value", (listOption to totalPrice).toString())
+            }
+            binding.totalPrice.text = "${String.format("%,d", totalPrice*amount)}đ"
+        }
     }
 
 }

@@ -29,7 +29,7 @@ class ItemToppingRecyclerAdapter(
                     if (!isChecked) {
                         selectedCheckbox--
                         totalPriceTopping -= topping.price!!
-                        onTotalChanged.onTotalChanged(-topping.price)
+                        onTotalChanged.onTotalChanged(totalPriceTopping)
                     } else {
                         buttonView.isChecked = false
                     }
@@ -37,11 +37,11 @@ class ItemToppingRecyclerAdapter(
                     if (isChecked) {
                         selectedCheckbox++
                         totalPriceTopping += topping.price!!
-                        onTotalChanged.onTotalChanged(topping.price)
+                        onTotalChanged.onTotalChanged(totalPriceTopping)
                     } else {
                         selectedCheckbox--
                         totalPriceTopping -= topping.price!!
-                        onTotalChanged.onTotalChanged(-topping.price)
+                        onTotalChanged.onTotalChanged(totalPriceTopping)
                     }
                 }
             }
