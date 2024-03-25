@@ -1,12 +1,18 @@
 package com.example.thecoffee.order.view
 
 import android.graphics.Paint
+import android.health.connect.datatypes.units.Length
 import android.os.Bundle
+import android.text.TextPaint
+import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.thecoffee.R
@@ -15,15 +21,25 @@ import com.example.thecoffee.order.adapter.ItemToppingRecyclerInterface
 import com.example.thecoffee.databinding.FragmentItemDrinkDetailBinding
 import com.example.thecoffee.order.model.Drink
 import com.example.thecoffee.base.MyViewModelFactory
+import com.example.thecoffee.order.model.Cart
+import com.example.thecoffee.order.viewmodel.CartViewModel
 import com.example.thecoffee.order.viewmodel.ProductViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 
 class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
     private lateinit var binding: FragmentItemDrinkDetailBinding
     private lateinit var productViewModel: ProductViewModel
+    private lateinit var cartViewModel: CartViewModel
     private lateinit var drinkDetail: Drink
     private var totalPrice = 0
+    private var amount = 1
+    private var listOption = mutableMapOf<String, Int>()
+    private var auth = FirebaseAuth.getInstance()
+    private var listTopping = emptyList<String>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,6 +48,7 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
         productViewModel =
             ViewModelProvider(this, viewModelFactory)[ProductViewModel::class.java]
 
+        cartViewModel = ViewModelProvider(this, viewModelFactory)[CartViewModel::class.java]
         productViewModel.getDataToppingList()
     }
 
@@ -48,16 +65,18 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnBack.setOnClickListener {
+            reset()
             dismiss()
         }
 
         productViewModel.getToppingList.observe(viewLifecycleOwner) {
             val adapterToppingView =
                 ItemToppingRecyclerAdapter(it, object : ItemToppingRecyclerInterface {
-                    override fun onTotalChanged(total: Int?) {
+                    override fun onTotalChanged(total: Int?, list: List<String>) {
                         if (total != null) {
-                            totalPrice += total
-                            updateTotalPriceText(totalPrice)
+                            listOption["topping"] = total
+                            listTopping = list
+                            updateTotalPriceText()
                         }
                     }
                 })
@@ -76,34 +95,66 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
             val checkedRadioButton: RadioButton =
                 view.findViewById(binding.radioGroup.checkedRadioButtonId)
             if (checkedRadioButton.id == R.id.radio_regular) {
-                totalPrice = drinkDetail.price!!
-                updateTotalPriceText(totalPrice)
+                listOption["size"] = drinkDetail.price!!
+                updateTotalPriceText()
             }
         }
 
         // handle event change radio button
         binding.radioGroup.setOnCheckedChangeListener { _, checkedId ->
             val radio: RadioButton = view.findViewById(checkedId)
+            var priceSize: Int
             when (radio.id) {
                 R.id.radio_big -> {
-                    totalPrice = drinkDetail.price!! + 10000
-                    updateTotalPriceText(totalPrice)
-                    totalPrice = 0
+                    priceSize = drinkDetail.price!! + 10000
+                    listOption["size"] = priceSize
+                    updateTotalPriceText()
                 }
 
                 R.id.radio_regular -> {
-                    totalPrice = drinkDetail.price!!
-                    updateTotalPriceText(totalPrice)
-                    totalPrice = 0
+                    priceSize = drinkDetail.price!!
+                    listOption["size"] = priceSize
+                    updateTotalPriceText()
                 }
 
                 R.id.radio_small -> {
-                    totalPrice = drinkDetail.price!! - 10000
-                    updateTotalPriceText(totalPrice)
-                    totalPrice = 0
+                    priceSize = drinkDetail.price!! - 10000
+                    listOption["size"] = priceSize
+                    updateTotalPriceText()
                 }
             }
         }
+
+        // handle amount of item
+        binding.viewPlus.setOnClickListener {
+            amount++
+            binding.amount.text = amount.toString()
+            binding.totalPrice.text = "${String.format("%,d", totalPrice*amount)}đ"
+        }
+
+        binding.viewMinus.setOnClickListener{view ->
+            if (amount > 1){
+                amount--
+                binding.amount.text = amount.toString()
+                binding.totalPrice.text = "${String.format("%,d", totalPrice*amount)}đ"
+            }
+        }
+
+        binding.viewAddBtn.setOnClickListener{
+            if (auth.currentUser != null){
+                val cart = Cart((totalPrice*amount), amount, drinkDetail.name, listTopping)
+                addToCart(cart)
+            } else {
+               Toast.makeText(requireContext(), "Log In required", Toast.LENGTH_LONG).show()
+            }
+            reset()
+            dismiss()
+        }
+
+    }
+
+    private fun addToCart(cart: Cart) {
+        cartViewModel.addToCart(cart)
     }
 
     private fun getDataDetail() {
@@ -139,8 +190,24 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
 
     }
 
-    private fun updateTotalPriceText(price: Int) {
-        binding.totalPrice.text = "${String.format("%,d", price)}đ"
+    private fun updateTotalPriceText() {
+        if (listOption.isNotEmpty()) {
+            totalPrice = 0
+            for ((key, value) in listOption){
+                totalPrice += value
+                Log.e("value", (listOption to totalPrice).toString())
+            }
+            binding.totalPrice.text = "${String.format("%,d", totalPrice*amount)}đ"
+        }
     }
+
+    private fun reset(){
+        totalPrice = 0
+        amount = 1
+        listTopping = emptyList()
+        listOption.clear()
+    }
+
+
 
 }

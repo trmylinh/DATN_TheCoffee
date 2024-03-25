@@ -70,6 +70,8 @@
         android:name="com.example.thecoffee.order.view.ItemDrinkDetailFragment"
         android:label="fragment_item_drink_detail"
         tools:layout="@layout/fragment_item_drink_detail">
-
+        <action
+            android:id="@+id/action_itemDrinkDetailFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
     </fragment>
 </navigation>

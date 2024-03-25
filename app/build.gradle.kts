@@ -143,6 +143,12 @@ dependencies {
     // read more - text
     implementation("com.github.colourmoon:readmore-textview:v1.0.2")
 
+    //Notification Badge
+    implementation("com.nex3z:notification-badge:1.0.4")
+
+    // event bus
+    implementation("org.greenrobot:eventbus:3.3.1")
+
 
 
 }

@@ -54,7 +54,6 @@
         android:layout_marginEnd="@dimen/_5sdp"
         android:backgroundTint="@color/orange_900"
         app:cardCornerRadius="@dimen/_10sdp">
-
         <ImageView
             android:layout_width="@dimen/_15sdp"
             android:layout_height="@dimen/_15sdp"

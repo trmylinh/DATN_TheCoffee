@@ -1,6 +1,8 @@
 package com.example.thecoffee.order.view
 
 import android.os.Bundle
+import android.text.TextPaint
+import android.text.TextUtils
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -136,6 +138,7 @@ class OrderFragment : Fragment() {
         }
 
         setScrollListener()
+
     }
 
     private suspend fun filterDrink(categoryId: String): List<Drink> = suspendCoroutine { continuation ->
@@ -199,5 +202,6 @@ class OrderFragment : Fragment() {
             }
         })
     }
+
 
 }
