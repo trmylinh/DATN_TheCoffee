@@ -7,7 +7,7 @@ import com.example.thecoffee.databinding.LayoutItemToppingBinding
 import com.example.thecoffee.order.model.Topping
 
 interface ItemToppingRecyclerInterface {
-    fun onTotalChanged(total: Int?)
+    fun onTotalChanged(total: Int?, list: List<String>)
 }
 
 class ItemToppingRecyclerAdapter(
@@ -17,6 +17,7 @@ class ItemToppingRecyclerAdapter(
     private lateinit var binding: LayoutItemToppingBinding
     private var selectedCheckbox: Int = 0
     private var totalPriceTopping: Int = 0
+    private var selectedListTopping = mutableListOf<String>()
 
     inner class ItemToppingViewHolder(val binding: LayoutItemToppingBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -28,20 +29,23 @@ class ItemToppingRecyclerAdapter(
                 if (selectedCheckbox == 2) {
                     if (!isChecked) {
                         selectedCheckbox--
+                        selectedListTopping.remove(buttonView.text.toString())
                         totalPriceTopping -= topping.price!!
-                        onTotalChanged.onTotalChanged(totalPriceTopping)
+                        onTotalChanged.onTotalChanged(totalPriceTopping, selectedListTopping)
                     } else {
                         buttonView.isChecked = false
                     }
                 } else {
                     if (isChecked) {
                         selectedCheckbox++
+                        selectedListTopping.add(buttonView.text.toString())
                         totalPriceTopping += topping.price!!
-                        onTotalChanged.onTotalChanged(totalPriceTopping)
+                        onTotalChanged.onTotalChanged(totalPriceTopping, selectedListTopping)
                     } else {
                         selectedCheckbox--
+                        selectedListTopping.remove(buttonView.text.toString())
                         totalPriceTopping -= topping.price!!
-                        onTotalChanged.onTotalChanged(totalPriceTopping)
+                        onTotalChanged.onTotalChanged(totalPriceTopping, selectedListTopping)
                     }
                 }
             }
