@@ -13,7 +13,8 @@ interface ItemDrinkCategoryRecyclerInterface {
 }
 class ItemDrinkCategoryRecyclerAdapter(
     val list: List<Any>,
-    val onClickItemDrink: ItemDrinkCategoryRecyclerInterface
+    val onClickItemDrink: ItemDrinkCategoryRecyclerInterface,
+    val marginBottom: Int
 ): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private companion object {
         private const val VIEW_TYPE_CATEGORY = 0
@@ -32,8 +33,15 @@ class ItemDrinkCategoryRecyclerAdapter(
                     val drink = list[position] as Drink
                     onClickItemDrink.onClickItemDrink(drink)
                 }
-//                onClickItemDrink.onClickItemDrink()
             }
+        }
+
+        fun setMarginForLastItem(isLastItem: Boolean, marginBottom: Int){
+            val layoutParams = binding.viewItem.layoutParams as RecyclerView.LayoutParams
+            if(isLastItem){
+                layoutParams.setMargins(layoutParams.leftMargin, layoutParams.topMargin, layoutParams.rightMargin, marginBottom)
+            }
+            binding.viewItem.layoutParams = layoutParams
         }
     }
     inner class CategoryViewHolder(val binding: LayoutCategoryNameBinding): RecyclerView.ViewHolder(binding.root){
@@ -45,11 +53,6 @@ class ItemDrinkCategoryRecyclerAdapter(
         return if (item is String) VIEW_TYPE_CATEGORY else VIEW_TYPE_PRODUCT
     }
 
-//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemDrinkCategoryViewHolder {
-//        val view = LayoutInflater.from(parent.context)
-//        binding = LayoutItemDrinkCategoryBinding.inflate(view, parent, false)
-//        return ItemDrinkCategoryViewHolder(binding)
-//    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -67,13 +70,16 @@ class ItemDrinkCategoryRecyclerAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = list[position]
+        val isLastItem = position == itemCount - 1
         if(holder is CategoryViewHolder){
             val category = item as String
             holder.binding.tvCategoryName.text = category
         } else if (holder is ProductViewHolder){
             val product = item as Drink
             holder.bind(product)
+            holder.setMarginForLastItem(isLastItem, marginBottom)
         }
+
     }
 
 }

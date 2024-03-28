@@ -155,7 +155,6 @@ class OrderFragment : Fragment() {
     private fun showListDrink() {
 //        productViewModel.getDrinkList.observe(viewLifecycleOwner) {
 //            drinkList = it
-
             adapterListDrink =
                 ItemDrinkCategoryRecyclerAdapter(
                     itemList,
@@ -168,7 +167,7 @@ class OrderFragment : Fragment() {
                             bottomSheetDetail.show(parentFragmentManager, bottomSheetDetail.tag)
                         }
 
-                    })
+                    }, marginBottom = 150)
             binding.rvItemDrink.adapter = adapterListDrink
             linearLayoutManager = LinearLayoutManager(
                 requireContext(), LinearLayoutManager.VERTICAL, false

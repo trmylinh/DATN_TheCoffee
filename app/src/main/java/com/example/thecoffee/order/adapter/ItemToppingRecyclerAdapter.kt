@@ -7,7 +7,7 @@ import com.example.thecoffee.databinding.LayoutItemToppingBinding
 import com.example.thecoffee.order.model.Topping
 
 interface ItemToppingRecyclerInterface {
-    fun onTotalChanged(total: Int?, list: List<String>)
+    fun onTotalChanged(total: Long?, list: List<String>)
 }
 
 class ItemToppingRecyclerAdapter(
@@ -16,7 +16,7 @@ class ItemToppingRecyclerAdapter(
 ) : RecyclerView.Adapter<ItemToppingRecyclerAdapter.ItemToppingViewHolder>() {
     private lateinit var binding: LayoutItemToppingBinding
     private var selectedCheckbox: Int = 0
-    private var totalPriceTopping: Int = 0
+    private var totalPriceTopping: Long = 0
     private var selectedListTopping = mutableListOf<String>()
 
     inner class ItemToppingViewHolder(val binding: LayoutItemToppingBinding) :
