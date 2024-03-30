@@ -16,6 +16,8 @@ class CartRepository(_application: Application) {
         application = _application
     }
 
+
+    // add cart to firestore database
     fun addToCart(cart: Cart){
         val userId = auth.currentUser?.uid
         if (userId != null) {
@@ -23,17 +25,25 @@ class CartRepository(_application: Application) {
             cartRef.get().addOnCompleteListener { task ->
                 if(task.isSuccessful){
                     val document = task.result
+
+                    val cartList: List<Map<String, Any>> = mutableListOf()
+                    val cartItem = hashMapOf(
+                        "name" to cart.drinkName!!,
+                        "size" to cart.drinkSize!!,
+                        "topping" to cart.drinkTopping!!,
+                        "note" to cart.note!!,
+                        "quantity" to cart.quantity!!,
+                        "price" to cart.totalPrice!!
+                    )
+                    (cartList as MutableList).add(cartItem)
+
                     if(document != null && document.exists()){
                         // cart cua user da ton tai -> update
-                        val cartData = document.get("cart") as? HashMap<String, Cart>
-                        val newKey = cartData?.size?.plus(1)
-
-                        if (newKey != null) {
-                            cartData?.put("${newKey - 1}", cart)
-                        }
+                        val cartData = document.get("cart") as? List<Map<String, Any>>
+                        (cartData as MutableList).add(cartItem)
 
                         val updateCart = hashMapOf(
-                            "cart" to cartData
+                            "cart" to cartData!!
                         )
                         cartRef.set(updateCart, SetOptions.merge()).addOnCompleteListener {
                             if (it.isSuccessful) {
@@ -49,10 +59,8 @@ class CartRepository(_application: Application) {
                             }
                         }
                     } else {
-                        val data = hashMapOf<String, Map<String, Cart>>(
-                            "cart" to hashMapOf(
-                                "0" to cart
-                            )
+                        val data =  hashMapOf<String, List<Map<String, Any>>>(
+                            "cart" to cartList
                         )
                         cartRef.set(data).addOnCompleteListener {
                             if (it.isSuccessful) {

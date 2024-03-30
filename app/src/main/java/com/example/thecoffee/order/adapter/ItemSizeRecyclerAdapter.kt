@@ -8,7 +8,7 @@ import com.example.thecoffee.databinding.LayoutItemSizeBinding
 import com.example.thecoffee.order.model.Size
 
 interface ItemSizeRecyclerInterface {
-    fun onRadioChanged(price: Long?)
+    fun onRadioChanged(price: Long?, sizeName: String)
 }
 
 class ItemSizeRecyclerAdapter(
@@ -31,7 +31,7 @@ class ItemSizeRecyclerAdapter(
                 if(isChecked){
                     selectedPosition = adapterPosition
                     notifyDataSetChanged()
-                    onRadioChanged.onRadioChanged(size.price)
+                    onRadioChanged.onRadioChanged(size.price, buttonView.text.toString())
                 }
             }
         }

@@ -1,5 +1,6 @@
 package com.example.thecoffee.order.view
 
+import android.content.Context
 import android.graphics.Paint
 import android.health.connect.datatypes.units.Length
 import android.os.Bundle
@@ -42,6 +43,7 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
     private var listOption = mutableMapOf<String, Long>()
     private var auth = FirebaseAuth.getInstance()
     private var listTopping = emptyList<String>()
+    private var drinkSize: String = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -89,9 +91,11 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
 
         binding.viewAddBtn.setOnClickListener {
             if (auth.currentUser != null) {
-                val cart = Cart((totalPrice * amount), amount, drinkDetail.name, listTopping)
+                val cart = Cart((totalPrice * amount), amount, drinkDetail.name, drinkSize, listTopping,
+                    note = if(binding.edtTextNote.text.isEmpty()) "" else binding.edtTextNote.text.toString())
                 addToCart(cart)
             } else {
+                // handle login - here ---> navigation sang screen Login
                 Toast.makeText(requireContext(), "Log In required", Toast.LENGTH_LONG).show()
             }
             reset()
@@ -103,6 +107,7 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
     private fun addToCart(cart: Cart) {
         cartViewModel.addToCart(cart)
     }
+
 
     private fun getDataDetail() {
 
@@ -135,9 +140,11 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
         //size
         if(drinkDetail.size?.isNotEmpty() == true){
             binding.viewSize.visibility = View.VISIBLE
+            drinkSize = drinkDetail.size?.get(1)?.name.toString()
             val adapterViewSize = ItemSizeRecyclerAdapter(drinkDetail.size!!, object : ItemSizeRecyclerInterface{
-                override fun onRadioChanged(price: Long?) {
+                override fun onRadioChanged(price: Long?, sizeName: String) {
                     listOption["size"] = price!!
+                    drinkSize = sizeName
                     updateTotalPriceText()
                 }
             })
@@ -162,6 +169,7 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
                         override fun onTotalChanged(total: Long?, list: List<String>) {
                             if (total != null) {
                                 listOption["topping"] = total
+                                listTopping = list
                                 updateTotalPriceText()
                             }
                         }
@@ -191,6 +199,8 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
     private fun reset() {
         totalPrice = 0
         amount = 1
+        drinkSize = ""
+        listTopping = emptyList()
         listOption.clear()
     }
 
