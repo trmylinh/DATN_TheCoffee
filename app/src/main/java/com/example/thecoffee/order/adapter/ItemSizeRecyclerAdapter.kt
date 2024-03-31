@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.thecoffee.databinding.LayoutItemSizeBinding
+import com.example.thecoffee.order.model.Drink
 import com.example.thecoffee.order.model.Size
 
 interface ItemSizeRecyclerInterface {
@@ -16,7 +17,9 @@ class ItemSizeRecyclerAdapter(
     val onRadioChanged: ItemSizeRecyclerInterface
 ) : RecyclerView.Adapter<ItemSizeRecyclerAdapter.ItemSizeViewHolder>() {
     private lateinit var binding: LayoutItemSizeBinding
-    private var selectedPosition = 1
+    private var selectedSizeName = list.find { it.name == "Vừa" }
+    private var selectedPosition = list.indexOf(selectedSizeName)
+
 
     inner class ItemSizeViewHolder(val binding: LayoutItemSizeBinding) :
         RecyclerView.ViewHolder(binding.root) {

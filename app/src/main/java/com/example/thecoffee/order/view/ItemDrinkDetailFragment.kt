@@ -32,6 +32,12 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.gson.Gson
+
+
+interface BottomSheetListener {
+    fun onResult(value: String)
+}
 
 class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
     private lateinit var binding: FragmentItemDrinkDetailBinding
@@ -44,15 +50,17 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
     private var auth = FirebaseAuth.getInstance()
     private var listTopping = emptyList<String>()
     private var drinkSize: String = ""
+    private var listCartItem = mutableListOf<Cart>()
+    var listener: BottomSheetListener? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val viewModelFactory = MyViewModelFactory(requireActivity().application)
+//        val viewModelFactory = MyViewModelFactory(requireActivity().application)
 //        productViewModel =
 //            ViewModelProvider(this, viewModelFactory)[ProductViewModel::class.java]
 
-        cartViewModel = ViewModelProvider(this, viewModelFactory)[CartViewModel::class.java]
+//        cartViewModel = ViewModelProvider(this, viewModelFactory)[CartViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -91,9 +99,14 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
 
         binding.viewAddBtn.setOnClickListener {
             if (auth.currentUser != null) {
+
                 val cart = Cart((totalPrice * amount), amount, drinkDetail.name, drinkSize, listTopping,
                     note = if(binding.edtTextNote.text.isEmpty()) "" else binding.edtTextNote.text.toString())
-                addToCart(cart)
+//                val gson = Gson()
+//                (listCartItem as MutableList).add(cart)
+//                val json = gson.toJson(listCartItem)
+                addToCartSharedPrefer(cart)
+//                addToCart(cart)
             } else {
                 // handle login - here ---> navigation sang screen Login
                 Toast.makeText(requireContext(), "Log In required", Toast.LENGTH_LONG).show()
@@ -104,25 +117,36 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
 
     }
 
-    private fun addToCart(cart: Cart) {
-        cartViewModel.addToCart(cart)
+//    private fun addToCart(cart: Cart) {
+//        cartViewModel.addToCart(cart)
+//    }
+
+    private fun addToCartSharedPrefer(cart: Cart){
+        listCartItem.add(cart)
+        val gson = Gson()
+        val json = gson.toJson(listCartItem)
+        listener?.onResult(json)
     }
 
 
     private fun getDataDetail() {
-
+        Log.e("detail", drinkDetail.toString())
         listOption["size"] = drinkDetail.price!!.toLong()
         updateTotalPriceText()
 
         Glide.with(requireActivity()).load(drinkDetail.image).into(binding.imageDrink)
         binding.nameDrink.text = drinkDetail.name
+
+        // discount
         if (drinkDetail.discount!! > 0) {
-            binding.priceDiscountDrink.visibility = View.VISIBLE
+            binding.viewDiscount.visibility = View.VISIBLE
             binding.priceDefaultDrink.visibility = View.VISIBLE
 
             binding.priceDiscountDrink.text = "-${String.format("%,d", drinkDetail.discount)}đ"
+
             val priceAfterDiscount = drinkDetail.price!! - drinkDetail.discount!!
             binding.priceDrink.text = "${String.format("%,d", priceAfterDiscount)}đ"
+
             binding.priceDefaultDrink.text = "${String.format("%,d", drinkDetail.price)}đ"
             binding.priceDefaultDrink.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
         } else {

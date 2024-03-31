@@ -149,6 +149,9 @@ dependencies {
     // event bus
     implementation("org.greenrobot:eventbus:3.3.1")
 
+    //gson
+    implementation("com.google.code.gson:gson:2.8.5")
+
 
 
 }

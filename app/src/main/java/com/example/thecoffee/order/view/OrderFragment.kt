@@ -1,6 +1,7 @@
 package com.example.thecoffee.order.view
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.TextPaint
 import android.text.TextUtils
@@ -26,6 +27,8 @@ import com.example.thecoffee.base.MyViewModelFactory
 import com.example.thecoffee.order.model.Cart
 import com.example.thecoffee.order.viewmodel.ProductViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -143,38 +146,71 @@ class OrderFragment : Fragment() {
 
     }
 
-    private suspend fun filterDrink(categoryId: String): List<Drink> = suspendCoroutine { continuation ->
-        productViewModel.getDrinkList.observe(viewLifecycleOwner) {
-            drinkList = it
-            val displayArr = drinkList.filter { item ->
-                item.categoryId == categoryId
+    private suspend fun filterDrink(categoryId: String): List<Drink> =
+        suspendCoroutine { continuation ->
+            productViewModel.getDrinkList.observe(viewLifecycleOwner) {
+                drinkList = it
+                val displayArr = drinkList.filter { item ->
+                    item.categoryId == categoryId
+                }
+                continuation.resume(displayArr)
             }
-            continuation.resume(displayArr)
         }
-    }
 
 
     private fun showListDrink() {
 //        productViewModel.getDrinkList.observe(viewLifecycleOwner) {
 //            drinkList = it
-            adapterListDrink =
-                ItemDrinkCategoryRecyclerAdapter(
-                    itemList,
-                    object : ItemDrinkCategoryRecyclerInterface {
-                        override fun onClickItemDrink(position: Drink) {
-                            Log.e("drink", position.name.toString())
-                            val bundle = Bundle()
-                            bundle.putSerializable("dataDrink", position)
-                            bottomSheetDetail.arguments = bundle
-                            bottomSheetDetail.show(parentFragmentManager, bottomSheetDetail.tag)
-                        }
+        adapterListDrink =
+            ItemDrinkCategoryRecyclerAdapter(
+                itemList,
+                object : ItemDrinkCategoryRecyclerInterface {
+                    override fun onClickItemDrink(position: Drink) {
+                        Log.e("drink", position.name.toString())
+                        val bundle = Bundle()
+                        bundle.putSerializable("dataDrink", position)
+                        bottomSheetDetail.arguments = bundle
+                        bottomSheetDetail.listener = object : BottomSheetListener {
+                            override fun onResult(value: String) {
+                                Log.e("cart", value)
+                                val sharedPreferences = requireContext().getSharedPreferences("cart", Context.MODE_PRIVATE)
+                                sharedPreferences.edit()
+                                    .apply {
+                                        putString("dataCart", value)
+                                    }.apply()
 
-                    }, marginBottom = 150)
-            binding.rvItemDrink.adapter = adapterListDrink
-            linearLayoutManager = LinearLayoutManager(
-                requireContext(), LinearLayoutManager.VERTICAL, false
+                                // doc chuoi JSON tu sharedPreferences
+                                val gson = Gson()
+                                val json = sharedPreferences.getString("dataCart", null)
+                                val type = object : TypeToken<List<Cart>>() {}.type
+
+                                // chuyen doi JSON -> list
+                                val listCartItem: List<Cart> = gson.fromJson(json, type)
+                                Log.e("listCartItem", listCartItem.toString())
+                                if (listCartItem.isNotEmpty()){
+                                    var total: Long = 0
+                                    for (item in listCartItem){
+                                        total += item.totalPrice!!
+                                    }
+                                    binding.viewCart.visibility = View.VISIBLE
+                                    binding.amount.text = listCartItem.size.toString()
+                                    binding.totalPrice.text = "${String.format("%,d", total)}đ"
+                                }
+
+                            }
+
+                        }
+                        bottomSheetDetail.show(parentFragmentManager, bottomSheetDetail.tag)
+                        bottomSheetDetail.isCancelable = false
+                    }
+
+                }, marginBottom = 150
             )
-            binding.rvItemDrink.layoutManager = linearLayoutManager
+        binding.rvItemDrink.adapter = adapterListDrink
+        linearLayoutManager = LinearLayoutManager(
+            requireContext(), LinearLayoutManager.VERTICAL, false
+        )
+        binding.rvItemDrink.layoutManager = linearLayoutManager
 
 //        }
     }
