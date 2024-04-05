@@ -195,6 +195,19 @@ class OrderFragment : Fragment() {
                                     binding.viewCart.visibility = View.VISIBLE
                                     binding.amount.text = listCartItem.size.toString()
                                     binding.totalPrice.text = "${String.format("%,d", total)}đ"
+
+                                    binding.viewCart.setOnClickListener {
+                                        // show confirm bill ui
+                                        val layoutConfirmBill = layoutInflater.inflate(R.layout.fragment_confirm_order_bill, null)
+                                        val bottomSheetConfirmBill = BottomSheetDialog(requireActivity())
+                                        val btnClose = layoutConfirmBill.findViewById<ImageView>(R.id.closeBtn)
+                                        btnClose.setOnClickListener {
+                                            bottomSheetConfirmBill.dismiss()
+                                        }
+                                        bottomSheetConfirmBill.setContentView(layoutConfirmBill)
+                                        bottomSheetConfirmBill.show()
+                                    }
+
                                 }
 
                             }

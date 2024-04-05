@@ -1,19 +1,12 @@
 package com.example.thecoffee.order.view
 
-import android.content.Context
 import android.graphics.Paint
-import android.health.connect.datatypes.units.Length
 import android.os.Bundle
-import android.text.TextPaint
-import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RadioButton
 import android.widget.Toast
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.thecoffee.R
@@ -21,17 +14,12 @@ import com.example.thecoffee.order.adapter.ItemToppingRecyclerAdapter
 import com.example.thecoffee.order.adapter.ItemToppingRecyclerInterface
 import com.example.thecoffee.databinding.FragmentItemDrinkDetailBinding
 import com.example.thecoffee.order.model.Drink
-import com.example.thecoffee.base.MyViewModelFactory
 import com.example.thecoffee.order.adapter.ItemSizeRecyclerAdapter
 import com.example.thecoffee.order.adapter.ItemSizeRecyclerInterface
 import com.example.thecoffee.order.model.Cart
 import com.example.thecoffee.order.viewmodel.CartViewModel
-import com.example.thecoffee.order.viewmodel.ProductViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 
 
@@ -41,7 +29,7 @@ interface BottomSheetListener {
 
 class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
     private lateinit var binding: FragmentItemDrinkDetailBinding
-//    private lateinit var productViewModel: ProductViewModel
+    //    private lateinit var productViewModel: ProductViewModel
     private lateinit var cartViewModel: CartViewModel
     private lateinit var drinkDetail: Drink
     private var totalPrice: Long = 0
