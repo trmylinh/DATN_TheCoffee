@@ -1,16 +1,15 @@
 package com.example.thecoffee.order.view
 
+import android.app.AlertDialog
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import android.text.TextPaint
-import android.text.TextUtils
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -45,6 +44,7 @@ class OrderFragment : Fragment() {
     private lateinit var adapterBottom: ItemCategoryRecyclerAdapter
     private lateinit var adapterListDrink: ItemDrinkCategoryRecyclerAdapter
     private val bottomSheetDetail = ItemDrinkDetailFragment()
+    private val listCartItem = mutableListOf<Cart>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,13 +62,8 @@ class OrderFragment : Fragment() {
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         // open bottom sheet category - menu danh muc spham
         productViewModel.loadingCategoryResult.observe(viewLifecycleOwner) {
@@ -159,21 +154,21 @@ class OrderFragment : Fragment() {
 
 
     private fun showListDrink() {
-//        productViewModel.getDrinkList.observe(viewLifecycleOwner) {
-//            drinkList = it
         adapterListDrink =
             ItemDrinkCategoryRecyclerAdapter(
                 itemList,
                 object : ItemDrinkCategoryRecyclerInterface {
                     override fun onClickItemDrink(position: Drink) {
-                        Log.e("drink", position.name.toString())
                         val bundle = Bundle()
                         bundle.putSerializable("dataDrink", position)
                         bottomSheetDetail.arguments = bundle
                         bottomSheetDetail.listener = object : BottomSheetListener {
                             override fun onResult(value: String) {
-                                Log.e("cart", value)
-                                val sharedPreferences = requireContext().getSharedPreferences("cart", Context.MODE_PRIVATE)
+                                // luu cart vao sharedPreferences
+                                val sharedPreferences = requireContext().getSharedPreferences(
+                                    "cart",
+                                    Context.MODE_PRIVATE
+                                )
                                 sharedPreferences.edit()
                                     .apply {
                                         putString("dataCart", value)
@@ -182,14 +177,15 @@ class OrderFragment : Fragment() {
                                 // doc chuoi JSON tu sharedPreferences
                                 val gson = Gson()
                                 val json = sharedPreferences.getString("dataCart", null)
-                                val type = object : TypeToken<List<Cart>>() {}.type
+                                val type = object : TypeToken<Cart>() {}.type
 
-                                // chuyen doi JSON -> list
-                                val listCartItem: List<Cart> = gson.fromJson(json, type)
-                                Log.e("listCartItem", listCartItem.toString())
-                                if (listCartItem.isNotEmpty()){
+                                // chuyen doi JSON -> cart object
+                                val itemCart: Cart = gson.fromJson(json, type)
+                                listCartItem.add(itemCart)
+
+                                if (listCartItem.isNotEmpty()) {
                                     var total: Long = 0
-                                    for (item in listCartItem){
+                                    for (item in listCartItem) {
                                         total += item.totalPrice!!
                                     }
                                     binding.viewCart.visibility = View.VISIBLE
@@ -198,20 +194,56 @@ class OrderFragment : Fragment() {
 
                                     binding.viewCart.setOnClickListener {
                                         // show confirm bill ui
-                                        val layoutConfirmBill = layoutInflater.inflate(R.layout.fragment_confirm_order_bill, null)
-                                        val bottomSheetConfirmBill = BottomSheetDialog(requireActivity())
-                                        val btnClose = layoutConfirmBill.findViewById<ImageView>(R.id.closeBtn)
+                                        val layoutConfirmBill = layoutInflater.inflate(
+                                            R.layout.fragment_confirm_order_bill,
+                                            null
+                                        )
+                                        val bottomSheetConfirmBill =
+                                            BottomSheetDialog(requireActivity())
+                                        val btnClose =
+                                            layoutConfirmBill.findViewById<ImageView>(R.id.closeBtn)
+                                        val btnClearBill =
+                                            layoutConfirmBill.findViewById<TextView>(R.id.clearBill)
+
+                                        bottomSheetConfirmBill.setContentView(layoutConfirmBill)
+                                        bottomSheetConfirmBill.show()
+
+                                        //
                                         btnClose.setOnClickListener {
                                             bottomSheetConfirmBill.dismiss()
                                         }
-                                        bottomSheetConfirmBill.setContentView(layoutConfirmBill)
-                                        bottomSheetConfirmBill.show()
+
+                                        // clear data cart -> clear data local
+                                        btnClearBill.setOnClickListener {
+                                            val builder = AlertDialog.Builder(context)
+                                            builder.setCancelable(false)
+                                            builder.setTitle("Xác nhận")
+                                            builder.setMessage("Xóa toàn bộ sản phẩm đã chọn khỏi đơn hàng này của bạn?")
+                                                .setPositiveButton("Xóa") { dialog, id ->
+                                                    sharedPreferences.edit()
+                                                        .apply {
+                                                            clear()
+                                                        }.apply()
+                                                    sharedPreferences.contains("dataCart")
+                                                    Log.e("shared",
+                                                        sharedPreferences.contains("dataCart").toString()
+                                                    )
+                                                    (listCartItem as MutableList).removeAll(listCartItem)
+                                                    Log.e("listCartItem",
+                                                        listCartItem.toString()
+                                                    )
+                                                    bottomSheetConfirmBill.dismiss()
+                                                    binding.viewCart.visibility = View.GONE
+                                                }
+                                                .setNegativeButton("Hủy") { dialog, id ->
+                                                    dialog.cancel()
+                                                }
+                                            val alertDialog = builder.create()
+                                            alertDialog.show()
+                                        }
                                     }
-
                                 }
-
                             }
-
                         }
                         bottomSheetDetail.show(parentFragmentManager, bottomSheetDetail.tag)
                         bottomSheetDetail.isCancelable = false
@@ -224,8 +256,6 @@ class OrderFragment : Fragment() {
             requireContext(), LinearLayoutManager.VERTICAL, false
         )
         binding.rvItemDrink.layoutManager = linearLayoutManager
-
-//        }
     }
 
     private fun getPositionOfItem(item: String): Int {

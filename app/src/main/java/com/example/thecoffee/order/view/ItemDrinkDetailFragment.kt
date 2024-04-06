@@ -29,7 +29,6 @@ interface BottomSheetListener {
 
 class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
     private lateinit var binding: FragmentItemDrinkDetailBinding
-    //    private lateinit var productViewModel: ProductViewModel
     private lateinit var cartViewModel: CartViewModel
     private lateinit var drinkDetail: Drink
     private var totalPrice: Long = 0
@@ -44,18 +43,13 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        val viewModelFactory = MyViewModelFactory(requireActivity().application)
-//        productViewModel =
-//            ViewModelProvider(this, viewModelFactory)[ProductViewModel::class.java]
-
-//        cartViewModel = ViewModelProvider(this, viewModelFactory)[CartViewModel::class.java]
+        drinkDetail = arguments?.getSerializable("dataDrink")!! as Drink
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        drinkDetail = arguments?.getSerializable("dataDrink")!! as Drink
         binding = FragmentItemDrinkDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -90,11 +84,7 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
 
                 val cart = Cart((totalPrice * amount), amount, drinkDetail.name, drinkSize, listTopping,
                     note = if(binding.edtTextNote.text.isEmpty()) "" else binding.edtTextNote.text.toString())
-//                val gson = Gson()
-//                (listCartItem as MutableList).add(cart)
-//                val json = gson.toJson(listCartItem)
                 addToCartSharedPrefer(cart)
-//                addToCart(cart)
             } else {
                 // handle login - here ---> navigation sang screen Login
                 Toast.makeText(requireContext(), "Log In required", Toast.LENGTH_LONG).show()
@@ -105,14 +95,10 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
 
     }
 
-//    private fun addToCart(cart: Cart) {
-//        cartViewModel.addToCart(cart)
-//    }
 
     private fun addToCartSharedPrefer(cart: Cart){
-        listCartItem.add(cart)
         val gson = Gson()
-        val json = gson.toJson(listCartItem)
+        val json = gson.toJson(cart)
         listener?.onResult(json)
     }
 
