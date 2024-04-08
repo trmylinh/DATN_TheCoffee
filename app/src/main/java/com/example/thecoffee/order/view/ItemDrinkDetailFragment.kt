@@ -37,7 +37,6 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
     private var auth = FirebaseAuth.getInstance()
     private var listTopping = emptyList<String>()
     private var drinkSize: String = ""
-    private var listCartItem = mutableListOf<Cart>()
     var listener: BottomSheetListener? = null
 
 

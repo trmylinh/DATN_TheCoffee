@@ -44,6 +44,7 @@ class OrderFragment : Fragment() {
     private lateinit var adapterBottom: ItemCategoryRecyclerAdapter
     private lateinit var adapterListDrink: ItemDrinkCategoryRecyclerAdapter
     private val bottomSheetDetail = ItemDrinkDetailFragment()
+    private val bottomSheetConfirmBill = ConfirmOrderBillFragment()
     private val listCartItem = mutableListOf<Cart>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -159,9 +160,10 @@ class OrderFragment : Fragment() {
                 itemList,
                 object : ItemDrinkCategoryRecyclerInterface {
                     override fun onClickItemDrink(position: Drink) {
-                        val bundle = Bundle()
-                        bundle.putSerializable("dataDrink", position)
-                        bottomSheetDetail.arguments = bundle
+                        // pass data -> item drink detail fragment
+                        val bundleDetail = Bundle()
+                        bundleDetail.putSerializable("dataDrink", position)
+                        bottomSheetDetail.arguments = bundleDetail
                         bottomSheetDetail.listener = object : BottomSheetListener {
                             override fun onResult(value: String) {
                                 // luu cart vao sharedPreferences
@@ -183,6 +185,7 @@ class OrderFragment : Fragment() {
                                 val itemCart: Cart = gson.fromJson(json, type)
                                 listCartItem.add(itemCart)
 
+
                                 if (listCartItem.isNotEmpty()) {
                                     var total: Long = 0
                                     for (item in listCartItem) {
@@ -193,56 +196,27 @@ class OrderFragment : Fragment() {
                                     binding.totalPrice.text = "${String.format("%,d", total)}đ"
 
                                     binding.viewCart.setOnClickListener {
-                                        // show confirm bill ui
-                                        val layoutConfirmBill = layoutInflater.inflate(
-                                            R.layout.fragment_confirm_order_bill,
-                                            null
+                                        // pass data -> confirm order bill fragment
+                                        val bundleBill = Bundle()
+                                        val jsonListCartItem = gson.toJson(listCartItem)
+                                        bundleBill.putString("dataBill", jsonListCartItem)
+                                        bottomSheetConfirmBill.arguments = bundleBill
+                                        bottomSheetConfirmBill.listener = object: ConfirmOrderBillFragmentListener{
+                                            override fun onBottomSheetClear() {
+                                                binding.viewCart.visibility = View.GONE
+                                                listCartItem.removeAll(listCartItem)
+                                            }
+                                        }
+
+                                        // hien thi confirm bill ui
+                                        bottomSheetConfirmBill.show(
+                                            parentFragmentManager,
+                                            bottomSheetConfirmBill.tag
                                         )
-                                        val bottomSheetConfirmBill =
-                                            BottomSheetDialog(requireActivity())
-                                        val btnClose =
-                                            layoutConfirmBill.findViewById<ImageView>(R.id.closeBtn)
-                                        val btnClearBill =
-                                            layoutConfirmBill.findViewById<TextView>(R.id.clearBill)
-
-                                        bottomSheetConfirmBill.setContentView(layoutConfirmBill)
-                                        bottomSheetConfirmBill.show()
-
-                                        //
-                                        btnClose.setOnClickListener {
-                                            bottomSheetConfirmBill.dismiss()
-                                        }
-
-                                        // clear data cart -> clear data local
-                                        btnClearBill.setOnClickListener {
-                                            val builder = AlertDialog.Builder(context)
-                                            builder.setCancelable(false)
-                                            builder.setTitle("Xác nhận")
-                                            builder.setMessage("Xóa toàn bộ sản phẩm đã chọn khỏi đơn hàng này của bạn?")
-                                                .setPositiveButton("Xóa") { dialog, id ->
-                                                    sharedPreferences.edit()
-                                                        .apply {
-                                                            clear()
-                                                        }.apply()
-                                                    sharedPreferences.contains("dataCart")
-                                                    Log.e("shared",
-                                                        sharedPreferences.contains("dataCart").toString()
-                                                    )
-                                                    (listCartItem as MutableList).removeAll(listCartItem)
-                                                    Log.e("listCartItem",
-                                                        listCartItem.toString()
-                                                    )
-                                                    bottomSheetConfirmBill.dismiss()
-                                                    binding.viewCart.visibility = View.GONE
-                                                }
-                                                .setNegativeButton("Hủy") { dialog, id ->
-                                                    dialog.cancel()
-                                                }
-                                            val alertDialog = builder.create()
-                                            alertDialog.show()
-                                        }
+                                        bottomSheetConfirmBill.isCancelable = false
                                     }
                                 }
+
                             }
                         }
                         bottomSheetDetail.show(parentFragmentManager, bottomSheetDetail.tag)

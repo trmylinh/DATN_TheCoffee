@@ -1,21 +1,34 @@
 package com.example.thecoffee.order.view
 
+import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.thecoffee.R
 import com.example.thecoffee.databinding.FragmentConfirmOrderBillBinding
-import com.example.thecoffee.databinding.FragmentItemDrinkDetailBinding
+import com.example.thecoffee.order.model.Cart
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
+interface ConfirmOrderBillFragmentListener{
+    fun onBottomSheetClear()
+}
 
-class ConfirmOrderBillFragment : Fragment() {
+class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
     private lateinit var binding: FragmentConfirmOrderBillBinding
+    private var dataBill = emptyList<Cart>()
+    var listener: ConfirmOrderBillFragmentListener? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val jsonListCartItem = arguments?.getString("dataBill")
+        val type = object : TypeToken<List<Cart>>() {}.type
+        val gson = Gson()
+        dataBill = gson.fromJson(jsonListCartItem, type)
     }
 
     override fun onCreateView(
@@ -28,5 +41,43 @@ class ConfirmOrderBillFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.closeBtn.setOnClickListener {
+            dismiss()
+        }
+
+        binding.clearBill.setOnClickListener {
+            val sharedPreferences = requireContext().getSharedPreferences(
+                "cart",
+                Context.MODE_PRIVATE
+            )
+            val builder = AlertDialog.Builder(context)
+            builder.setCancelable(false)
+            builder.setTitle("Xác nhận")
+            builder.setMessage("Xóa toàn bộ sản phẩm đã chọn khỏi đơn hàng này của bạn?")
+                .setPositiveButton("Xóa") { dialog, id ->
+
+                    sharedPreferences.edit()
+                        .apply {
+                            clear()
+                        }.apply()
+
+                    (dataBill as MutableList).removeAll(dataBill)
+
+                    dismiss()
+                    listener?.onBottomSheetClear()
+
+                }
+                .setNegativeButton("Hủy") { dialog, id ->
+                    dialog.cancel()
+                }
+            val alertDialog = builder.create()
+            alertDialog.show()
+        }
+
+
     }
+
+
+
 }
