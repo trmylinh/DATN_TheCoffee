@@ -2,14 +2,20 @@ package com.example.thecoffee.order.view
 
 import android.app.AlertDialog
 import android.content.Context
+import android.graphics.Canvas
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.thecoffee.databinding.FragmentConfirmOrderBillBinding
+import com.example.thecoffee.order.adapter.ItemChosenBillRecyclerAdapter
 import com.example.thecoffee.order.model.Cart
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -21,6 +27,8 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
     private lateinit var binding: FragmentConfirmOrderBillBinding
     private var dataBill = emptyList<Cart>()
     var listener: ConfirmOrderBillFragmentListener? = null
+    private var priceItems: Long = 0
+    private lateinit var adapter: ItemChosenBillRecyclerAdapter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,8 +83,27 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
             alertDialog.show()
         }
 
+        updateUIBill()
+
+
 
     }
+
+    private fun updateUIBill(){
+        priceItems = 0
+        for (item in dataBill) {
+            priceItems += item.totalPrice!!
+        }
+        binding.itemsPrice.text = "${String.format("%,d", priceItems)}đ"
+
+        // recycler view items chosen
+        adapter = ItemChosenBillRecyclerAdapter(dataBill)
+        binding.rvItemChoosen.adapter = adapter
+        binding.rvItemChoosen.layoutManager = LinearLayoutManager(
+            requireContext(), LinearLayoutManager.VERTICAL, false
+        )
+    }
+
 
 
 

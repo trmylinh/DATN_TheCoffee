@@ -152,6 +152,12 @@ dependencies {
     //gson
     implementation("com.google.code.gson:gson:2.8.5")
 
+    // swipe refresh layout
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+
+    // swipe view
+    implementation("com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.1")
+
 
 
 }
