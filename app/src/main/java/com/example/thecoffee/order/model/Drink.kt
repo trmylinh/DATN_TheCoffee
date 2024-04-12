@@ -11,7 +11,8 @@ data class Drink (
     val price: Int? = null,
     val discount: Int? = null,
     val categoryId: String? = null,
-    var countTopping: Int = 0
+    val size: List<Size>? = emptyList(),
+    val topping: List<Topping>? = emptyList()
 ): Serializable {
 
 }

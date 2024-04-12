@@ -129,6 +129,7 @@
 
 <!--            size-->
             <LinearLayout
+                android:id="@+id/view_size"
                 android:orientation="vertical"
                 android:background="@color/white_900"
                 android:layout_marginTop="@dimen/_10sdp"
@@ -151,82 +152,16 @@
                     android:layout_marginStart="@dimen/_10sdp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
-                <RelativeLayout
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewItemSize"
                     android:layout_margin="@dimen/_10sdp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <RadioGroup
-                        android:id="@+id/radio_group"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <RadioButton
-                            android:id="@+id/radio_big"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:paddingStart="@dimen/_5sdp"
-                            android:text="Lớn"
-                            android:textColor="@color/black_900"
-                            android:textSize="@dimen/_13sdp" />
-
-                        <RadioButton
-                            android:id="@+id/radio_regular"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:checked="true"
-                            android:paddingStart="@dimen/_5sdp"
-                            android:text="Vừa"
-                            android:textColor="@color/black_900"
-                            android:textSize="@dimen/_13sdp" />
-
-                        <RadioButton
-                            android:id="@+id/radio_small"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:paddingStart="@dimen/_5sdp"
-                            android:text="Nhỏ"
-                            android:textColor="@color/black_900"
-                            android:textSize="@dimen/_13sdp" />
-                    </RadioGroup>
-                    <TextView
-                        android:id="@+id/price_size_big"
-                        android:text="55.000d"
-                        android:textColor="@color/black_900"
-                        android:textSize="@dimen/_13sdp"
-                        android:layout_marginTop="@dimen/_10sdp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                    <TextView
-                        android:id="@+id/price_size_regular"
-                        android:layout_below="@id/price_size_big"
-                        android:text="55.000d"
-                        android:textColor="@color/black_900"
-                        android:textSize="@dimen/_13sdp"
-                        android:layout_marginTop="@dimen/_19sdp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                    <TextView
-                        android:id="@+id/price_size_small"
-                        android:layout_below="@id/price_size_regular"
-                        android:text="55.000d"
-                        android:textColor="@color/black_900"
-                        android:textSize="@dimen/_13sdp"
-                        android:layout_marginTop="@dimen/_20sdp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                </RelativeLayout>
+                    android:layout_height="wrap_content"/>
             </LinearLayout>
 
 <!--            topping-->
             <LinearLayout
+                android:id="@+id/view_topping"
                 android:orientation="vertical"
                 android:background="@color/white_900"
                 android:layout_marginTop="@dimen/_10sdp"
@@ -282,7 +217,7 @@
                     android:id="@+id/edtTextNote"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/edittext_border_selector"
+                    android:background="@drawable/custom_default_border"
                     android:layout_marginVertical="@dimen/_10sdp"
                     android:layout_marginHorizontal="@dimen/_10sdp"
                     android:inputType="text"
@@ -359,7 +294,7 @@
             android:clickable="true"
             android:focusable="true">
             <TextView
-                android:text="Chọn ~"
+                android:text="Chọn •"
                 android:layout_marginEnd="@dimen/_5sdp"
                 android:textColor="@color/white_900"
                 android:textSize="@dimen/_15sdp"
