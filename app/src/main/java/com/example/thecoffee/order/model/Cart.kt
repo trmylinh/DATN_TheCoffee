@@ -6,10 +6,10 @@ data class Cart (
     // item - product -> drink(size, topping di kem)
     // sluong
     // tong tien
-    val totalPrice: Long?,
-    val quantity: Int?,
-    val drinkName: String?,
-    val drinkSize: String?,
-    val drinkTopping: List<String>?,
-    val note: String?
+    val totalPrice: Long? = null,
+    val quantity: Int? = null,
+    val drinkName: String? = null,
+    val drinkSize: String? = null,
+    val drinkTopping: List<String>? = emptyList(),
+    val note: String? = null
 )

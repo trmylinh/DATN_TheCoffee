@@ -47,6 +47,8 @@ class ItemChosenBillRecyclerAdapter(
 
         init {
             swipeRevealLayout = binding.swipeLayout
+
+            
         }
 
     }
@@ -64,7 +66,7 @@ class ItemChosenBillRecyclerAdapter(
     override fun onBindViewHolder(holder: ItemChosenBillViewHolder, position: Int) {
         holder.bind(list[position])
         viewBinderHelper.setOpenOnlyOne(true)
-        viewBinderHelper.bind(holder.swipeRevealLayout, list[position].drinkName)
+        viewBinderHelper.bind(holder.swipeRevealLayout, (position to list[position].drinkName).toString())
 
     }
 

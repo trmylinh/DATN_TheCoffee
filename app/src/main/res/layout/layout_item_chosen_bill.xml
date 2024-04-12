@@ -72,7 +72,7 @@
             android:layout_width="@dimen/_20sdp"
             android:layout_height="@dimen/_20sdp"/>
         <LinearLayout
-            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_margin="@dimen/_10sdp"
             android:orientation="vertical"
             android:layout_weight="1"
             android:layout_width="0dp"
@@ -125,54 +125,3 @@
             android:layout_height="wrap_content"/>
     </LinearLayout>
 </com.chauthai.swipereveallayout.SwipeRevealLayout>
-
-<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--android:orientation="horizontal"-->
-<!--android:layout_width="wrap_content"-->
-<!--android:layout_height="wrap_content">-->
-<!--<LinearLayout-->
-<!--    android:orientation="vertical"-->
-<!--    android:backgroundTint="@color/grey_800"-->
-<!--    android:background="@drawable/round_corner"-->
-<!--    android:paddingVertical="@dimen/_10sdp"-->
-<!--    android:paddingHorizontal="@dimen/_12sdp"-->
-<!--    android:layout_marginRight="@dimen/_5sdp"-->
-<!--    android:layout_width="wrap_content"-->
-<!--    android:layout_height="wrap_content">-->
-<!--    <ImageView-->
-<!--        android:layout_gravity="center"-->
-<!--        android:src="@drawable/icon_edit_white"-->
-<!--        android:layout_width="@dimen/_15sdp"-->
-<!--        android:layout_height="@dimen/_15sdp"/>-->
-<!--    <TextView-->
-<!--        android:text="Sửa"-->
-<!--        android:layout_gravity="center"-->
-<!--        android:textColor="@color/white_900"-->
-<!--        android:textSize="@dimen/_10sdp"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"/>-->
-<!--</LinearLayout>-->
-
-<!--<LinearLayout-->
-<!--    android:orientation="vertical"-->
-<!--    android:paddingVertical="@dimen/_10sdp"-->
-<!--    android:paddingHorizontal="@dimen/_12sdp"-->
-<!--    android:backgroundTint="@color/red_900"-->
-<!--    android:background="@drawable/round_corner"-->
-<!--    android:layout_width="wrap_content"-->
-<!--    android:layout_height="wrap_content">-->
-<!--    <ImageView-->
-<!--        android:src="@drawable/icon_delete"-->
-<!--        android:layout_gravity="center"-->
-<!--        android:layout_width="@dimen/_15sdp"-->
-<!--        android:layout_height="@dimen/_15sdp"/>-->
-<!--    <TextView-->
-<!--        android:text="Xóa"-->
-<!--        android:layout_gravity="center"-->
-<!--        android:textColor="@color/white_900"-->
-<!--        android:textSize="@dimen/_10sdp"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"/>-->
-<!--</LinearLayout>-->
-
-<!--</LinearLayout>-->

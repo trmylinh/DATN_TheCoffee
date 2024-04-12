@@ -17,7 +17,7 @@ import com.example.thecoffee.order.model.Drink
 import com.example.thecoffee.order.adapter.ItemSizeRecyclerAdapter
 import com.example.thecoffee.order.adapter.ItemSizeRecyclerInterface
 import com.example.thecoffee.order.model.Cart
-import com.example.thecoffee.order.viewmodel.CartViewModel
+import com.example.thecoffee.order.viewmodel.BillViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
@@ -29,7 +29,7 @@ interface BottomSheetListener {
 
 class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
     private lateinit var binding: FragmentItemDrinkDetailBinding
-    private lateinit var cartViewModel: CartViewModel
+    private lateinit var cartViewModel: BillViewModel
     private lateinit var drinkDetail: Drink
     private var totalPrice: Long = 0
     private var amount = 1

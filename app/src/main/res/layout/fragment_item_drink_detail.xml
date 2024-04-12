@@ -294,7 +294,7 @@
             android:clickable="true"
             android:focusable="true">
             <TextView
-                android:text="Chọn ~"
+                android:text="Chọn •"
                 android:layout_marginEnd="@dimen/_5sdp"
                 android:textColor="@color/white_900"
                 android:textSize="@dimen/_15sdp"
