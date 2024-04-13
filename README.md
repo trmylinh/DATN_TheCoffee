@@ -16,5 +16,17 @@
 4. Connect your phone or create a new virtual device following on screen instruction
 
 ## 🖼️ Screenshots
+### Home 
+<img src="https://github.com/trmylinh/DATN_TheCoffee/assets/89790450/9c490fdb-255b-45dd-96de-1a3e5b3ed6e2" title="TS" alt="React" width="150" height="300"/>&nbsp;
+<img src="https://github.com/trmylinh/DATN_TheCoffee/assets/89790450/768fb81d-6a40-4fad-b7f1-0778041eaa06" title="TS" alt="React" width="150" height="300"/>&nbsp;
 
+### Order
+<img src="https://github.com/trmylinh/DATN_TheCoffee/assets/89790450/2c332fd7-a0df-4236-8f23-29edbff62ebd" title="TS" alt="React" width="150" height="300"/>&nbsp;
+<img src="https://github.com/trmylinh/DATN_TheCoffee/assets/89790450/405b2cdd-9e36-42bc-bf07-348d6ed1941a" title="TS" alt="React" width="150" height="300"/>&nbsp;
+<img src="https://github.com/trmylinh/DATN_TheCoffee/assets/89790450/b0596a54-b2e6-4827-aa4a-c557e64c2c38" title="TS" alt="React" width="150" height="300"/>&nbsp;
+<img src="https://github.com/trmylinh/DATN_TheCoffee/assets/89790450/d37771f2-a756-417e-b82b-984674524f7b" title="TS" alt="React" width="150" height="300"/>&nbsp;
+
+### Voucher
+<img src="https://github.com/trmylinh/DATN_TheCoffee/assets/89790450/b8dd80c2-e72d-4057-94d3-912a410eb604" title="TS" alt="React" width="150" height="300"/>&nbsp;
+<img src="https://github.com/trmylinh/DATN_TheCoffee/assets/89790450/c8a1145b-97d0-4143-9a78-198ee6afb636" title="TS" alt="React" width="150" height="300"/>&nbsp;
 

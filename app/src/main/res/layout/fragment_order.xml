@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/black_50"
     android:orientation="vertical"
-    tools:context=".views.OrderFragment">
+    tools:context=".order.view.OrderFragment">
 
     <!--    header-->
     <RelativeLayout
@@ -83,25 +83,110 @@
             android:layout_centerInParent="true"
             android:visibility="gone" />
 
+        <LinearLayout
+            android:id="@+id/view_cart_address"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:background="@drawable/round_corner"
+            android:backgroundTint="@color/white_900"
+            android:elevation="@dimen/_20sdp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/view_address"
+                android:orientation="vertical"
+                android:layout_gravity="center_vertical"
+                android:layout_marginVertical="@dimen/_5sdp"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:layout_weight="1.8"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true">
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:id="@+id/icon_delivery"
+                        android:src="@drawable/icon_delivery"
+                        android:layout_gravity="center_vertical"
+                        android:layout_width="@dimen/_15sdp"
+                        android:layout_height="@dimen/_15sdp"/>
+                    <TextView
+                        android:text="Giao đến"
+                        android:textSize="@dimen/_8sdp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:textColor="@color/grey_800"
+                        android:textStyle="bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/text_address"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:text="2 P.Pham Van Bach, Yen Hoa, Cau Giay, Ha Noi"
+                    android:textColor="@color/black_900"
+                    android:textSize="@dimen/_9sdp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:scrollHorizontally="false"
+                    android:layout_gravity="center_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/view_cart"
+                android:orientation="horizontal"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:background="@drawable/round_corner"
+                android:paddingVertical="@dimen/_5sdp"
+                android:backgroundTint="@color/orange_700"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:visibility="gone">
+                <TextView
+                    android:id="@+id/amount"
+                    android:text="1"
+                    android:textStyle="bold"
+                    android:textColor="@color/orange_900"
+                    android:textSize="@dimen/_10sdp"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    android:gravity="center"
+                    android:background="@drawable/circle_drawable"
+                    android:backgroundTint="@color/orange_100"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/total_price"
+                    android:text="759.000d"
+                    android:textStyle="bold"
+                    android:textColor="@color/white_900"
+                    android:textSize="@dimen/_10sdp"
+                    android:gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"/>
+                <ImageView
+                    android:src="@drawable/icon_arrow_right_white"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="@dimen/_5sdp"
+                    android:layout_width="@dimen/_8sdp"
+                    android:layout_height="@dimen/_8sdp"/>
+
+            </LinearLayout>
+        </LinearLayout>
+
     </RelativeLayout>
 
-<!--    <androidx.core.widget.NestedScrollView-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="@dimen/_2sdp"-->
-<!--        android:scrollbarSize="0dp"-->
-<!--        android:scrollbars="vertical">-->
-
-<!--        <LinearLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:orientation="vertical">-->
-
-<!--            -->
-
-<!--        </LinearLayout>-->
-
-
-<!--    </androidx.core.widget.NestedScrollView>-->
 
 </LinearLayout>

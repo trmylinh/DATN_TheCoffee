@@ -7,27 +7,27 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.thecoffee.views.HomeFragment"
+        android:name="com.example.thecoffee.home.view.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/orderFragment"
-        android:name="com.example.thecoffee.views.OrderFragment"
+        android:name="com.example.thecoffee.order.view.OrderFragment"
         android:label="fragment_order"
         tools:layout="@layout/fragment_order"/>
     <fragment
         android:id="@+id/storeFragment"
-        android:name="com.example.thecoffee.views.StoreFragment"
+        android:name="com.example.thecoffee.store.view.StoreFragment"
         android:label="fragment_store"
         tools:layout="@layout/fragment_store" />
     <fragment
         android:id="@+id/voucherFragment"
-        android:name="com.example.thecoffee.views.VoucherFragment"
+        android:name="com.example.thecoffee.voucher.view.VoucherFragment"
         android:label="fragment_voucher"
         tools:layout="@layout/fragment_voucher" />
     <fragment
         android:id="@+id/otherFragment"
-        android:name="com.example.thecoffee.views.OtherFragment"
+        android:name="com.example.thecoffee.other.OtherFragment"
         android:label="fragment_other"
         tools:layout="@layout/fragment_other">
         <action
@@ -40,7 +40,7 @@
 
     <fragment
         android:id="@+id/splashFragment"
-        android:name="com.example.thecoffee.views.SplashFragment"
+        android:name="com.example.thecoffee.home.view.SplashFragment"
         android:label="fragment_splash"
         tools:layout="@layout/fragment_splash">
         <action
@@ -51,7 +51,7 @@
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.thecoffee.views.LoginFragment"
+        android:name="com.example.thecoffee.other.login.view.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login">
         <action
@@ -62,14 +62,16 @@
     </fragment>
     <fragment
         android:id="@+id/userInfoFragment"
-        android:name="com.example.thecoffee.views.UserInfoFragment"
+        android:name="com.example.thecoffee.other.user.view.UserInfoFragment"
         android:label="fragment_user_info"
         tools:layout="@layout/fragment_user_info" />
     <fragment
         android:id="@+id/itemDrinkDetailFragment"
-        android:name="com.example.thecoffee.views.ItemDrinkDetailFragment"
+        android:name="com.example.thecoffee.order.view.ItemDrinkDetailFragment"
         android:label="fragment_item_drink_detail"
         tools:layout="@layout/fragment_item_drink_detail">
-
+        <action
+            android:id="@+id/action_itemDrinkDetailFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
     </fragment>
 </navigation>

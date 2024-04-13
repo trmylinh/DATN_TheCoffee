@@ -6,7 +6,7 @@
     <data>
         <variable
             name="userInfo"
-            type="com.example.thecoffee.models.User" />
+            type="com.example.thecoffee.other.user.model.User" />
 
     </data>
 
@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white_900"
-        tools:context=".views.UserInfoFragment">
+        tools:context=".other.user.view.UserInfoFragment">
 
         <!--    header-->
         <LinearLayout

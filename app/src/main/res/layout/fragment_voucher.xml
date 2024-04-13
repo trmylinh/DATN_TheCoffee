@@ -6,13 +6,13 @@
     android:layout_height="match_parent"
     android:background="@color/grey_200"
     android:orientation="vertical"
-    tools:context=".views.VoucherFragment">
+    tools:context=".voucher.view.VoucherFragment">
 
     <!--    header-->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/brown_200">
+        android:background="@color/brown_100">
 
         <TextView
             android:id="@+id/title_category"
@@ -86,7 +86,6 @@
                 <TextView
                     android:text="@string/beans"
                     android:textSize="@dimen/_13sdp"
-                    android:textStyle="bold"
                     android:layout_gravity="center_vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
@@ -110,7 +109,6 @@
                 <TextView
                     android:text="@string/historyBean"
                     android:textSize="@dimen/_13sdp"
-                    android:textStyle="bold"
                     android:layout_gravity="center_vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
@@ -186,7 +184,4 @@
             </RelativeLayout>
         </LinearLayout>
     </ScrollView>
-
-
-
 </LinearLayout>

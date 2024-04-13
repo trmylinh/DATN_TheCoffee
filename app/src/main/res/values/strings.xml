@@ -53,4 +53,5 @@
     <string name="my_voucher">Voucher của tôi</string>
     <string name="historyBean">Lịch sử BEAN</string>
     <string name="my_voucher_layout">Phiếu ưu đãi của bạn</string>
+    <string name="space_line">- - - - - - - - - - - - - - - -</string>
 </resources>
