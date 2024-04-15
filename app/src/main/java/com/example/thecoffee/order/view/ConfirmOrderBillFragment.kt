@@ -87,7 +87,7 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
             builder.setCancelable(false)
             builder.setTitle("Xác nhận")
             builder.setMessage("Xóa toàn bộ sản phẩm đã chọn khỏi đơn hàng này của bạn?")
-                .setPositiveButton("Xóa") { dialog, id ->
+                .setPositiveButton("Xóa") { _, _ ->
 
                     sharedPreferences.edit()
                         .apply {
@@ -100,7 +100,7 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
                     listener?.onBottomSheetClear()
 
                 }
-                .setNegativeButton("Hủy") { dialog, id ->
+                .setNegativeButton("Hủy") { dialog, _ ->
                     dialog.cancel()
                 }
             val alertDialog = builder.create()
