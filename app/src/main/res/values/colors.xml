@@ -20,10 +20,17 @@
     <color name="brown_200">#C3A48F</color>
     <color name="red_900">#C5030C</color>
     <color name="green_500">#00C61E</color>
+    <color name="green_900">#1B5E20</color>
     <color name="green_300">#77D874</color>
     <color name="green_200">#9EE39B</color>
     <color name="green_100">#C7EEC4</color>
     <color name="blue_900">#0000D6</color>
+    <color name="light_blue_100">#B3E5FC</color>
+    <color name="light_blue_900">#01579B</color>
+    <color name="yellow_100">#FFF9C4</color>
+    <color name="deep_purple_100">#D1C4E9</color>
+    <color name="pink_100">#F8BBD0</color>
+    <color name="pink_900">#880E4F</color>
 
 
 </resources>
