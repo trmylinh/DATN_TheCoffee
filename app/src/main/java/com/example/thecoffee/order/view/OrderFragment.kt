@@ -1,15 +1,12 @@
 package com.example.thecoffee.order.view
 
-import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -45,7 +42,7 @@ class OrderFragment : Fragment() {
     private lateinit var adapterListDrink: ItemDrinkCategoryRecyclerAdapter
     private val bottomSheetDetail = ItemDrinkDetailFragment()
     private val bottomSheetConfirmBill = ConfirmOrderBillFragment()
-    private val listCartItem = mutableListOf<Cart>()
+    private var listCartItem = mutableListOf<Cart>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -183,16 +180,42 @@ class OrderFragment : Fragment() {
 
                                 // chuyen doi JSON -> cart object
                                 val itemCart: Cart = gson.fromJson(json, type)
-                                listCartItem.add(itemCart)
+
+                                // case -> add trung spham
+                                var found = false
+                                for (item in listCartItem){
+                                    if(itemCart == item){
+                                        found = true
+                                        break
+                                    }
+                                }
+
+                                // xử lý tăng số lượng của spham trùng
+                                if(found){
+                                    val updateList = listCartItem.map { item ->
+                                        if(item == itemCart){
+                                            item.copy(
+                                                totalPrice = item.totalPrice?.plus(itemCart.totalPrice!!),
+                                                quantity = item.quantity?.plus(itemCart.quantity!!))
+                                        } else {
+                                            item
+                                        }
+                                    }
+                                    listCartItem = updateList.toMutableList()
+                                } else {
+                                    listCartItem.add(itemCart)
+                                }
 
 
                                 if (listCartItem.isNotEmpty()) {
                                     var total: Long = 0
+                                    var countItem: Long = 0
                                     for (item in listCartItem) {
                                         total += item.totalPrice!!
+                                        countItem += item.quantity!!
                                     }
                                     binding.viewCart.visibility = View.VISIBLE
-                                    binding.amount.text = listCartItem.size.toString()
+                                    binding.amount.text = countItem.toString()
                                     binding.totalPrice.text = "${String.format("%,d", total)}đ"
 
                                     binding.viewCart.setOnClickListener {

@@ -105,7 +105,8 @@ class BillRepository(_application: Application) {
                     "address" to bill.address!!,
                     "drinks" to bill.drinks!!,
                     "status" to bill.status!!,
-                    "shipFee" to bill.shipFee!!
+                    "shipFee" to bill.shipFee!!,
+                    "time" to bill.time!!
                 )
 
                 (bills as MutableList).add(itemBill)
