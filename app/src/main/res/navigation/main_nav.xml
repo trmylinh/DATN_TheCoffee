@@ -36,6 +36,9 @@
         <action
             android:id="@+id/action_otherFragment_to_userInfoFragment"
             app:destination="@id/userInfoFragment" />
+        <action
+            android:id="@+id/action_otherFragment_to_homeAdminFragment"
+            app:destination="@id/homeAdminFragment" />
     </fragment>
 
     <fragment
@@ -59,9 +62,6 @@
             app:destination="@id/homeFragment"
             app:popUpTo="@id/loginFragment"
             app:popUpToInclusive="true" />
-        <action
-            android:id="@+id/action_loginFragment_to_homeAdminFragment"
-            app:destination="@id/homeAdminFragment" />
     </fragment>
     <fragment
         android:id="@+id/userInfoFragment"
@@ -79,7 +79,7 @@
     </fragment>
     <fragment
         android:id="@+id/homeAdminFragment"
-        android:name="com.example.thecoffee.admin.view.HomeAdminFragment"
+        android:name="com.example.thecoffee.admin.home.view.HomeAdminFragment"
         android:label="fragment_home_admin"
         tools:layout="@layout/fragment_home_admin" />
 </navigation>

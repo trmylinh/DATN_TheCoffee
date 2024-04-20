@@ -21,13 +21,24 @@ class MainActivity : AppCompatActivity() {
         NavigationUI.setupWithNavController(binding.bottomNavView, navController)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            binding.bottomNavView.visibility = if (
-                destination.id == R.id.splashFragment
-                || destination.id == R.id.loginFragment
-                || destination.id == R.id.itemDrinkDetailFragment)
-                View.GONE else View.VISIBLE
+            binding.bottomNavView.visibility =
+                when (destination.id) {
+                    R.id.splashFragment,
+                    R.id.loginFragment,
+                    R.id.itemDrinkDetailFragment,
+                    R.id.homeAdminFragment
+                    -> View.GONE
+                else -> View.VISIBLE
+            }
         }
 
     }
+
+//    if (
+//    destination.id == R.id.splashFragment
+//    || destination.id == R.id.loginFragment
+//    || destination.id == R.id.itemDrinkDetailFragment
+//    || destination.id == R.id.homeAdminFragment)
+//    View.GONE else View.VISIBLE
 }
 

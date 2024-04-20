@@ -1,4 +1,4 @@
-package com.example.thecoffee.admin.view
+package com.example.thecoffee.admin.manage.order.view
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -14,10 +14,10 @@ private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
- * Use the [HomeAdminFragment.newInstance] factory method to
+ * Use the [ManageOrderAdminFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class HomeAdminFragment : Fragment() {
+class ManageOrderAdminFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -35,7 +35,7 @@ class HomeAdminFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home_admin, container, false)
+        return inflater.inflate(R.layout.fragment_manage_order_admin, container, false)
     }
 
     companion object {
@@ -45,12 +45,12 @@ class HomeAdminFragment : Fragment() {
          *
          * @param param1 Parameter 1.
          * @param param2 Parameter 2.
-         * @return A new instance of fragment HomeAdminFragment.
+         * @return A new instance of fragment ManageOrderAdminFragment.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            HomeAdminFragment().apply {
+            ManageOrderAdminFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
                     putString(ARG_PARAM2, param2)

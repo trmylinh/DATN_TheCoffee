@@ -30,6 +30,7 @@ class LoginFragment : Fragment() {
     private lateinit var authenticationViewModel: AuthenticationViewModel
     companion object {
         private const val RC_SIGN_IN = 9001
+        private const val USERID_ADMIN = "wFBO2VxN5lfkGBCndiH4rdT9wX33"
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -113,8 +114,7 @@ class LoginFragment : Fragment() {
                 user ->
             loggedCheck.observe(this){
                 loading(false)
-                    Log.e("it", it.toString())
-                    findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
             }
         }
     }
