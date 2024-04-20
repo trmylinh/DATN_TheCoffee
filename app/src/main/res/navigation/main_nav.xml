@@ -81,5 +81,14 @@
         android:id="@+id/homeAdminFragment"
         android:name="com.example.thecoffee.admin.home.view.HomeAdminFragment"
         android:label="fragment_home_admin"
-        tools:layout="@layout/fragment_home_admin" />
+        tools:layout="@layout/fragment_home_admin" >
+        <action
+            android:id="@+id/action_homeAdminFragment_to_manageOrderAdminFragment"
+            app:destination="@id/manageOrderAdminFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/manageOrderAdminFragment"
+        android:name="com.example.thecoffee.admin.manage.order.view.ManageOrderAdminFragment"
+        android:label="fragment_manage_order_admin"
+        tools:layout="@layout/fragment_manage_order_admin" />
 </navigation>

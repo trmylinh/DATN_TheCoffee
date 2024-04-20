@@ -32,7 +32,7 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
     private lateinit var cartViewModel: BillViewModel
     private lateinit var drinkDetail: Drink
     private var totalPrice: Long = 0
-    private var amount = 1
+    private var amount: Long = 1
     private var listOption = mutableMapOf<String, Long>()
     private var auth = FirebaseAuth.getInstance()
     private var listTopping = emptyList<String>()

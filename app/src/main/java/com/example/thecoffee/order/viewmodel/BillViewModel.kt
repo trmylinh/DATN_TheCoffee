@@ -12,14 +12,24 @@ import kotlinx.coroutines.withContext
 class BillViewModel (application: Application) : AndroidViewModel(application) {
     private var repository: BillRepository
     private val _loadingResult: MutableLiveData<Boolean>
+    private val _loadingBillsResult: MutableLiveData<Boolean>
+    private var bills: MutableLiveData<ArrayList<Bill>>
 
     init {
         repository = BillRepository(application)
         _loadingResult = repository.loadingResult
+        _loadingBillsResult = repository.loadingBillsResult
+        bills = repository.getBills
     }
 
     val loadingResult: MutableLiveData<Boolean>
     get() = _loadingResult
+
+    val loadingBillsResult: MutableLiveData<Boolean>
+        get() = _loadingBillsResult
+
+    val getBills: MutableLiveData<ArrayList<Bill>>
+        get() = bills
 
     fun addToCart(cart: Cart){
         repository.addToCart(cart)
@@ -29,6 +39,10 @@ class BillViewModel (application: Application) : AndroidViewModel(application) {
 //        _loadingResult.postValue(true)
         repository.order(bill)
 //        _loadingResult.postValue(false)
+    }
+
+    fun getAllBils(){
+        repository.getAllBills()
     }
 
 }

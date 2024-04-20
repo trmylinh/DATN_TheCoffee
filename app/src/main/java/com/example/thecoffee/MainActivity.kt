@@ -26,19 +26,13 @@ class MainActivity : AppCompatActivity() {
                     R.id.splashFragment,
                     R.id.loginFragment,
                     R.id.itemDrinkDetailFragment,
-                    R.id.homeAdminFragment
+                    R.id.homeAdminFragment,
+                    R.id.manageOrderAdminFragment
                     -> View.GONE
                 else -> View.VISIBLE
             }
         }
 
     }
-
-//    if (
-//    destination.id == R.id.splashFragment
-//    || destination.id == R.id.loginFragment
-//    || destination.id == R.id.itemDrinkDetailFragment
-//    || destination.id == R.id.homeAdminFragment)
-//    View.GONE else View.VISIBLE
 }
 
