@@ -80,6 +80,11 @@ class OtherFragment : Fragment() {
                 findNavController().navigate(R.id.action_otherFragment_to_homeAdminFragment)
             }
 
+            //history - oder
+            binding.layoutHistoryOrder.setOnClickListener {
+                navController.navigate(R.id.action_otherFragment_to_historyOrderFragment)
+            }
+
         } else {
             binding.viewAdmin.visibility = View.GONE
             // user chua login -> login
@@ -92,6 +97,10 @@ class OtherFragment : Fragment() {
 
             // user-info if user not log in
             binding.layoutUserInfo.setOnClickListener {
+                navController.navigate(R.id.action_otherFragment_to_loginFragment)
+            }
+
+            binding.layoutHistoryOrder.setOnClickListener {
                 navController.navigate(R.id.action_otherFragment_to_loginFragment)
             }
         }

@@ -1,12 +1,14 @@
 package com.example.thecoffee.order.view
 
 import android.graphics.Paint
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.thecoffee.R
@@ -16,11 +18,13 @@ import com.example.thecoffee.databinding.FragmentItemDrinkDetailBinding
 import com.example.thecoffee.order.model.Drink
 import com.example.thecoffee.order.adapter.ItemSizeRecyclerAdapter
 import com.example.thecoffee.order.adapter.ItemSizeRecyclerInterface
+import com.example.thecoffee.order.model.Bill
 import com.example.thecoffee.order.model.Cart
 import com.example.thecoffee.order.viewmodel.BillViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
+import java.util.UUID
 
 
 interface BottomSheetListener {
@@ -29,7 +33,6 @@ interface BottomSheetListener {
 
 class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
     private lateinit var binding: FragmentItemDrinkDetailBinding
-    private lateinit var cartViewModel: BillViewModel
     private lateinit var drinkDetail: Drink
     private var totalPrice: Long = 0
     private var amount: Long = 1
@@ -80,7 +83,6 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
 
         binding.viewAddBtn.setOnClickListener {
             if (auth.currentUser != null) {
-
                 val cart = Cart((totalPrice * amount), amount, drinkDetail.name, drinkSize, listTopping,
                     note = if(binding.edtTextNote.text.isEmpty()) "" else binding.edtTextNote.text.toString())
                 addToCartSharedPrefer(cart)
@@ -103,7 +105,6 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
 
 
     private fun getDataDetail() {
-        Log.e("detail", drinkDetail.toString())
         listOption["size"] = drinkDetail.price!!.toLong()
         updateTotalPriceText()
 
@@ -199,6 +200,10 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
         drinkSize = ""
         listTopping = emptyList()
         listOption.clear()
+    }
+
+    private fun generateRandomId(): String {
+        return "${UUID.randomUUID()}"
     }
 
 

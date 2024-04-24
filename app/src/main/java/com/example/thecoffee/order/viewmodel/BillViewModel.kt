@@ -12,21 +12,35 @@ import kotlinx.coroutines.withContext
 class BillViewModel (application: Application) : AndroidViewModel(application) {
     private var repository: BillRepository
     private val _loadingResult: MutableLiveData<Boolean>
+    private val _loadingBillsUserResult: MutableLiveData<Boolean>
     private val _loadingBillsResult: MutableLiveData<Boolean>
+    private val _loadingBillUserByIdResult: MutableLiveData<Boolean>
+    private var billsUser: MutableLiveData<ArrayList<Bill>>
     private var bills: MutableLiveData<ArrayList<Bill>>
+    private var billUserById: MutableLiveData<Bill>
 
     init {
         repository = BillRepository(application)
         _loadingResult = repository.loadingResult
+        _loadingBillsUserResult = repository.loadingBillsUserResult
         _loadingBillsResult = repository.loadingBillsResult
+        _loadingBillUserByIdResult = repository.loadingBillUserByIdResult
+        billsUser = repository.getBillsUser
         bills = repository.getBills
+        billUserById = repository.getBillUserById
     }
 
     val loadingResult: MutableLiveData<Boolean>
     get() = _loadingResult
 
+    val loadingBillsUserResult: MutableLiveData<Boolean>
+        get() = _loadingBillsUserResult
+
     val loadingBillsResult: MutableLiveData<Boolean>
         get() = _loadingBillsResult
+
+    val getBillsUser: MutableLiveData<ArrayList<Bill>>
+        get() = billsUser
 
     val getBills: MutableLiveData<ArrayList<Bill>>
         get() = bills
@@ -36,12 +50,18 @@ class BillViewModel (application: Application) : AndroidViewModel(application) {
     }
 
     fun order(bill: Bill) {
-//        _loadingResult.postValue(true)
         repository.order(bill)
-//        _loadingResult.postValue(false)
     }
 
-    fun getAllBils(){
+    fun getAllBillsUser(){
+        repository.getAllBillsByUser()
+    }
+
+    fun getBillUserById(id: String){
+        repository.getBillUserById(id)
+    }
+
+    fun getAllBills(){
         repository.getAllBills()
     }
 

@@ -27,7 +27,7 @@
            android:text="Quản lý đơn hàng"
            android:textColor="@color/black_900"
            android:textStyle="bold"
-           android:textSize="@dimen/_18sdp"
+           android:textSize="@dimen/_16sdp"
            android:layout_width="0dp"
            android:layout_weight="1"
            android:layout_height="wrap_content"/>

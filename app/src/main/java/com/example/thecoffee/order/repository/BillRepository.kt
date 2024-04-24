@@ -22,23 +22,43 @@ class BillRepository(_application: Application) {
     private var db: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
     private val _loadingResult: MutableLiveData<Boolean>
+    private val _loadingBillsUserResult: MutableLiveData<Boolean>
     private val _loadingBillsResult: MutableLiveData<Boolean>
-    private var bills: MutableLiveData<ArrayList<Bill>>
+    private val _loadingBillUserByIdResult: MutableLiveData<Boolean>
+    private var billsUser: MutableLiveData<ArrayList<Bill>>
+    private var bills: MutableLiveData<ArrayList<Bill>> // admin
+    private var billUserById: MutableLiveData<Bill>
     init {
         application = _application
         _loadingResult = MutableLiveData<Boolean>()
+        _loadingBillsUserResult = MutableLiveData<Boolean>()
         _loadingBillsResult = MutableLiveData<Boolean>()
+        _loadingBillUserByIdResult = MutableLiveData<Boolean>()
+        billsUser = MutableLiveData<ArrayList<Bill>>()
         bills = MutableLiveData<ArrayList<Bill>>()
+        billUserById = MutableLiveData<Bill>()
     }
 
     val loadingResult: MutableLiveData<Boolean>
         get() = _loadingResult
 
+    val loadingBillsUserResult: MutableLiveData<Boolean>
+        get() = _loadingBillsUserResult
+
     val loadingBillsResult: MutableLiveData<Boolean>
         get() = _loadingBillsResult
 
+    val loadingBillUserByIdResult: MutableLiveData<Boolean>
+        get() = _loadingBillUserByIdResult
+
+    val getBillsUser: MutableLiveData<ArrayList<Bill>>
+        get() = billsUser
+
     val getBills: MutableLiveData<ArrayList<Bill>>
         get() = bills
+
+    val getBillUserById: MutableLiveData<Bill>
+        get() = billUserById
 
     // add cart to firestore database
     fun addToCart(cart: Cart){
@@ -173,8 +193,9 @@ class BillRepository(_application: Application) {
 
     }
 
-    fun getAllBills(){
-        _loadingBillsResult.postValue(true)
+    // tat ca bill cua user
+    fun getAllBillsByUser(){
+        _loadingBillsUserResult.postValue(true)
         db.collection("Bills").document(auth.currentUser!!.uid)
             .get().addOnCompleteListener { task ->
                 if(task.isSuccessful && task.result != null){
@@ -185,7 +206,7 @@ class BillRepository(_application: Application) {
                         val id = element["id"] as String
                         val userId = element["userId"] as String
                         val address = element["address"] as String
-                        val status = element["status"] as String
+                        val status = element["status"] as Long
                         val shipFee = element["shipFee"] as Long
                         val time = element["time"] as String
                         val drinks = element["drinks"]  as List<*>
@@ -203,7 +224,96 @@ class BillRepository(_application: Application) {
                             drink.add(Cart(totalPrice, quantity, drinkName, drinkSize, drinkTopping, note))
                         }
                         bill.add(Bill(id, userId, address, drink, status, shipFee, time))
-//                        Log.e("bill", item["address"].toString())
+                    }
+
+                    billsUser.postValue(bill)
+                    _loadingBillsUserResult.postValue(false)
+                }
+            }
+    }
+
+    // bill cua  user theo tung idBill
+    fun getBillUserById(id: String){
+        _loadingBillUserByIdResult.postValue(true)
+        db.collection("Bills").document(auth.currentUser!!.uid)
+            .get()
+            .addOnCompleteListener { task ->
+                if(task.isSuccessful && task.isSuccessful){
+                    val data = task.result.data?.get("bill") as List<Map<*, *>>
+                    var bill = Bill()
+                    data.forEach { element->
+                        if(element["id"] == id){
+                            val userId = element["userId"] as String
+                            val address = element["address"] as String
+                            val status = element["status"] as Long
+                            val shipFee = element["shipFee"] as Long
+                            val time = element["time"] as String
+                            val drinks = element["drinks"]  as List<*>
+
+                            val drink = mutableListOf<Cart>()
+                            drinks.forEach { element ->
+                                val item = element as Map<*,*>
+                                val quantity = item["quantity"] as Long
+                                val drinkName = item["drinkName"] as String
+                                val totalPrice = item["totalPrice"] as Long
+                                val note = item["note"] as String
+                                val drinkSize = item["drinkSize"] as String
+                                val drinkTopping = item["drinkTopping"] as List<String>
+
+                                drink.add(Cart(totalPrice, quantity, drinkName, drinkSize, drinkTopping, note))
+                            }
+                            bill = Bill(id, userId, address, drink, status, shipFee, time)
+                        }
+                    }
+                    billUserById.postValue(bill)
+                    _loadingBillUserByIdResult.postValue(false)
+                }
+            }
+    }
+
+
+    // tat ca bill cua cua hang -> admin
+    fun getAllBills() {
+        _loadingBillsResult.postValue(true)
+        db.collection("Bills").get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful && task.result != null) {
+                    val bill = ArrayList<Bill>()
+                    for (document in task.result) {
+                        val data = document.get("bill") as List<Map<*, *>>
+
+                        data.forEach { element ->
+                            val id = element["id"] as String
+                            val userId = element["userId"] as String
+                            val address = element["address"] as String
+                            val status = element["status"] as Long
+                            val shipFee = element["shipFee"] as Long
+                            val time = element["time"] as String
+                            val drinks = element["drinks"] as List<*>
+
+                            val drink = mutableListOf<Cart>()
+                            drinks.forEach { element ->
+                                val item = element as Map<*, *>
+                                val quantity = item["quantity"] as Long
+                                val drinkName = item["drinkName"] as String
+                                val totalPrice = item["totalPrice"] as Long
+                                val note = item["note"] as String
+                                val drinkSize = item["drinkSize"] as String
+                                val drinkTopping = item["drinkTopping"] as List<String>
+
+                                drink.add(
+                                    Cart(
+                                        totalPrice,
+                                        quantity,
+                                        drinkName,
+                                        drinkSize,
+                                        drinkTopping,
+                                        note
+                                    )
+                                )
+                            }
+                            bill.add(Bill(id, userId, address, drink, status, shipFee, time))
+                        }
                     }
 
                     bills.postValue(bill)

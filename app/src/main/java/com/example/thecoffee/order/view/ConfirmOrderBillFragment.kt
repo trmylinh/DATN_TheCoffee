@@ -48,7 +48,6 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
     private var countItem: Long = 0
     private lateinit var adapter: ItemChosenBillRecyclerAdapter
 
-    private val ref: DatabaseReference = FirebaseDatabase.getInstance().reference
     private var auth = FirebaseAuth.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,10 +55,13 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
         val viewModelFactory = MyViewModelFactory(requireActivity().application)
         billViewModel = ViewModelProvider(this, viewModelFactory)[BillViewModel::class.java]
 
+        // data order -> confirm
         val jsonListCartItem = arguments?.getString("dataBill")
         val type = object : TypeToken<List<Cart>>() {}.type
         val gson = Gson()
         dataBill = gson.fromJson(jsonListCartItem, type)
+
+
     }
 
     override fun onCreateView(
@@ -119,20 +121,29 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
             listener?.onBottomSheetClear()
 
 //            dismiss()
-            binding.progressBar.visibility = View.VISIBLE
-            Handler().postDelayed({
+//            binding.progressBar.visibility = View.VISIBLE
+//            Handler().postDelayed({
+////                order()
+//                binding.progressBar.visibility = View.GONE
+//
+//                binding.saveInfo.visibility = View.GONE
+//                binding.viewBottom.visibility = View.GONE
+//                binding.clearBill.visibility = View.GONE
+//                binding.addMore.visibility = View.GONE
+//
+//                binding.viewAfterOrder.visibility = View.VISIBLE
+//                binding.title.text = "Trạng thái đơn hàng"
+//                binding.billCode.text = ""
+//            }, 3000)
+
+//            CoroutineScope(Dispatchers.Main).launch {
                 order()
-                binding.progressBar.visibility = View.GONE
 
-                binding.saveInfo.visibility = View.GONE
-                binding.viewBottom.visibility = View.GONE
-                binding.clearBill.visibility = View.GONE
-                binding.addMore.visibility = View.GONE
+//            }
 
-                binding.viewAfterOrder.visibility = View.VISIBLE
-                binding.title.text = "Trạng thái đơn hàng"
-            }, 3000)
         }
+
+
 
 
     }
@@ -164,16 +175,32 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
         val id: String = generateRandomId()
         val userId: String = auth.currentUser?.uid!!
         val address: String = "165 Cau Giay"
-        val status: String = "Dang cho xac nhan"
+        val status: Long = 0
         val shipFee: Long = 18000
         val time = SimpleDateFormat("HH:mm:ss dd/MM/yyyy").format(Calendar.getInstance().time)
 
-        billViewModel.order(Bill(id, userId, address, dataBill, status, shipFee, time))
+        billViewModel.order(Bill(id,userId, address, dataBill, status, shipFee, time))
+        billViewModel.loadingResult.observe(viewLifecycleOwner){loading ->
+            if(loading){
+                binding.progressBar.visibility = View.VISIBLE
+            } else {
+                binding.progressBar.visibility = View.GONE
+
+                binding.saveInfo.visibility = View.GONE
+                binding.viewBottom.visibility = View.GONE
+                binding.clearBill.visibility = View.GONE
+                binding.addMore.visibility = View.GONE
+
+                binding.viewAfterOrder.visibility = View.VISIBLE
+                binding.title.text = "Trạng thái đơn hàng"
+                binding.billCode.text = id
+            }
+        }
 
     }
 
     private fun generateRandomId(): String {
-        return ref.push().key.toString()
+        return "${UUID.randomUUID()}"
     }
 
 
