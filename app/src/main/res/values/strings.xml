@@ -62,4 +62,5 @@
     <string name="btn_status_confirm">Xác nhận</string>
     <string name="btn_status_delivery">Giao hàng</string>
     <string name="btn_status_done_delivery">Hoàn thành</string>
+    <string name="items">Sản phẩm</string>
 </resources>

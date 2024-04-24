@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.thecoffee.R
 import com.example.thecoffee.admin.manage.order.adapter.ManageItemBillAdapter
 import com.example.thecoffee.admin.manage.order.adapter.ManageItemBillAdapterInterface
+import com.example.thecoffee.admin.manage.order.view.ManageDetailOrderFragment
+import com.example.thecoffee.admin.manage.order.view.ManageDetailOrderFragmentListener
 import com.example.thecoffee.base.MyViewModelFactory
 import com.example.thecoffee.databinding.FragmentHistoryOrderBinding
 import com.example.thecoffee.databinding.FragmentManageOrderAdminBinding
@@ -29,6 +31,7 @@ class HistoryOrderFragment : Fragment() {
     private lateinit var binding: FragmentHistoryOrderBinding
     private lateinit var billViewModel: BillViewModel
     private var bills = emptyList<Bill>()
+    private val bottomSheetManageDetailOrder = ManageDetailOrderFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,7 +68,23 @@ class HistoryOrderFragment : Fragment() {
                     bills = getAllBillsUser()
                     val adapter = ManageItemBillAdapter(bills, object: ManageItemBillAdapterInterface {
                         override fun onClickItem(position: Bill) {
-                            Log.e("click", position.id.toString())
+                            val bundleBill = Bundle()
+                            bundleBill.putSerializable("billDetail", position)
+                            bundleBill.putString("role", "user")
+                            bottomSheetManageDetailOrder.arguments = bundleBill
+                            bottomSheetManageDetailOrder.listener = object:
+                                ManageDetailOrderFragmentListener {
+                                override fun onBottomSheetClose() {
+                                    Log.d("close", "close")
+                                }
+                            }
+
+                            // hien thi confirm bill ui
+                            bottomSheetManageDetailOrder.show(
+                                parentFragmentManager,
+                                bottomSheetManageDetailOrder.tag
+                            )
+                            bottomSheetManageDetailOrder.isCancelable = false
                         }
                     })
                     binding.rvBills.adapter = adapter

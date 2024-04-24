@@ -75,6 +75,7 @@ class ManageOrderAdminFragment : Fragment() {
                             // pass data -> confirm order bill fragment
                             val bundleBill = Bundle()
                             bundleBill.putSerializable("billDetail", position)
+                            bundleBill.putString("role", "admin")
                             bottomSheetManageDetailOrder.arguments = bundleBill
                             bottomSheetManageDetailOrder.listener = object:
                                 ManageDetailOrderFragmentListener {

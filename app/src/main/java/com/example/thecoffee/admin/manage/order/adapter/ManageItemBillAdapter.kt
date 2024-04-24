@@ -1,5 +1,6 @@
 package com.example.thecoffee.admin.manage.order.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -19,15 +20,15 @@ class ManageItemBillAdapter(
 ): RecyclerView.Adapter<ManageItemBillAdapter.ManageItemBillViewModel>(){
     private lateinit var binding: LayoutItemBillBinding
     inner class ManageItemBillViewModel(binding: LayoutItemBillBinding) : RecyclerView.ViewHolder(binding.root){
-        fun bind(bill: Bill){
+        fun bind(bill: Bill, context: Context){
 //            binding.idOrderBill.text = "Đơn hàng ${bill.id}"
             binding.idOrderBill.text = bill.drinks!!.joinToString(", ") {"${it.drinkName}"}
             binding.statusBill.text = when(bill.status){
-                (-1).toLong() -> "${R.string.status_cancel}"
-                0.toLong() -> "${R.string.status_pre_confirm}"
-                1.toLong() -> "${R.string.status_confirm}"
-                2.toLong() -> "${R.string.delivery}"
-                3.toLong() -> "${R.string.status_done_delivery}"
+                (-1).toLong() -> context.getString(R.string.status_cancel)
+                0.toLong() -> context.getString(R.string.status_pre_confirm)
+                1.toLong() -> context.getString(R.string.status_confirm)
+                2.toLong() -> context.getString(R.string.delivery)
+                3.toLong() -> context.getString(R.string.status_done_delivery)
                 else -> "-----"
             }
             binding.dateBill.text = bill.time
@@ -58,6 +59,7 @@ class ManageItemBillAdapter(
     }
 
     override fun onBindViewHolder(holder: ManageItemBillViewModel, position: Int) {
-        holder.bind(list[position])
+        val context = holder.itemView.context
+        holder.bind(list[position], context)
     }
 }
