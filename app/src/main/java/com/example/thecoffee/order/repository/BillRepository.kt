@@ -11,10 +11,12 @@ import com.example.thecoffee.order.model.Bill
 import com.example.thecoffee.order.model.Cart
 import com.example.thecoffee.order.model.Drink
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.util.Arrays
 import kotlin.reflect.typeOf
 
 class BillRepository(_application: Application) {
@@ -25,6 +27,7 @@ class BillRepository(_application: Application) {
     private val _loadingBillsUserResult: MutableLiveData<Boolean>
     private val _loadingBillsResult: MutableLiveData<Boolean>
     private val _loadingBillUserByIdResult: MutableLiveData<Boolean>
+    private val _loadingUpdateStatusBillResult: MutableLiveData<Boolean>
     private var billsUser: MutableLiveData<ArrayList<Bill>>
     private var bills: MutableLiveData<ArrayList<Bill>> // admin
     private var billUserById: MutableLiveData<Bill>
@@ -34,6 +37,7 @@ class BillRepository(_application: Application) {
         _loadingBillsUserResult = MutableLiveData<Boolean>()
         _loadingBillsResult = MutableLiveData<Boolean>()
         _loadingBillUserByIdResult = MutableLiveData<Boolean>()
+        _loadingUpdateStatusBillResult = MutableLiveData<Boolean>()
         billsUser = MutableLiveData<ArrayList<Bill>>()
         bills = MutableLiveData<ArrayList<Bill>>()
         billUserById = MutableLiveData<Bill>()
@@ -50,6 +54,9 @@ class BillRepository(_application: Application) {
 
     val loadingBillUserByIdResult: MutableLiveData<Boolean>
         get() = _loadingBillUserByIdResult
+
+    val loadingUpdateStatusBillResult: MutableLiveData<Boolean>
+        get() = _loadingUpdateStatusBillResult
 
     val getBillsUser: MutableLiveData<ArrayList<Bill>>
         get() = billsUser
@@ -123,7 +130,6 @@ class BillRepository(_application: Application) {
             }
         }
     }
-
 
     fun order(bill: Bill){
         _loadingResult.postValue(true)
@@ -318,6 +324,63 @@ class BillRepository(_application: Application) {
 
                     bills.postValue(bill)
                     _loadingBillsResult.postValue(false)
+                }
+            }
+    }
+
+
+    // admin update status bill
+    // lay ra xem bill cua user nao, cap nhat status tuong ung
+    fun updateStatusBillUser(userId: String, idBill: String, statusBill: Long){
+        _loadingUpdateStatusBillResult.postValue(true)
+        val billRef = db.collection("Bills").document(userId)
+        billRef.get().addOnCompleteListener { task ->
+                if(task.isSuccessful && task.isSuccessful){
+                    val data = task.result.data?.get("bill") as List<Map<*, *>>
+                    val updates = ArrayList<Bill>()
+                    var bill: Bill
+                    for(index in data.indices){
+                        val element = data[index]
+                        val address = element["address"] as String
+                        val shipFee = element["shipFee"] as Long
+                        val status = element["status"] as Long
+                        val time = element["time"] as String
+                        val drinks = element["drinks"]  as List<*>
+
+                        val drink = mutableListOf<Cart>()
+                        drinks.forEach { element ->
+                            val item = element as Map<*,*>
+                            val quantity = item["quantity"] as Long
+                            val drinkName = item["drinkName"] as String
+                            val totalPrice = item["totalPrice"] as Long
+                            val note = item["note"] as String
+                            val drinkSize = item["drinkSize"] as String
+                            val drinkTopping = item["drinkTopping"] as List<String>
+
+                            drink.add(Cart(totalPrice, quantity, drinkName, drinkSize, drinkTopping, note))
+                        }
+                        bill = if(element["id"] == idBill){
+                            Bill(idBill, userId, address, drink, statusBill, shipFee, time)
+                        } else {
+                            Bill(idBill, userId, address, drink, status, shipFee, time)
+                        }
+                        updates.add(bill)
+                    }
+
+                    billRef.update("bill", updates).addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            Toast.makeText(
+                                application,
+                                "update status bill successfully",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            _loadingUpdateStatusBillResult.postValue(false)
+                        } else {
+                            Toast.makeText(application, it.exception.toString(), Toast.LENGTH_SHORT)
+                                .show()
+                            Log.e("Firestore", "Error setting bill", it.exception)
+                        }
+                    }
                 }
             }
     }

@@ -24,11 +24,11 @@ class ManageItemBillAdapter(
 //            binding.idOrderBill.text = "Đơn hàng ${bill.id}"
             binding.idOrderBill.text = bill.drinks!!.joinToString(", ") {"${it.drinkName}"}
             binding.statusBill.text = when(bill.status){
-                (-1).toLong() -> context.getString(R.string.status_cancel)
-                0.toLong() -> context.getString(R.string.status_pre_confirm)
-                1.toLong() -> context.getString(R.string.status_confirm)
-                2.toLong() -> context.getString(R.string.delivery)
-                3.toLong() -> context.getString(R.string.status_done_delivery)
+                -1L -> context.getString(R.string.status_cancel)
+                0L -> context.getString(R.string.status_pre_confirm)
+                1L -> context.getString(R.string.status_confirm)
+                2L -> context.getString(R.string.delivery)
+                3L -> context.getString(R.string.status_done_delivery)
                 else -> "-----"
             }
             binding.dateBill.text = bill.time

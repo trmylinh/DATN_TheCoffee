@@ -113,6 +113,8 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
 
         // luu bill -> database
         binding.orderBtn.setOnClickListener {
+            val idOrder = sharedPreferences.getString("idCart", null)
+            order(idOrder!!)
             sharedPreferences.edit()
                 .apply {
                     clear()
@@ -137,7 +139,7 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
 //            }, 3000)
 
 //            CoroutineScope(Dispatchers.Main).launch {
-                order()
+
 
 //            }
 
@@ -171,8 +173,8 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
 
     }
 
-    private fun order() {
-        val id: String = generateRandomId()
+    private fun order(id: String) {
+//        val id: String = generateRandomId()
         val userId: String = auth.currentUser?.uid!!
         val address: String = "165 Cau Giay"
         val status: Long = 0
@@ -199,9 +201,6 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
 
     }
 
-    private fun generateRandomId(): String {
-        return "${UUID.randomUUID()}"
-    }
 
 
 }

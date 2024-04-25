@@ -15,6 +15,7 @@ class BillViewModel (application: Application) : AndroidViewModel(application) {
     private val _loadingBillsUserResult: MutableLiveData<Boolean>
     private val _loadingBillsResult: MutableLiveData<Boolean>
     private val _loadingBillUserByIdResult: MutableLiveData<Boolean>
+    private val _loadingUpdateStatusBillResult: MutableLiveData<Boolean>
     private var billsUser: MutableLiveData<ArrayList<Bill>>
     private var bills: MutableLiveData<ArrayList<Bill>>
     private var billUserById: MutableLiveData<Bill>
@@ -25,6 +26,7 @@ class BillViewModel (application: Application) : AndroidViewModel(application) {
         _loadingBillsUserResult = repository.loadingBillsUserResult
         _loadingBillsResult = repository.loadingBillsResult
         _loadingBillUserByIdResult = repository.loadingBillUserByIdResult
+        _loadingUpdateStatusBillResult = repository.loadingUpdateStatusBillResult
         billsUser = repository.getBillsUser
         bills = repository.getBills
         billUserById = repository.getBillUserById
@@ -38,6 +40,9 @@ class BillViewModel (application: Application) : AndroidViewModel(application) {
 
     val loadingBillsResult: MutableLiveData<Boolean>
         get() = _loadingBillsResult
+
+    val loadingUpdateStatusBillResult: MutableLiveData<Boolean>
+        get() = _loadingUpdateStatusBillResult
 
     val getBillsUser: MutableLiveData<ArrayList<Bill>>
         get() = billsUser
@@ -63,6 +68,10 @@ class BillViewModel (application: Application) : AndroidViewModel(application) {
 
     fun getAllBills(){
         repository.getAllBills()
+    }
+
+    fun updateStatusBillUser(userId: String, idBill: String, status: Long){
+        repository.updateStatusBillUser(userId, idBill, status)
     }
 
 }
