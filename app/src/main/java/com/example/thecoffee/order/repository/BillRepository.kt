@@ -206,9 +206,8 @@ class BillRepository(_application: Application) {
             .get().addOnCompleteListener { task ->
                 if(task.isSuccessful && task.result != null){
                     val bill = ArrayList<Bill>()
-                    val data = task.result.data?.get("bill") as List<Map<*, *>>
-
-                    data.forEach{ element ->
+                    val data = task.result.data?.get("bill") as List<Map<*, *>>?
+                    data?.forEach{ element ->
                         val id = element["id"] as String
                         val userId = element["userId"] as String
                         val address = element["address"] as String
@@ -342,6 +341,7 @@ class BillRepository(_application: Application) {
                     for(index in data.indices){
                         val element = data[index]
                         val address = element["address"] as String
+                        val id = element["id"] as String
                         val shipFee = element["shipFee"] as Long
                         val status = element["status"] as Long
                         val time = element["time"] as String
@@ -362,7 +362,7 @@ class BillRepository(_application: Application) {
                         bill = if(element["id"] == idBill){
                             Bill(idBill, userId, address, drink, statusBill, shipFee, time)
                         } else {
-                            Bill(idBill, userId, address, drink, status, shipFee, time)
+                            Bill(id, userId, address, drink, status, shipFee, time)
                         }
                         updates.add(bill)
                     }

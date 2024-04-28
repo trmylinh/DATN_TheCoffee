@@ -32,8 +32,9 @@ import kotlin.coroutines.suspendCoroutine
 class ManageOrderAdminFragment : Fragment() {
     private lateinit var binding: FragmentManageOrderAdminBinding
     private lateinit var billViewModel: BillViewModel
-    private var bills = emptyList<Bill>()
+    private var bills: List<Bill>? = null
     private val bottomSheetManageDetailOrder = ManageDetailOrderFragment()
+    private lateinit var adapter: ManageItemBillAdapter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,43 +66,60 @@ class ManageOrderAdminFragment : Fragment() {
                 binding.progressBar.visibility = View.VISIBLE
             } else {
                 binding.progressBar.visibility = View.GONE
-
                 CoroutineScope(Dispatchers.Main).launch {
-                    Log.e("bill", "${getAllBills()}")
                     bills = getAllBills()
-                    val adapter = ManageItemBillAdapter(bills, object: ManageItemBillAdapterInterface{
-                        override fun onClickItem(position: Bill) {
-                            Log.e("click", position.id.toString())
-                            // pass data -> confirm order bill fragment
-                            val bundleBill = Bundle()
-                            bundleBill.putSerializable("billDetail", position)
-                            bundleBill.putString("role", "admin")
-                            bottomSheetManageDetailOrder.arguments = bundleBill
-                            bottomSheetManageDetailOrder.listener = object:
-                                ManageDetailOrderFragmentListener {
-                                override fun onBottomSheetClose() {
-                                    Log.d("close", "close")
-                                }
-                            }
+                    if(bills?.isNotEmpty() == true){
+                        binding.emptyView.visibility = View.GONE
+                        binding.rvBills.visibility = View.VISIBLE
 
-                            // hien thi confirm bill ui
-                            bottomSheetManageDetailOrder.show(
-                                parentFragmentManager,
-                                bottomSheetManageDetailOrder.tag
-                            )
-                            bottomSheetManageDetailOrder.isCancelable = false
-                        }
-                    })
-                    binding.rvBills.adapter = adapter
-                    binding.rvBills.layoutManager = LinearLayoutManager(
-                        requireContext(), LinearLayoutManager.VERTICAL, false
-                    )
+                        showRecyclerView(bills!!)
+//                        adapter = ManageItemBillAdapter(bills!!, object: ManageItemBillAdapterInterface{
+//                            override fun onClickItem(position: Bill) {
+//                                // pass data -> confirm order bill fragment
+//                                val bundleBill = Bundle()
+//                                bundleBill.putSerializable("billDetail", position)
+//                                bundleBill.putString("role", "admin")
+//                                bottomSheetManageDetailOrder.arguments = bundleBill
+//                                bottomSheetManageDetailOrder.listener = object:
+//                                    ManageDetailOrderFragmentListener {
+//                                    override fun onBottomSheetClose(status: Long, idBill: String){
+//                                        if(status != -1L){
+//                                            val newData = bills?.toMutableList()
+//                                            if (newData != null) {
+//                                                for(item in newData){
+//                                                    if(item.id == idBill){
+//                                                        item.status = status
+//                                                    }
+//                                                }
+//                                                showRecyclerView(newData)
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//
+//                                // hien thi confirm bill ui
+//                                bottomSheetManageDetailOrder.show(
+//                                    parentFragmentManager,
+//                                    bottomSheetManageDetailOrder.tag
+//                                )
+//                                bottomSheetManageDetailOrder.isCancelable = false
+//                            }
+//                        })
+//                        binding.rvBills.adapter = adapter
+//                        binding.rvBills.layoutManager = LinearLayoutManager(
+//                            requireContext(), LinearLayoutManager.VERTICAL, false
+//                        )
+                    }
+                    else {
+                        binding.rvBills.visibility = View.GONE
+                        binding.emptyView.visibility = View.VISIBLE
+                    }
                 }
             }
         }
     }
 
-    private suspend fun getAllBills(): List<Bill> =
+    private suspend fun getAllBills(): List<Bill>? =
         suspendCoroutine { continuation ->
             billViewModel.getBills.observe(viewLifecycleOwner){
                 val dateFormat = SimpleDateFormat("HH:mm:ss dd/MM/yyyy", Locale.getDefault())
@@ -110,4 +128,40 @@ class ManageOrderAdminFragment : Fragment() {
             }
         }
 
+    private fun showRecyclerView(data: List<Bill>){
+        adapter = ManageItemBillAdapter(data, object: ManageItemBillAdapterInterface{
+            override fun onClickItem(position: Bill) {
+                // pass data -> confirm order bill fragment
+                val bundleBill = Bundle()
+                bundleBill.putSerializable("billDetail", position)
+                bundleBill.putString("role", "admin")
+                bottomSheetManageDetailOrder.arguments = bundleBill
+                bottomSheetManageDetailOrder.listener = object:
+                    ManageDetailOrderFragmentListener {
+                    override fun onBottomSheetClose(status: Long, idBill: String){
+                        if(status != -1L){
+                            val newData = data.toMutableList()
+                            for(item in newData){
+                                if(item.id == idBill){
+                                    item.status = status
+                                }
+                            }
+                            showRecyclerView(newData)
+                        }
+                    }
+                }
+
+                // hien thi confirm bill ui
+                bottomSheetManageDetailOrder.show(
+                    parentFragmentManager,
+                    bottomSheetManageDetailOrder.tag
+                )
+                bottomSheetManageDetailOrder.isCancelable = false
+            }
+        })
+        binding.rvBills.adapter = adapter
+        binding.rvBills.layoutManager = LinearLayoutManager(
+            requireContext(), LinearLayoutManager.VERTICAL, false
+        )
+    }
 }

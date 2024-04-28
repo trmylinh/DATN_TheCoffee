@@ -2,6 +2,7 @@ package com.example.thecoffee.admin.manage.order.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.thecoffee.R
@@ -15,21 +16,38 @@ interface ManageItemBillAdapterInterface {
 }
 
 class ManageItemBillAdapter(
-    val list: List<Bill>,
-    val onClickItem: ManageItemBillAdapterInterface
+    var list: List<Bill>,
+    val onClickItem: ManageItemBillAdapterInterface?
 ): RecyclerView.Adapter<ManageItemBillAdapter.ManageItemBillViewModel>(){
     private lateinit var binding: LayoutItemBillBinding
     inner class ManageItemBillViewModel(binding: LayoutItemBillBinding) : RecyclerView.ViewHolder(binding.root){
         fun bind(bill: Bill, context: Context){
 //            binding.idOrderBill.text = "Đơn hàng ${bill.id}"
             binding.idOrderBill.text = bill.drinks!!.joinToString(", ") {"${it.drinkName}"}
-            binding.statusBill.text = when(bill.status){
-                -1L -> context.getString(R.string.status_cancel)
-                0L -> context.getString(R.string.status_pre_confirm)
-                1L -> context.getString(R.string.status_confirm)
-                2L -> context.getString(R.string.delivery)
-                3L -> context.getString(R.string.status_done_delivery)
-                else -> "-----"
+            when(bill.status){
+                -1L -> {
+                    // huy
+                    binding.statusBill.text =  context.getString(R.string.status_cancel)
+                }
+                0L -> {
+                    // dang cho xac nhan - xac nhan
+                    binding.statusBill.text =  context.getString(R.string.status_pre_confirm)
+                }
+                1L -> {
+                    // da xac nhan - giao hang
+                    binding.statusBill.text =  context.getString(R.string.status_confirm)
+                    binding.statusBill.setTextColor(context.resources.getColor(R.color.orange_900,null))
+                }
+                2L -> {
+                    // dang giao hang - hoan thanh
+                    binding.statusBill.text = context.getString(R.string.status_delivery)
+                    binding.statusBill.setTextColor(context.resources.getColor(R.color.orange_900,null))
+                }
+                3L -> {
+                    // giao hang thanh cong
+                    binding.statusBill.text = context.getString(R.string.status_done_delivery)
+                    binding.statusBill.setTextColor(context.resources.getColor(R.color.green_900, null))
+                }
             }
             binding.dateBill.text = bill.time
 
@@ -43,7 +61,7 @@ class ManageItemBillAdapter(
 
         init {
             binding.itemBill.setOnClickListener {
-                onClickItem.onClickItem(list[adapterPosition])
+                onClickItem?.onClickItem(list[adapterPosition])
             }
         }
     }

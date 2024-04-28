@@ -30,7 +30,7 @@ import kotlin.coroutines.suspendCoroutine
 class HistoryOrderFragment : Fragment() {
     private lateinit var binding: FragmentHistoryOrderBinding
     private lateinit var billViewModel: BillViewModel
-    private var bills = emptyList<Bill>()
+    private var bills: List<Bill>? = null
     private val bottomSheetManageDetailOrder = ManageDetailOrderFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,44 +64,52 @@ class HistoryOrderFragment : Fragment() {
                 binding.progressBar.visibility = View.GONE
 
                 CoroutineScope(Dispatchers.Main).launch {
-                    Log.e("bill", "${getAllBillsUser()}")
                     bills = getAllBillsUser()
-                    val adapter = ManageItemBillAdapter(bills, object: ManageItemBillAdapterInterface {
-                        override fun onClickItem(position: Bill) {
-                            val bundleBill = Bundle()
-                            bundleBill.putSerializable("billDetail", position)
-                            bundleBill.putString("role", "user")
-                            bottomSheetManageDetailOrder.arguments = bundleBill
-                            bottomSheetManageDetailOrder.listener = object:
-                                ManageDetailOrderFragmentListener {
-                                override fun onBottomSheetClose() {
-                                    Log.d("close", "close")
-                                }
-                            }
+                    if(bills?.isNotEmpty() == true){
+                        binding.emptyView.visibility = View.GONE
+                        binding.rvBills.visibility = View.VISIBLE
+                        val adapter = ManageItemBillAdapter(bills!!, object: ManageItemBillAdapterInterface {
+                            override fun onClickItem(position: Bill) {
+                                val bundleBill = Bundle()
+                                bundleBill.putSerializable("billDetail", position)
+                                bundleBill.putString("role", "user")
+                                bottomSheetManageDetailOrder.arguments = bundleBill
+                                bottomSheetManageDetailOrder.listener = object:
+                                    ManageDetailOrderFragmentListener {
+                                    override fun onBottomSheetClose(status: Long, idBill: String) {
 
-                            // hien thi confirm bill ui
-                            bottomSheetManageDetailOrder.show(
-                                parentFragmentManager,
-                                bottomSheetManageDetailOrder.tag
-                            )
-                            bottomSheetManageDetailOrder.isCancelable = false
-                        }
-                    })
-                    binding.rvBills.adapter = adapter
-                    binding.rvBills.layoutManager = LinearLayoutManager(
-                        requireContext(), LinearLayoutManager.VERTICAL, false
-                    )
+                                    }
+                                }
+
+                                // hien thi confirm bill ui
+                                bottomSheetManageDetailOrder.show(
+                                    parentFragmentManager,
+                                    bottomSheetManageDetailOrder.tag
+                                )
+                                bottomSheetManageDetailOrder.isCancelable = false
+                            }
+                        })
+                        binding.rvBills.adapter = adapter
+                        binding.rvBills.layoutManager = LinearLayoutManager(
+                            requireContext(), LinearLayoutManager.VERTICAL, false
+                        )
+                    } else {
+                        binding.rvBills.visibility = View.GONE
+                        binding.emptyView.visibility = View.VISIBLE
+                    }
                 }
             }
         }
     }
 
-    private suspend fun getAllBillsUser(): List<Bill> =
+    private suspend fun getAllBillsUser(): List<Bill>? =
         suspendCoroutine { continuation ->
             billViewModel.getBillsUser.observe(viewLifecycleOwner){
-                val dateFormat = SimpleDateFormat("HH:mm:ss dd/MM/yyyy", Locale.getDefault())
-                val sortedItems = it.sortedByDescending  { item -> dateFormat.parse(item.time!!) }
-                continuation.resume(sortedItems)
+                if(it != null){
+                    val dateFormat = SimpleDateFormat("HH:mm:ss dd/MM/yyyy", Locale.getDefault())
+                    val sortedItems = it.sortedByDescending  { item -> dateFormat.parse(item.time!!) }
+                    continuation.resume(sortedItems)
+                }
             }
         }
 

@@ -7,7 +7,7 @@ data class Bill(
     val userId: String? = null,
     val address: String? = null,
     val drinks: List<Cart>? = emptyList(), // cac spham trong don hang
-    val status: Long? = null,  // trang thai don hang
+    var status: Long? = null,  // trang thai don hang
     /*
     -1 - huy -> do user huy (trong vong 1 khoang tgian nhat dinh)
     0 - dang cho xac nhan

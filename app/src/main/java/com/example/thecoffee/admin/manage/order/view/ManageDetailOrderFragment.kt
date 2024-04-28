@@ -20,9 +20,10 @@ import com.example.thecoffee.order.viewmodel.BillViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import kotlin.properties.Delegates
 
 interface ManageDetailOrderFragmentListener {
-    fun onBottomSheetClose()
+    fun onBottomSheetClose(status: Long, idBill: String)
 }
 
 class ManageDetailOrderFragment : BottomSheetDialogFragment() {
@@ -31,6 +32,7 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
     var listener: ManageDetailOrderFragmentListener? = null
     private lateinit var billDetail: Bill
     private lateinit var role: String
+    private var statusUpdate: Long = -1L
 
     companion object {
         private const val USER = "user"
@@ -57,7 +59,8 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.closeBtn.setOnClickListener {
             dismiss()
-            listener?.onBottomSheetClose()
+            listener?.onBottomSheetClose(statusUpdate, billDetail.id!!)
+            statusUpdate = -1L
         }
 
         binding.billCode.text = "${billDetail.id}"
@@ -76,69 +79,94 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
         binding.itemsPrice.text = "${String.format("%,d", priceItems)}đ"
         binding.totalPay.text = "${String.format("%,d", priceItems)}đ"
 
-        binding.statusBill.text = when (billDetail.status) {
-            -1L -> getString(R.string.status_cancel)
-            0L -> getString(R.string.status_pre_confirm)
-            1L -> getString(R.string.status_confirm)
-            2L -> getString(R.string.delivery)
-            3L -> getString(R.string.status_done_delivery)
-            else -> "-----"
+        when(billDetail.status){
+            -1L -> {
+                // huy
+                binding.layoutBtnConfirmStatusBill.visibility = View.GONE
+                binding.statusBill.text = getString(R.string.status_cancel)
+            }
+            0L -> {
+                // dang cho xac nhan - xac nhan
+                binding.layoutBtnConfirmStatusBill.visibility = if(role == ADMIN) View.VISIBLE else View.GONE
+                binding.statusBill.text = getString(R.string.status_pre_confirm)
+                binding.btnConfirmStatusBill.text = getString(R.string.btn_status_confirm)
+            }
+            1L -> {
+                // da xac nhan - giao hang
+                binding.layoutBtnConfirmStatusBill.visibility = if(role == ADMIN) View.VISIBLE else View.GONE
+                binding.statusBill.text = getString(R.string.status_confirm)
+                binding.btnConfirmStatusBill.text = getString(R.string.btn_status_delivery)
+            }
+            2L -> {
+                // dang giao hang - hoan thanh
+                binding.layoutBtnConfirmStatusBill.visibility = if(role == ADMIN) View.VISIBLE else View.GONE
+                binding.statusBill.text = getString(R.string.status_delivery)
+                binding.btnConfirmStatusBill.text = getString(R.string.btn_status_done_delivery)
+            }
+            3L -> {
+                // giao hang thanh cong
+                binding.layoutBtnConfirmStatusBill.visibility = View.GONE
+                binding.statusBill.text = getString(R.string.status_done_delivery)
+            }
         }
 
-        /* update color cho status text
-        here
-        */
         if (role == ADMIN) {
             binding.itemsTitle.text = "${getString(R.string.items)} ($countItem)"
 
-            binding.layoutBtnConfirmStatusBill.visibility = View.VISIBLE
-
             binding.layoutBtnConfirmStatusBill.setOnClickListener {
-                if (billDetail.status!! == 0L) {
-                    billViewModel.updateStatusBillUser(billDetail.userId!!, billDetail.id!!, 1)
-                    billViewModel.loadingUpdateStatusBillResult.observe(viewLifecycleOwner) { loading ->
-                        if (!loading) {
-                            binding.statusBill.visibility = View.VISIBLE
-                            binding.statusBill.text = getString(R.string.status_confirm)
-                            binding.statusBill.setTextColor(resources.getColor(R.color.orange_900))
-                            binding.btnConfirmStatusBill.text =
-                                getString(R.string.btn_status_delivery)
-                            binding.progressBar.visibility = View.GONE
-                        } else {
-                            binding.progressBar.visibility = View.VISIBLE
-                            binding.statusBill.visibility = View.GONE
+                when(billDetail.status){
+                    0L -> {
+                        // dang cho xac nhan -> da xac nhan - giao hang
+                        billViewModel.updateStatusBillUser(billDetail.userId!!, billDetail.id!!, 1)
+                        billViewModel.loadingUpdateStatusBillResult.observe(viewLifecycleOwner) { loading ->
+                            if (!loading) {
+                                statusUpdate = 1L
+                                binding.statusBill.visibility = View.VISIBLE
+                                binding.statusBill.text = getString(R.string.status_confirm)
+                                binding.btnConfirmStatusBill.text =
+                                    getString(R.string.btn_status_delivery)
+                                binding.progressBar.visibility = View.GONE
+                            } else {
+                                binding.progressBar.visibility = View.VISIBLE
+                                binding.statusBill.visibility = View.GONE
+                            }
                         }
                     }
-                } else if (billDetail.status!! == 1L) {
-                    billViewModel.updateStatusBillUser(billDetail.userId!!, billDetail.id!!, 2)
-                    billViewModel.loadingUpdateStatusBillResult.observe(viewLifecycleOwner) { loading ->
-                        if (!loading) {
-                            binding.statusBill.visibility = View.VISIBLE
-                            binding.statusBill.text = getString(R.string.status_delivery)
-                            binding.statusBill.setTextColor(resources.getColor(R.color.green_900))
-                            binding.btnConfirmStatusBill.text = getString(R.string.btn_status_done_delivery)
-                            binding.progressBar.visibility = View.GONE
-                        } else {
-                            binding.progressBar.visibility = View.VISIBLE
-                            binding.statusBill.visibility = View.GONE
+                    1L -> {
+                        // da xac nhan -> dang giao hang - hoan thanh
+                        billViewModel.updateStatusBillUser(billDetail.userId!!, billDetail.id!!, 2)
+                        billViewModel.loadingUpdateStatusBillResult.observe(viewLifecycleOwner) { loading ->
+                            if (!loading) {
+                                statusUpdate = 2L
+                                binding.statusBill.visibility = View.VISIBLE
+                                binding.statusBill.text = getString(R.string.status_delivery)
+                                binding.btnConfirmStatusBill.text = getString(R.string.btn_status_done_delivery)
+                                binding.progressBar.visibility = View.GONE
+                            } else {
+                                binding.progressBar.visibility = View.VISIBLE
+                                binding.statusBill.visibility = View.GONE
+                            }
                         }
                     }
-                } else if (billDetail.status!! == 2L) {
-                    billViewModel.updateStatusBillUser(billDetail.userId!!, billDetail.id!!, 3)
-                    billViewModel.loadingUpdateStatusBillResult.observe(viewLifecycleOwner) { loading ->
-                        if (!loading) {
-                            binding.statusBill.visibility = View.VISIBLE
-                            binding.statusBill.text = getString(R.string.status_done_delivery)
-                            binding.statusBill.setTextColor(resources.getColor(R.color.green_900))
-                            binding.layoutBtnConfirmStatusBill.visibility = View.GONE
-                            binding.progressBar.visibility = View.GONE
-                        } else {
-                            binding.progressBar.visibility = View.VISIBLE
-                            binding.statusBill.visibility = View.GONE
+                    2L -> {
+                        // dang giao hang -> giao hang thanh cong
+                        billViewModel.updateStatusBillUser(billDetail.userId!!, billDetail.id!!, 3)
+                        billViewModel.loadingUpdateStatusBillResult.observe(viewLifecycleOwner) { loading ->
+                            if (!loading) {
+                                statusUpdate = 3L
+                                binding.statusBill.visibility = View.VISIBLE
+                                binding.statusBill.text = getString(R.string.status_done_delivery)
+                                binding.layoutBtnConfirmStatusBill.visibility = View.GONE
+                                binding.progressBar.visibility = View.GONE
+                            } else {
+                                binding.progressBar.visibility = View.VISIBLE
+                                binding.statusBill.visibility = View.GONE
+                            }
                         }
                     }
                 }
             }
+
         } else {
             binding.layoutBtnConfirmStatusBill.visibility = View.GONE
         }
