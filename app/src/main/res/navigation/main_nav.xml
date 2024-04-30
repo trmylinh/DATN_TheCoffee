@@ -36,6 +36,12 @@
         <action
             android:id="@+id/action_otherFragment_to_userInfoFragment"
             app:destination="@id/userInfoFragment" />
+        <action
+            android:id="@+id/action_otherFragment_to_homeAdminFragment"
+            app:destination="@id/homeAdminFragment" />
+        <action
+            android:id="@+id/action_otherFragment_to_historyOrderFragment"
+            app:destination="@id/historyOrderFragment" />
     </fragment>
 
     <fragment
@@ -74,4 +80,23 @@
             android:id="@+id/action_itemDrinkDetailFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/homeAdminFragment"
+        android:name="com.example.thecoffee.admin.home.view.HomeAdminFragment"
+        android:label="fragment_home_admin"
+        tools:layout="@layout/fragment_home_admin" >
+        <action
+            android:id="@+id/action_homeAdminFragment_to_manageOrderAdminFragment"
+            app:destination="@id/manageOrderAdminFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/manageOrderAdminFragment"
+        android:name="com.example.thecoffee.admin.manage.order.view.ManageOrderAdminFragment"
+        android:label="fragment_manage_order_admin"
+        tools:layout="@layout/fragment_manage_order_admin" />
+    <fragment
+        android:id="@+id/historyOrderFragment"
+        android:name="com.example.thecoffee.other.history.view.HistoryOrderFragment"
+        android:label="fragment_history_order"
+        tools:layout="@layout/fragment_history_order" />
 </navigation>

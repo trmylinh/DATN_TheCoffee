@@ -7,7 +7,7 @@ data class Cart (
     // sluong
     // tong tien
     val totalPrice: Long? = null,
-    val quantity: Int? = null,
+    val quantity: Long? = null,
     val drinkName: String? = null,
     val drinkSize: String? = null,
     val drinkTopping: List<String>? = emptyList(),

@@ -54,4 +54,14 @@
     <string name="historyBean">Lịch sử BEAN</string>
     <string name="my_voucher_layout">Phiếu ưu đãi của bạn</string>
     <string name="space_line">- - - - - - - - - - - - - - - -</string>
+    <string name="status_pre_confirm">Đang chờ xác nhận</string>
+    <string name="status_confirm">Đã xác nhận</string>
+    <string name="status_delivery">Đang giao hàng</string>
+    <string name="status_done_delivery">Giao hàng thành công</string>
+    <string name="status_cancel">Đã hủy</string>
+    <string name="btn_status_confirm">Xác nhận</string>
+    <string name="btn_status_delivery">Giao hàng</string>
+    <string name="btn_status_done_delivery">Hoàn thành</string>
+    <string name="btn_status_cancel">Hủy</string>
+    <string name="items">Sản phẩm</string>
 </resources>

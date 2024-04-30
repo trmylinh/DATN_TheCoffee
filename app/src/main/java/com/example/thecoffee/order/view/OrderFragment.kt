@@ -2,6 +2,7 @@ package com.example.thecoffee.order.view
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -28,6 +29,7 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.UUID
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -168,10 +170,23 @@ class OrderFragment : Fragment() {
                                     "cart",
                                     Context.MODE_PRIVATE
                                 )
+                                val isIdCartExist = sharedPreferences.contains("idCart")
+                                if(!isIdCartExist){
+                                    sharedPreferences.edit()
+                                        .apply {
+                                            // tao idCart ~ idBill -> chi tao 1 lan
+                                            putString("idCart", generateRandomId())
+                                        }.apply()
+                                }
+
                                 sharedPreferences.edit()
                                     .apply {
                                         putString("dataCart", value)
+
+                                        // tao idCart ~ idBill -> chi tao 1 lan
+//                                        putString("idCart", generateRandomId())
                                     }.apply()
+
 
                                 // doc chuoi JSON tu sharedPreferences
                                 val gson = Gson()
@@ -278,6 +293,9 @@ class OrderFragment : Fragment() {
                 }
             }
         })
+    }
+    private fun generateRandomId(): String {
+        return "${UUID.randomUUID()}"
     }
 
 
