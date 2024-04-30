@@ -121,33 +121,7 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
                 }.apply()
 
             listener?.onBottomSheetClear()
-
-//            dismiss()
-//            binding.progressBar.visibility = View.VISIBLE
-//            Handler().postDelayed({
-////                order()
-//                binding.progressBar.visibility = View.GONE
-//
-//                binding.saveInfo.visibility = View.GONE
-//                binding.viewBottom.visibility = View.GONE
-//                binding.clearBill.visibility = View.GONE
-//                binding.addMore.visibility = View.GONE
-//
-//                binding.viewAfterOrder.visibility = View.VISIBLE
-//                binding.title.text = "Trạng thái đơn hàng"
-//                binding.billCode.text = ""
-//            }, 3000)
-
-//            CoroutineScope(Dispatchers.Main).launch {
-
-
-//            }
-
         }
-
-
-
-
     }
 
     private fun updateUIBill() {

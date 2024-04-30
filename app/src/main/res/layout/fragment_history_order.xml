@@ -43,6 +43,36 @@
         android:layout_height="@dimen/_1sdp"
         android:background="@color/grey_500" />
 
+    <LinearLayout
+        android:id="@+id/layout_filter_status"
+        android:layout_gravity="end"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/round_corner"
+        android:paddingVertical="@dimen/_5sdp"
+        android:paddingHorizontal="@dimen/_15sdp"
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true">
+        <TextView
+            android:id="@+id/status_name"
+            android:text="Trạng thái"
+            android:textColor="@color/grey_700"
+            android:textStyle="bold"
+            android:textSize="@dimen/_13sdp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <ImageView
+            android:src="@drawable/icon_arrow_down"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_width="@dimen/_15sdp"
+            android:layout_height="@dimen/_15sdp"/>
+    </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_bills"
         android:layout_marginVertical="@dimen/_10sdp"

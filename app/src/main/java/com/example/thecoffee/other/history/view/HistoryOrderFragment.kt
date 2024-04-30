@@ -6,6 +6,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RadioButton
+import android.widget.RadioGroup
+import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,6 +22,7 @@ import com.example.thecoffee.databinding.FragmentHistoryOrderBinding
 import com.example.thecoffee.databinding.FragmentManageOrderAdminBinding
 import com.example.thecoffee.order.model.Bill
 import com.example.thecoffee.order.viewmodel.BillViewModel
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,6 +36,7 @@ class HistoryOrderFragment : Fragment() {
     private lateinit var billViewModel: BillViewModel
     private var bills: List<Bill>? = null
     private val bottomSheetManageDetailOrder = ManageDetailOrderFragment()
+    private var selectedRadioButtonId: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +73,12 @@ class HistoryOrderFragment : Fragment() {
                     if(bills?.isNotEmpty() == true){
                         binding.emptyView.visibility = View.GONE
                         binding.rvBills.visibility = View.VISIBLE
+
+                        binding.layoutFilterStatus.visibility = View.VISIBLE
+
+                        //filter status bottom dialog
+                        displayBottomSheetDialogFilterStatus()
+
                         val adapter = ManageItemBillAdapter(bills!!, object: ManageItemBillAdapterInterface {
                             override fun onClickItem(position: Bill) {
                                 val bundleBill = Bundle()
@@ -95,6 +106,7 @@ class HistoryOrderFragment : Fragment() {
                         )
                     } else {
                         binding.rvBills.visibility = View.GONE
+                        binding.layoutFilterStatus.visibility = View.GONE
                         binding.emptyView.visibility = View.VISIBLE
                     }
                 }
@@ -112,5 +124,47 @@ class HistoryOrderFragment : Fragment() {
                 }
             }
         }
+
+    private fun displayBottomSheetDialogFilterStatus() {
+        binding.layoutFilterStatus.setOnClickListener {
+            val layoutBottomSheet = layoutInflater.inflate(R.layout.layout_bottom_sheet_dialog_filter_status, null)
+            val dialog = BottomSheetDialog(requireActivity())
+            dialog.setCancelable(true)
+            dialog.setContentView(layoutBottomSheet)
+            dialog.show()
+
+            val radioGroup = layoutBottomSheet.findViewById<RadioGroup>(R.id.radioGroup)
+            val btnFilter = layoutBottomSheet.findViewById<TextView>(R.id.btn_filter)
+            val btnClear = layoutBottomSheet.findViewById<TextView>(R.id.clear_filter)
+
+            radioGroup.setOnCheckedChangeListener { group, checkedId ->
+                selectedRadioButtonId = checkedId
+            }
+
+            if (selectedRadioButtonId != -1) {
+                radioGroup.check(selectedRadioButtonId)
+            }
+
+            btnFilter.setOnClickListener {
+                val selectOption = radioGroup.checkedRadioButtonId
+                val radioBtn = layoutBottomSheet.findViewById<RadioButton>(selectOption)
+                binding.statusName.text = radioBtn.text
+                binding.statusName.setTextColor(resources.getColor(R.color.green_900, null))
+                binding.layoutFilterStatus.backgroundTintList = resources.getColorStateList(R.color.green_200, null)
+                dialog.dismiss()
+                dialog.setOnDismissListener {
+                    selectedRadioButtonId = radioGroup.checkedRadioButtonId
+                }
+            }
+
+            btnClear.setOnClickListener {
+                dialog.dismiss()
+                radioGroup.clearCheck()
+                binding.statusName.text = "Trạng thái"
+                binding.statusName.setTextColor(resources.getColor(R.color.grey_700, null))
+                binding.layoutFilterStatus.backgroundTintList = resources.getColorStateList(R.color.grey_300, null)
+            }
+        }
+    }
 
 }

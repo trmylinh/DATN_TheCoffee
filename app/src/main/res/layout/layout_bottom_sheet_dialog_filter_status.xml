@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/rounded_bg_login">
+
+        <TextView
+            android:text="Trạng thái đơn hàng"
+            android:textSize="@dimen/_18sdp"
+            android:textColor="@color/black_900"
+            android:textStyle="bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_20sdp"/>
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_10sdp">
+            <RadioButton
+                android:id="@+id/radioBtnPreConfirm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/status_pre_confirm"
+                android:textSize="@dimen/_13sdp"/>
+            <RadioButton
+                android:id="@+id/radioBtnConfirm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/status_confirm"
+                android:textSize="@dimen/_13sdp"/>
+            <RadioButton
+                android:id="@+id/radioBtnDelivery"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/status_delivery"
+                android:textSize="@dimen/_13sdp"/>
+            <RadioButton
+                android:id="@+id/radioBtnDoneDelivery"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/status_done_delivery"
+                android:textSize="@dimen/_13sdp"/>
+            <RadioButton
+                android:id="@+id/radioBtnCancel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/status_cancel"
+                android:textSize="@dimen/_13sdp"/>
+        </RadioGroup>
+
+        <LinearLayout
+            android:layout_marginVertical="@dimen/_10sdp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginHorizontal="@dimen/_10sdp">
+            <TextView
+                android:id="@+id/clear_filter"
+                android:text="Đặt lại"
+                android:textColor="@color/grey_700"
+                android:textSize="@dimen/_13sdp"
+                android:textStyle="bold"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:layout_height="wrap_content"
+                android:background="@drawable/custom_default_border"
+                android:layout_marginEnd="@dimen/_2sdp"
+                android:paddingVertical="@dimen/_8sdp"
+                android:clickable="true"
+                android:focusable="true"
+                />
+            <TextView
+                android:id="@+id/btn_filter"
+                android:text="Áp dụng"
+                android:textColor="@color/white_900"
+                android:textSize="@dimen/_13sdp"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:background="@drawable/custom_button"
+                android:layout_marginStart="@dimen/_2sdp"
+                android:paddingVertical="@dimen/_8sdp"
+                android:clickable="true"
+                android:focusable="true"/>
+        </LinearLayout>
+    </LinearLayout>
