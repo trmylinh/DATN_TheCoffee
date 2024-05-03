@@ -158,8 +158,6 @@ dependencies {
     // swipe view
     implementation("com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.1")
 
-
-
 }
 kapt {
     correctErrorTypes = true

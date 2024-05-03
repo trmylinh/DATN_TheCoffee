@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Canvas
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
@@ -49,6 +50,12 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
     private lateinit var adapter: ItemChosenBillRecyclerAdapter
 
     private var auth = FirebaseAuth.getInstance()
+
+    private var timeSelected: Int = 0
+    private var timeCountDown: CountDownTimer? = null
+    private var timeProgress = 0
+    private var pauseOffSet: Long = 0
+    private var isStart = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -113,14 +120,46 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
 
         // luu bill -> database
         binding.orderBtn.setOnClickListener {
-            val idOrder = sharedPreferences.getString("idCart", null)
-            order(idOrder!!)
-            sharedPreferences.edit()
-                .apply {
-                    clear()
-                }.apply()
+            timeSelected = 6
+            if (timeSelected > timeProgress) {
+                binding.viewBottom.visibility = View.GONE
 
-            listener?.onBottomSheetClear()
+                binding.viewCancel.visibility = View.VISIBLE
+                binding.progressCountdown.progress = timeProgress
+                timeCountDown = object :
+                    CountDownTimer((timeSelected * 1000).toLong() - pauseOffSet * 1000, 1000) {
+                    override fun onTick(millisUntilFinished: Long) {
+                        timeProgress++
+                        pauseOffSet = timeSelected.toLong() - millisUntilFinished / 1000
+                        binding.progressCountdown.progress = timeSelected - timeProgress
+                        binding.textCountdown.text = "${timeSelected - timeProgress}"
+                    }
+
+                    override fun onFinish() {
+                        if (timeCountDown != null) {
+                            timeCountDown!!.cancel()
+                            timeProgress = 0
+                            timeSelected = 0
+                            pauseOffSet = 0
+                            timeCountDown = null
+                            binding.progressCountdown.progress = 0
+                            binding.textCountdown.text = "0"
+                            binding.viewCancel.visibility = View.GONE
+
+
+                            val idOrder = sharedPreferences.getString("idCart", null)
+                            order(idOrder!!)
+                            sharedPreferences.edit()
+                                .apply {
+                                    clear()
+                                }.apply()
+
+                            listener?.onBottomSheetClear()
+                        }
+                    }
+                }.start()
+            }
+
         }
     }
 
@@ -155,9 +194,9 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
         val shipFee: Long = 18000
         val time = SimpleDateFormat("HH:mm:ss dd/MM/yyyy").format(Calendar.getInstance().time)
 
-        billViewModel.order(Bill(id,userId, address, dataBill, status, shipFee, time))
-        billViewModel.loadingResult.observe(viewLifecycleOwner){loading ->
-            if(loading){
+        billViewModel.order(Bill(id, userId, address, dataBill, status, shipFee, time))
+        billViewModel.loadingResult.observe(viewLifecycleOwner) { loading ->
+            if (loading) {
                 binding.progressBar.visibility = View.VISIBLE
             } else {
                 binding.progressBar.visibility = View.GONE
@@ -174,7 +213,6 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
         }
 
     }
-
 
 
 }
