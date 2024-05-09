@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/_10sdp"
+    android:layout_marginVertical="@dimen/_5sdp"
+    android:orientation="horizontal">
+
+    <EditText
+        android:id="@+id/edtTextName"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_30sdp"
+        android:background="@drawable/edittext_border_selector"
+        android:cursorVisible="false"
+        android:focusableInTouchMode="false"
+        android:hint="Vua"
+        android:inputType="text"
+        android:textSize="@dimen/_12sdp"
+        android:paddingHorizontal="@dimen/_10sdp"/>
+
+    <EditText
+        android:id="@+id/edtTextPrice"
+        android:layout_width="@dimen/_80sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_marginStart="@dimen/_5sdp"
+        android:background="@drawable/edittext_border_selector"
+        android:cursorVisible="false"
+        android:focusableInTouchMode="false"
+        android:hint="20.000d"
+        android:inputType="number"
+        android:paddingHorizontal="@dimen/_15sdp"
+        android:singleLine="true"
+        android:textSize="@dimen/_12sdp" />
+
+</LinearLayout>

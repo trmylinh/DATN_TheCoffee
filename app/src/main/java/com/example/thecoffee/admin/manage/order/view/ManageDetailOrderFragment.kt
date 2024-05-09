@@ -8,6 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.android.volley.RequestQueue
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.example.thecoffee.R
 import com.example.thecoffee.base.MyViewModelFactory
 import com.example.thecoffee.databinding.FragmentConfirmOrderBillBinding
@@ -21,6 +24,7 @@ import com.example.thecoffee.order.viewmodel.BillViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.RemoteMessage
 import okhttp3.Call
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -30,6 +34,8 @@ import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
+import org.json.JSONException
+import org.json.JSONObject
 import java.io.IOException
 import kotlin.properties.Delegates
 
@@ -47,10 +53,11 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
     private var client = OkHttpClient()
 
     companion object {
+        private const val BARE_URL = "https://fcm.googleapis.com/fcm/send"
         private const val USER = "user"
         private const val ADMIN = "admin"
         private const val SERVER_KEY =
-            ""
+            "AAAA8zDdfjQ:APA91bH4SzXHfHIHmR597zyHtvNmQ2k1XibNb7R8YFLJ4H-XvB2Da3soXiFGvL2AXgNPlRTHJJdwygNTk-y7xot-2Dx1eyC0rhHgYN7gCxl6hUA5YEAGzsb2TfLK4TV2t9b_qaHiPy3c"
 
     }
 
@@ -194,7 +201,7 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
 
             binding.push.setOnClickListener {
                 Log.d("push", "push")
-                sendNotification()
+                sendNotification("", "", "")
             }
 
         } else {
@@ -202,39 +209,73 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private fun sendNotification() {
-        val requestBody = """
-{
-    "data": {
-        "body":"This is an FCM notification message order status 5 update!",
-        "title":"FCM Message Order 20 Status"
-    },
-    "to" : "$FCM_TOKEN"
-}
-""".toRequestBody("application/json".toMediaTypeOrNull())
+    private fun sendNotification(token: String, title: String, message: String) {
+//        val requestBody = """
+//{
+//    "data": {
+//        "body":"This is an FCM notification message order status 5 update!",
+//        "title":"FCM Message Order 20 Status"
+//    },
+//    "to" : "$FCM_TOKEN"
+//}
+//""".toRequestBody("application/json".toMediaTypeOrNull())
+//
+//        val request = Request.Builder()
+//            .url("https://fcm.googleapis.com/fcm/send")
+//            .post(requestBody)
+//            .addHeader("Authorization", "key=$SERVER_KEY")
+//            .addHeader("Content-Type", "application/json")
+//            .build()
+//
+//        client.newCall(request).enqueue(object : okhttp3.Callback {
+//            override fun onFailure(call: Call, e: IOException) {
+//                Log.d("error", "$e")
+//                e.printStackTrace()
+//            }
+//
+//            override fun onResponse(call: Call, response: Response) {
+//                response.use {
+//                    if (!response.isSuccessful) throw IOException("Unexpected code $response")
+//
+//                    val responseString = response.body?.string()
+//                    Log.d("response", responseString ?: "Response body is null")
+//                }
+//            }
+//        })
 
-        val request = Request.Builder()
-            .url("https://fcm.googleapis.com/fcm/send")
-            .post(requestBody)
-            .addHeader("Authorization", "key=$SERVER_KEY")
-            .addHeader("Content-Type", "application/json")
-            .build()
+        val queue: RequestQueue = Volley.newRequestQueue(requireContext())
+        try {
+            val json: JSONObject = JSONObject()
+            json.put("to", token)
 
-        client.newCall(request).enqueue(object : okhttp3.Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Log.d("error", "$e")
-                e.printStackTrace()
-            }
+            val notification: JSONObject = JSONObject()
+            notification.put("title", title)
+            notification.put("body", message)
 
-            override fun onResponse(call: Call, response: Response) {
-                response.use {
-                    if (!response.isSuccessful) throw IOException("Unexpected code $response")
+            json.put("notification", notification)
 
-                    val responseString = response.body?.string()
-                    Log.d("response", responseString ?: "Response body is null")
+            val jsonObjectRequest = object: JsonObjectRequest(
+                Method.POST, BARE_URL, json,
+                com.android.volley.Response.Listener{ response ->
+                    Log.d("response", "$response")
+                },
+                com.android.volley.Response.ErrorListener{ error ->
+                    Log.d("response", "$error")
+                }
+            ){
+                override fun getHeaders(): MutableMap<String, String> {
+                    val headers = HashMap<String, String>()
+                    headers["Authorization"] = "key=${SERVER_KEY}"
+                    headers["Content-Type"] = "application/json"
+                    // Thêm các headers tùy chỉnh ở đây
+                    return headers
                 }
             }
-        })
+
+            queue.add(jsonObjectRequest)
+        } catch (e: JSONException){
+            e.printStackTrace()
+        }
 
 
     }

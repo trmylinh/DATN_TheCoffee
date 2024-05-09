@@ -38,9 +38,12 @@ class HomeAdminFragment : Fragment() {
             findNavController().popBackStack()
         }
 
-
         binding.qlOrder.setOnClickListener {
             findNavController().navigate(R.id.action_homeAdminFragment_to_manageOrderAdminFragment)
+        }
+
+        binding.qlDrink.setOnClickListener {
+            findNavController().navigate(R.id.action_homeAdminFragment_to_managerDrinkAdminFragment)
         }
     }
 

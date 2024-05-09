@@ -28,10 +28,12 @@ class MainActivity : AppCompatActivity() {
                     R.id.itemDrinkDetailFragment,
                     R.id.homeAdminFragment,
                     R.id.manageOrderAdminFragment,
-                    R.id.historyOrderFragment
+                    R.id.historyOrderFragment,
+                    R.id.managerDrinkAdminFragment
                     -> View.GONE
-                else -> View.VISIBLE
-            }
+
+                    else -> View.VISIBLE
+                }
         }
 
     }
