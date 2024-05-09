@@ -17,7 +17,7 @@
         android:layout_marginHorizontal="@dimen/_10sdp"
         android:layout_marginTop="@dimen/_10sdp"
         android:orientation="horizontal"
-        android:paddingVertical="@dimen/_2sdp">
+        android:paddingVertical="@dimen/_5sdp">
 
         <ImageView
             android:layout_width="@dimen/_20sdp"
@@ -37,30 +37,99 @@
             android:textColor="@color/black_900"
             android:textSize="@dimen/_11sdp" />
 
-        <ImageButton
-            android:id="@+id/btn_voucher"
-            android:layout_width="@dimen/_35sdp"
-            android:layout_height="@dimen/_35sdp"
-            android:background="@drawable/round_corner"
-            android:backgroundTint="@color/white_900"
-            android:contentDescription="@string/image_voucher"
-            android:elevation="@dimen/_2sdp"
-            android:padding="@dimen/_8sdp"
-            android:scaleType="centerCrop"
-            app:srcCompat="@drawable/icon_voucher_color" />
+<!--        <ImageView-->
+<!--            android:id="@+id/btn_voucher"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:layout_width="@dimen/_25sdp"-->
+<!--            android:layout_height="@dimen/_25sdp"-->
+<!--            android:backgroundTint="@color/white_900"-->
+<!--            android:contentDescription="@string/image_voucher"-->
+<!--            android:src="@drawable/icon_voucher_color"-->
+<!--            android:clickable="true"-->
+<!--            android:focusable="true"/>-->
 
-        <ImageButton
-            android:id="@+id/btn_noti"
-            android:layout_width="@dimen/_35sdp"
-            android:layout_height="@dimen/_35sdp"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:background="@drawable/round_corner"
-            android:backgroundTint="@color/white_900"
-            android:contentDescription="@string/image_noti"
-            android:elevation="@dimen/_2sdp"
-            android:padding="@dimen/_8sdp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/icon_bell" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/view_voucher_noti"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true">
+            <ImageView
+                android:id="@+id/btn_voucher"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:scaleType="centerCrop"
+                android:padding="@dimen/_10sdp"
+                android:src="@drawable/icon_voucher_color"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:background="@drawable/round_circle"
+                android:clickable="true"
+                android:focusable="true"
+                />
+
+            <FrameLayout
+                android:id="@+id/voucherNumberContainer"
+                android:layout_width="@dimen/_12sdp"
+                android:layout_height="@dimen/_12sdp"
+                android:background="@drawable/round_circle"
+                android:backgroundTint="@color/red_600"
+                app:layout_constraintEnd_toEndOf="@id/btn_voucher"
+                app:layout_constraintTop_toTopOf="@id/btn_voucher">
+                <TextView
+                    android:id="@+id/voucher_number"
+                    android:layout_gravity="center"
+                    android:text="99"
+                    android:textColor="@color/white_900"
+                    android:textSize="@dimen/_6sdp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </FrameLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/view_bell_noti"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true">
+            <ImageView
+                android:id="@+id/btn_noti"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:scaleType="centerCrop"
+                android:padding="@dimen/_10sdp"
+                android:src="@drawable/icon_bell"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:background="@drawable/round_circle"
+                />
+
+            <FrameLayout
+                android:id="@+id/notificationNumberContainer"
+                android:layout_width="@dimen/_12sdp"
+                android:layout_height="@dimen/_12sdp"
+                android:background="@drawable/round_circle"
+                android:backgroundTint="@color/red_600"
+                app:layout_constraintEnd_toEndOf="@id/btn_noti"
+                app:layout_constraintTop_toTopOf="@id/btn_noti">
+                <TextView
+                    android:id="@+id/noti_number"
+                    android:layout_gravity="center"
+                    android:text="99"
+                    android:textColor="@color/white_900"
+                    android:textSize="@dimen/_6sdp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </FrameLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 
     <androidx.core.widget.NestedScrollView

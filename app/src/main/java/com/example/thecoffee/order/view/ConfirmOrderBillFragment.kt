@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.thecoffee.R
 import com.example.thecoffee.base.MyViewModelFactory
 import com.example.thecoffee.databinding.FragmentConfirmOrderBillBinding
 import com.example.thecoffee.order.adapter.ItemChosenBillRecyclerAdapter
@@ -120,7 +121,8 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
 
         // luu bill -> database
         binding.orderBtn.setOnClickListener {
-            timeSelected = 6
+            val idOrder = sharedPreferences.getString("idCart", null)
+            timeSelected = 4
             if (timeSelected > timeProgress) {
                 binding.viewBottom.visibility = View.GONE
 
@@ -133,6 +135,27 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
                         pauseOffSet = timeSelected.toLong() - millisUntilFinished / 1000
                         binding.progressCountdown.progress = timeSelected - timeProgress
                         binding.textCountdown.text = "${timeSelected - timeProgress}"
+
+                        binding.btnCancel.setOnClickListener {
+                            if (timeCountDown != null) {
+                                timeCountDown!!.cancel()
+                                timeProgress = 0
+                                timeSelected = 0
+                                pauseOffSet = 0
+                                timeCountDown = null
+                                binding.progressCountdown.progress = 0
+                                binding.textCountdown.text = "0"
+                                binding.viewCancel.visibility = View.GONE
+
+                                order(idOrder!!, -1)
+                                sharedPreferences.edit()
+                                    .apply {
+                                        clear()
+                                    }.apply()
+
+                                listener?.onBottomSheetClear()
+                            }
+                        }
                     }
 
                     override fun onFinish() {
@@ -146,9 +169,7 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
                             binding.textCountdown.text = "0"
                             binding.viewCancel.visibility = View.GONE
 
-
-                            val idOrder = sharedPreferences.getString("idCart", null)
-                            order(idOrder!!)
+                            order(idOrder!!, 0)
                             sharedPreferences.edit()
                                 .apply {
                                     clear()
@@ -186,11 +207,11 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
 
     }
 
-    private fun order(id: String) {
+    private fun order(id: String, statusBill: Long) {
 //        val id: String = generateRandomId()
         val userId: String = auth.currentUser?.uid!!
         val address: String = "165 Cau Giay"
-        val status: Long = 0
+        val status: Long = statusBill
         val shipFee: Long = 18000
         val time = SimpleDateFormat("HH:mm:ss dd/MM/yyyy").format(Calendar.getInstance().time)
 
@@ -205,10 +226,14 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
                 binding.viewBottom.visibility = View.GONE
                 binding.clearBill.visibility = View.GONE
                 binding.addMore.visibility = View.GONE
+                binding.viewCancel.visibility = View.GONE
 
                 binding.viewAfterOrder.visibility = View.VISIBLE
                 binding.title.text = "Trạng thái đơn hàng"
                 binding.billCode.text = id
+                if(status == -1L){
+                    binding.statusBill.text = getString(R.string.status_cancel)
+                }
             }
         }
 

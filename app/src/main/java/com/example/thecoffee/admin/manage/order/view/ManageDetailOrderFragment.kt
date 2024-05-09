@@ -12,6 +12,7 @@ import com.example.thecoffee.R
 import com.example.thecoffee.base.MyViewModelFactory
 import com.example.thecoffee.databinding.FragmentConfirmOrderBillBinding
 import com.example.thecoffee.databinding.FragmentManageDetailOrderBinding
+import com.example.thecoffee.fcm.MyFirebaseMessagingService.Companion.FCM_TOKEN
 import com.example.thecoffee.order.adapter.ItemChosenBillRecyclerAdapter
 import com.example.thecoffee.order.model.Bill
 import com.example.thecoffee.order.model.Drink
@@ -20,6 +21,16 @@ import com.example.thecoffee.order.viewmodel.BillViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import okhttp3.Call
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttp
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
+import java.io.IOException
 import kotlin.properties.Delegates
 
 interface ManageDetailOrderFragmentListener {
@@ -33,10 +44,14 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
     private lateinit var billDetail: Bill
     private lateinit var role: String
     private var statusUpdate: Long = -1L
+    private var client = OkHttpClient()
 
     companion object {
         private const val USER = "user"
         private const val ADMIN = "admin"
+        private const val SERVER_KEY =
+            ""
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,30 +94,37 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
         binding.itemsPrice.text = "${String.format("%,d", priceItems)}đ"
         binding.totalPay.text = "${String.format("%,d", priceItems)}đ"
 
-        when(billDetail.status){
+        when (billDetail.status) {
             -1L -> {
                 // huy
                 binding.layoutBtnConfirmStatusBill.visibility = View.GONE
                 binding.statusBill.text = getString(R.string.status_cancel)
             }
+
             0L -> {
                 // dang cho xac nhan - xac nhan
-                binding.layoutBtnConfirmStatusBill.visibility = if(role == ADMIN) View.VISIBLE else View.GONE
+                binding.layoutBtnConfirmStatusBill.visibility =
+                    if (role == ADMIN) View.VISIBLE else View.GONE
                 binding.statusBill.text = getString(R.string.status_pre_confirm)
                 binding.btnConfirmStatusBill.text = getString(R.string.btn_status_confirm)
             }
+
             1L -> {
                 // da xac nhan - giao hang
-                binding.layoutBtnConfirmStatusBill.visibility = if(role == ADMIN) View.VISIBLE else View.GONE
+                binding.layoutBtnConfirmStatusBill.visibility =
+                    if (role == ADMIN) View.VISIBLE else View.GONE
                 binding.statusBill.text = getString(R.string.status_confirm)
                 binding.btnConfirmStatusBill.text = getString(R.string.btn_status_delivery)
             }
+
             2L -> {
                 // dang giao hang - hoan thanh
-                binding.layoutBtnConfirmStatusBill.visibility = if(role == ADMIN) View.VISIBLE else View.GONE
+                binding.layoutBtnConfirmStatusBill.visibility =
+                    if (role == ADMIN) View.VISIBLE else View.GONE
                 binding.statusBill.text = getString(R.string.status_delivery)
                 binding.btnConfirmStatusBill.text = getString(R.string.btn_status_done_delivery)
             }
+
             3L -> {
                 // giao hang thanh cong
                 binding.layoutBtnConfirmStatusBill.visibility = View.GONE
@@ -114,7 +136,7 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
             binding.itemsTitle.text = "${getString(R.string.items)} ($countItem)"
 
             binding.layoutBtnConfirmStatusBill.setOnClickListener {
-                when(billDetail.status){
+                when (billDetail.status) {
                     0L -> {
                         // dang cho xac nhan -> da xac nhan - giao hang
                         billViewModel.updateStatusBillUser(billDetail.userId!!, billDetail.id!!, 1)
@@ -132,6 +154,7 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
                             }
                         }
                     }
+
                     1L -> {
                         // da xac nhan -> dang giao hang - hoan thanh
                         billViewModel.updateStatusBillUser(billDetail.userId!!, billDetail.id!!, 2)
@@ -140,7 +163,8 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
                                 statusUpdate = 2L
                                 binding.statusBill.visibility = View.VISIBLE
                                 binding.statusBill.text = getString(R.string.status_delivery)
-                                binding.btnConfirmStatusBill.text = getString(R.string.btn_status_done_delivery)
+                                binding.btnConfirmStatusBill.text =
+                                    getString(R.string.btn_status_done_delivery)
                                 binding.progressBar.visibility = View.GONE
                             } else {
                                 binding.progressBar.visibility = View.VISIBLE
@@ -148,6 +172,7 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
                             }
                         }
                     }
+
                     2L -> {
                         // dang giao hang -> giao hang thanh cong
                         billViewModel.updateStatusBillUser(billDetail.userId!!, billDetail.id!!, 3)
@@ -167,9 +192,51 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
                 }
             }
 
+            binding.push.setOnClickListener {
+                Log.d("push", "push")
+                sendNotification()
+            }
+
         } else {
             binding.layoutBtnConfirmStatusBill.visibility = View.GONE
         }
+    }
+
+    private fun sendNotification() {
+        val requestBody = """
+{
+    "data": {
+        "body":"This is an FCM notification message order status 5 update!",
+        "title":"FCM Message Order 20 Status"
+    },
+    "to" : "$FCM_TOKEN"
+}
+""".toRequestBody("application/json".toMediaTypeOrNull())
+
+        val request = Request.Builder()
+            .url("https://fcm.googleapis.com/fcm/send")
+            .post(requestBody)
+            .addHeader("Authorization", "key=$SERVER_KEY")
+            .addHeader("Content-Type", "application/json")
+            .build()
+
+        client.newCall(request).enqueue(object : okhttp3.Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.d("error", "$e")
+                e.printStackTrace()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                response.use {
+                    if (!response.isSuccessful) throw IOException("Unexpected code $response")
+
+                    val responseString = response.body?.string()
+                    Log.d("response", responseString ?: "Response body is null")
+                }
+            }
+        })
+
+
     }
 
 }

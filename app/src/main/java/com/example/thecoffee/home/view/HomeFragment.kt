@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -19,8 +20,10 @@ import com.example.thecoffee.order.model.Drink
 import com.example.thecoffee.databinding.FragmentHomeBinding
 import com.example.thecoffee.base.MyViewModelFactory
 import com.example.thecoffee.order.viewmodel.ProductViewModel
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
@@ -28,6 +31,7 @@ class HomeFragment : Fragment() {
     private lateinit var productViewModel: ProductViewModel
     private var drinkList = mutableListOf<Drink>()
     private lateinit var adapterListDrink: ItemDrinkHomeRecyclerAdapter
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,7 +102,19 @@ class HomeFragment : Fragment() {
         // xem them - text underline
         binding.more.paintFlags = android.graphics.Paint.UNDERLINE_TEXT_FLAG
 
-    }
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.d("token", "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
 
+            // Get new FCM registration token
+            val token = task.result
+
+            // Log and toast
+            Log.d("token", token)
+        })
+
+    }
 
 }

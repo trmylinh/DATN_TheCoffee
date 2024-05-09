@@ -40,8 +40,7 @@
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/view_header"
-        android:layout_above="@id/view_bottom">
+        android:layout_below="@id/view_header">
         <LinearLayout
             android:id="@+id/view_content"
             android:layout_width="match_parent"
@@ -157,6 +156,11 @@
                                 android:src="@drawable/icon_check_nobg" />
                         </LinearLayout>
                     </LinearLayout>
+                    <Button
+                        android:id="@+id/push"
+                        android:text="Push"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
                 </LinearLayout>
             </LinearLayout>
 

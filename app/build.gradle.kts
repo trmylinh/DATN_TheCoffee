@@ -21,7 +21,6 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -104,6 +103,10 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-storage")
 
+    // push notification - fcm
+    implementation("com.google.firebase:firebase-messaging")
+//    implementation("com.google.firebase:firebase-analytics")
+
     val nav_version = "2.7.6"
 
     // Feature module Support
@@ -157,6 +160,9 @@ dependencies {
 
     // swipe view
     implementation("com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.1")
+
+    //okhttp
+    implementation("com.squareup.okhttp3:okhttp:4.9.1")
 
 }
 kapt {

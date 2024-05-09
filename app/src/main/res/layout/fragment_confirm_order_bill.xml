@@ -579,7 +579,7 @@
             <TextView
                 android:textColor="@color/red_900"
                 android:textSize="@dimen/_12sdp"
-                android:text="Đơn hàng sẽ được đặt sau 5 giây, hãy HỦY nếu bạn không muốn đặt nữa!"
+                android:text="Đơn hàng sẽ được đặt sau 3 giây, hãy HỦY nếu bạn không muốn đặt nữa!"
                 android:layout_gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -622,14 +622,12 @@
                 android:id="@+id/text_countdown"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="10:00"
-                android:textSize="@dimen/_13sdp"
+                tools:text="3"
+                android:textSize="@dimen/_18sdp"
                 android:textStyle="bold"
                 android:textColor="@color/red_900"
                 android:layout_gravity="center"/>
         </FrameLayout>
-
-
     </LinearLayout>
 
     <ProgressBar
