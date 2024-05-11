@@ -10,27 +10,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class BillViewModel (application: Application) : AndroidViewModel(application) {
-    private var repository: BillRepository
-    private val _loadingResult: MutableLiveData<Boolean>
-    private val _loadingBillsUserResult: MutableLiveData<Boolean>
-    private val _loadingBillsResult: MutableLiveData<Boolean>
-    private val _loadingBillUserByIdResult: MutableLiveData<Boolean>
-    private val _loadingUpdateStatusBillResult: MutableLiveData<Boolean>
-    private var billsUser: MutableLiveData<ArrayList<Bill>>
-    private var bills: MutableLiveData<ArrayList<Bill>>
-    private var billUserById: MutableLiveData<Bill>
-
-    init {
-        repository = BillRepository(application)
-        _loadingResult = repository.loadingResult
-        _loadingBillsUserResult = repository.loadingBillsUserResult
-        _loadingBillsResult = repository.loadingBillsResult
-        _loadingBillUserByIdResult = repository.loadingBillUserByIdResult
-        _loadingUpdateStatusBillResult = repository.loadingUpdateStatusBillResult
-        billsUser = repository.getBillsUser
-        bills = repository.getBills
-        billUserById = repository.getBillUserById
-    }
+    private var repository: BillRepository = BillRepository(application)
+    private val _loadingResult: MutableLiveData<Boolean> = repository.loadingResult
+    private val _loadingBillsUserResult: MutableLiveData<Boolean> = repository.loadingBillsUserResult
+    private val _loadingBillsResult: MutableLiveData<Boolean> = repository.loadingBillsResult
+    private val _loadingBillUserByIdResult: MutableLiveData<Boolean> = repository.loadingBillUserByIdResult
+    private val _loadingUpdateStatusBillResult: MutableLiveData<Boolean> = repository.loadingUpdateStatusBillResult
+    private var billsUser: MutableLiveData<ArrayList<Bill>> = repository.getBillsUser
+    private var bills: MutableLiveData<ArrayList<Bill>> = repository.getBills
+    private var billUserById: MutableLiveData<Bill> = repository.getBillUserById
 
     val loadingResult: MutableLiveData<Boolean>
     get() = _loadingResult

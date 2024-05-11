@@ -25,8 +25,7 @@ import kotlin.coroutines.suspendCoroutine
 class ManageDrinkAdminFragment : Fragment() {
     private lateinit var binding: FragmentManagerDrinkAdminBinding
     private lateinit var productViewModel: ProductViewModel
-    private lateinit var adapterListDrink: ItemDrinkCategoryRecyclerAdapter
-
+    private var adapterListDrink: ItemDrinkCategoryRecyclerAdapter? = null
     private var itemList = mutableListOf<Any>()
     private var categoryList = mutableListOf<Category>()
     private var drinkList = mutableListOf<Drink>()
@@ -124,6 +123,11 @@ class ManageDrinkAdminFragment : Fragment() {
         super.onDestroyView()
         drinkList.clear()
         categoryList.clear()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        adapterListDrink?.notifyDataSetChanged()
     }
 
 }

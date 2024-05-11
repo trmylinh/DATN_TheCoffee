@@ -2,9 +2,23 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="@dimen/_10sdp"
+    android:layout_marginHorizontal="@dimen/_5sdp"
     android:layout_marginVertical="@dimen/_5sdp"
     android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/btn_delete"
+        android:layout_gravity="center"
+        android:layout_marginEnd="@dimen/_5sdp"
+        android:padding="@dimen/_5sdp"
+        android:background="@drawable/circle_drawable"
+        android:backgroundTint="@color/orange_100"
+        android:src="@drawable/icon_minus_orange"
+        android:layout_width="@dimen/_20sdp"
+        android:layout_height="@dimen/_20sdp"
+        android:visibility="visible"
+        android:clickable="true"
+        android:focusable="true"/>
 
     <EditText
         android:id="@+id/edtTextName"
@@ -27,7 +41,7 @@
         android:background="@drawable/edittext_border_selector"
         android:cursorVisible="false"
         android:focusableInTouchMode="false"
-        android:hint="20.000d"
+        android:hint="20.000"
         android:inputType="number"
         android:paddingHorizontal="@dimen/_15sdp"
         android:singleLine="true"

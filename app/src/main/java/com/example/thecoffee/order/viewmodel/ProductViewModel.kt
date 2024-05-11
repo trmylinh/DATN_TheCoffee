@@ -9,13 +9,23 @@ import com.example.thecoffee.order.model.Topping
 import com.example.thecoffee.order.repository.ProductRepository
 
 class ProductViewModel (application: Application) : AndroidViewModel(application) {
-    private var repository: ProductRepository
+    private var repository: ProductRepository = ProductRepository(application)
     private var _categoryList = MutableLiveData<ArrayList<Category>>()
     private var _drinkList = MutableLiveData<ArrayList<Drink>>()
     private var _toppingList = MutableLiveData<ArrayList<Topping>>()
-    private val _loadingDrinkResult: MutableLiveData<Boolean>
-    private val _loadingCategoryResult: MutableLiveData<Boolean>
+    private val _loadingDrinkResult: MutableLiveData<Boolean> = repository.loadingDrinkResult
+    private val _loadingCategoryResult: MutableLiveData<Boolean> = repository.loadingCategoryResult
     private val selectedProduct: MutableLiveData<String>
+
+    private val _loadingUpdatedData: MutableLiveData<Boolean> = repository.loadingUpdatedData
+    private val _loadingDeleteData: MutableLiveData<Boolean> = repository.loadingDeleteData
+
+    val loadingDeleteData: MutableLiveData<Boolean>
+        get() =  _loadingDeleteData
+
+    val loadingUpdatedData: MutableLiveData<Boolean>
+        get() =  _loadingUpdatedData
+
     val loadingDrinkResult: MutableLiveData<Boolean>
         get() = _loadingDrinkResult
 
@@ -32,12 +42,9 @@ class ProductViewModel (application: Application) : AndroidViewModel(application
         get() = _toppingList
 
     init {
-        repository = ProductRepository(application)
         _categoryList = repository.getCategoryList
         _drinkList = repository.getDrinkList
         _toppingList = repository.getToppingList
-        _loadingDrinkResult = repository.loadingDrinkResult
-        _loadingCategoryResult = repository.loadingCategoryResult
         selectedProduct = MutableLiveData<String>()
     }
 
@@ -49,12 +56,17 @@ class ProductViewModel (application: Application) : AndroidViewModel(application
         repository.getAllDataDrink()
     }
 
-    fun getDataToppingList(){
-        repository.getDataTopping()
-    }
 
     fun getDataDrinkBySale(){
         repository.getDataDrinkBySale()
+    }
+
+    fun updateDataDrink(idDrink: String, newItem: Drink){
+        repository.updateDataDrink(idDrink, newItem)
+    }
+
+    fun deleteDataDrink(idDrink: String){
+        repository.deleteDataDrink(idDrink)
     }
 
 
