@@ -57,7 +57,7 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
         private const val USER = "user"
         private const val ADMIN = "admin"
         private const val SERVER_KEY =
-            "AAAA8zDdfjQ:APA91bH4SzXHfHIHmR597zyHtvNmQ2k1XibNb7R8YFLJ4H-XvB2Da3soXiFGvL2AXgNPlRTHJJdwygNTk-y7xot-2Dx1eyC0rhHgYN7gCxl6hUA5YEAGzsb2TfLK4TV2t9b_qaHiPy3c"
+            ""
 
     }
 
