@@ -15,6 +15,8 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -153,7 +155,12 @@ class ManageDrinkDetailAdminFragment : Fragment() {
 
             binding.btnDelete.setOnClickListener {
                 productViewModel.deleteDataDrink(result.id!!)
-                findNavController().popBackStack()
+                productViewModel.loadingDeleteData.observe(viewLifecycleOwner){loading ->
+                    if(!loading){
+                        setFragmentResult("requestKey", bundleOf("id" to result.id))
+                        findNavController().popBackStack()
+                    }
+                }
             }
         }
 

@@ -68,9 +68,9 @@ class OrderFragment : Fragment() {
         // open bottom sheet category - menu danh muc spham
         productViewModel.loadingCategoryResult.observe(viewLifecycleOwner) {
             if (it) { // true show processing bar
-                binding.loadingDrinkList.visibility = View.VISIBLE
+                binding.loadingCategoryList.visibility = View.VISIBLE
             } else {
-                binding.loadingDrinkList.visibility = View.GONE
+                binding.loadingCategoryList.visibility = View.GONE
                 showMenuCategory()
             }
         }
