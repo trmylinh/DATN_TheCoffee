@@ -261,7 +261,7 @@ class OrderFragment : Fragment() {
                         bottomSheetDetail.isCancelable = false
                     }
 
-                }, marginBottom = 150
+                }, marginBottom = 150, false
             )
         binding.rvItemDrink.adapter = adapterListDrink
         linearLayoutManager = LinearLayoutManager(

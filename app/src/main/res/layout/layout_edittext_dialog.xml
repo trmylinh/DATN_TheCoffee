@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/_10sdp"
+    android:paddingVertical="@dimen/_10sdp">
+
+<!--    <TextView-->
+<!--        android:id="@+id/title_dialog"-->
+<!--        android:text="Thêm size"-->
+<!--        android:textColor="@color/black_900"-->
+<!--        android:textStyle="bold"-->
+<!--        android:textSize="@dimen/_13sdp"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"/>-->
+
+    <EditText
+        android:id="@+id/edtTextName"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/edittext_border_selector"
+        android:hint="Tên"
+        android:inputType="text"
+        android:textSize="@dimen/_12sdp"
+        android:paddingHorizontal="@dimen/_10sdp"
+        android:paddingVertical="@dimen/_10sdp"/>
+    <EditText
+        android:id="@+id/edtTextPrice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/edittext_border_selector"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:hint="20.0000đ"
+        android:inputType="number"
+        android:textSize="@dimen/_12sdp"
+        android:paddingHorizontal="@dimen/_10sdp"
+        android:paddingVertical="@dimen/_10sdp"/>
+</LinearLayout>

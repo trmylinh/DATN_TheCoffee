@@ -88,6 +88,9 @@
         <action
             android:id="@+id/action_homeAdminFragment_to_manageOrderAdminFragment"
             app:destination="@id/manageOrderAdminFragment" />
+        <action
+            android:id="@+id/action_homeAdminFragment_to_managerDrinkAdminFragment"
+            app:destination="@id/managerDrinkAdminFragment" />
     </fragment>
     <fragment
         android:id="@+id/manageOrderAdminFragment"
@@ -99,4 +102,22 @@
         android:name="com.example.thecoffee.other.history.view.HistoryOrderFragment"
         android:label="fragment_history_order"
         tools:layout="@layout/fragment_history_order" />
+    <fragment
+        android:id="@+id/managerDrinkAdminFragment"
+        android:name="com.example.thecoffee.admin.manage.drink.view.ManageDrinkAdminFragment"
+        android:label="fragment_manager_drink_admin"
+        tools:layout="@layout/fragment_manager_drink_admin" >
+        <action
+            android:id="@+id/action_managerDrinkAdminFragment_to_manageDrinkDetailAdminFragment"
+            app:destination="@id/manageDrinkDetailAdminFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/manageDrinkDetailAdminFragment"
+        android:name="com.example.thecoffee.admin.manage.drink.view.ManageDrinkDetailAdminFragment"
+        android:label="fragment_manage_drink_detail_admin"
+        tools:layout="@layout/fragment_manage_drink_detail_admin">
+        <argument
+            android:name="detailDrink"
+            app:argType="com.example.thecoffee.order.model.Drink"/>
+    </fragment>
 </navigation>

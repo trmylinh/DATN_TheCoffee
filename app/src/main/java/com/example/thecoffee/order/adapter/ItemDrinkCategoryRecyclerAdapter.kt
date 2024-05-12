@@ -1,9 +1,12 @@
 package com.example.thecoffee.order.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.chauthai.swipereveallayout.SwipeRevealLayout
+import com.chauthai.swipereveallayout.ViewBinderHelper
 import com.example.thecoffee.order.model.Drink
 import com.example.thecoffee.databinding.LayoutCategoryNameBinding
 import com.example.thecoffee.databinding.LayoutItemDrinkCategoryBinding
@@ -14,7 +17,8 @@ interface ItemDrinkCategoryRecyclerInterface {
 class ItemDrinkCategoryRecyclerAdapter(
     val list: List<Any>,
     val onClickItemDrink: ItemDrinkCategoryRecyclerInterface,
-    val marginBottom: Int
+    val marginBottom: Int,
+    val isAdmin: Boolean,
 ): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private companion object {
         private const val VIEW_TYPE_CATEGORY = 0
@@ -25,9 +29,21 @@ class ItemDrinkCategoryRecyclerAdapter(
             binding.nameDrink.text = drink.name
             binding.priceDrink.text ="${String.format("%,d", drink.price)}đ"
             Glide.with(itemView.context).load(drink.image).into(binding.imageDrink)
+
+            if(isAdmin){
+                binding.cardVideBtnAdd.visibility = View.GONE
+            }
         }
         init {
             binding.cardVideBtnAdd.setOnClickListener {
+                val position = adapterPosition
+                if(position != RecyclerView.NO_POSITION){
+                    val drink = list[position] as Drink
+                    onClickItemDrink.onClickItemDrink(drink)
+                }
+            }
+
+            binding.viewItem.setOnClickListener{
                 val position = adapterPosition
                 if(position != RecyclerView.NO_POSITION){
                     val drink = list[position] as Drink

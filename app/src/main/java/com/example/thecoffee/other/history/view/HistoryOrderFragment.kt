@@ -79,31 +79,8 @@ class HistoryOrderFragment : Fragment() {
                         //filter status bottom dialog
                         displayBottomSheetDialogFilterStatus()
 
-                        val adapter = ManageItemBillAdapter(bills!!, object: ManageItemBillAdapterInterface {
-                            override fun onClickItem(position: Bill) {
-                                val bundleBill = Bundle()
-                                bundleBill.putSerializable("billDetail", position)
-                                bundleBill.putString("role", "user")
-                                bottomSheetManageDetailOrder.arguments = bundleBill
-                                bottomSheetManageDetailOrder.listener = object:
-                                    ManageDetailOrderFragmentListener {
-                                    override fun onBottomSheetClose(status: Long, idBill: String) {
+                        showRecyclerView(bills!!)
 
-                                    }
-                                }
-
-                                // hien thi confirm bill ui
-                                bottomSheetManageDetailOrder.show(
-                                    parentFragmentManager,
-                                    bottomSheetManageDetailOrder.tag
-                                )
-                                bottomSheetManageDetailOrder.isCancelable = false
-                            }
-                        })
-                        binding.rvBills.adapter = adapter
-                        binding.rvBills.layoutManager = LinearLayoutManager(
-                            requireContext(), LinearLayoutManager.VERTICAL, false
-                        )
                     } else {
                         binding.rvBills.visibility = View.GONE
                         binding.layoutFilterStatus.visibility = View.GONE
@@ -112,6 +89,32 @@ class HistoryOrderFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun showRecyclerView(data: List<Bill>){
+        val adapter = ManageItemBillAdapter(data, object: ManageItemBillAdapterInterface {
+            override fun onClickItem(position: Bill) {
+                val bundleBill = Bundle()
+                bundleBill.putSerializable("billDetail", position)
+                bundleBill.putString("role", "user")
+                bottomSheetManageDetailOrder.arguments = bundleBill
+                bottomSheetManageDetailOrder.listener = object:
+                    ManageDetailOrderFragmentListener {
+                    override fun onBottomSheetClose(status: Long, idBill: String) {}
+                }
+
+                // hien thi confirm bill ui
+                bottomSheetManageDetailOrder.show(
+                    parentFragmentManager,
+                    bottomSheetManageDetailOrder.tag
+                )
+                bottomSheetManageDetailOrder.isCancelable = false
+            }
+        })
+        binding.rvBills.adapter = adapter
+        binding.rvBills.layoutManager = LinearLayoutManager(
+            requireContext(), LinearLayoutManager.VERTICAL, false
+        )
     }
 
     private suspend fun getAllBillsUser(): List<Bill>? =
@@ -155,6 +158,29 @@ class HistoryOrderFragment : Fragment() {
                 dialog.setOnDismissListener {
                     selectedRadioButtonId = radioGroup.checkedRadioButtonId
                 }
+
+                var statusFilter: Long = -2L
+                when(binding.statusName.text){
+                    getString(R.string.status_pre_confirm) -> statusFilter = 0L
+                    getString(R.string.status_confirm) -> statusFilter = 1L
+                    getString(R.string.status_delivery) -> statusFilter = 2L
+                    getString(R.string.status_done_delivery) -> statusFilter = 3L
+                    getString(R.string.status_cancel) -> statusFilter = -1L
+                    "Trạng thái" -> statusFilter = -2L
+                }
+                val filterBill = bills?.filter { it.status == statusFilter}
+                if(statusFilter != -2L){
+                    if (filterBill != null) {
+                        if(filterBill.isNotEmpty()){
+                            binding.rvBills.visibility = View.VISIBLE
+                            binding.emptyView.visibility = View.GONE
+                            showRecyclerView(filterBill)
+                        } else {
+                            binding.rvBills.visibility = View.GONE
+                            binding.emptyView.visibility = View.VISIBLE
+                        }
+                    }
+                }
             }
 
             btnClear.setOnClickListener {
@@ -163,6 +189,10 @@ class HistoryOrderFragment : Fragment() {
                 binding.statusName.text = "Trạng thái"
                 binding.statusName.setTextColor(resources.getColor(R.color.grey_700, null))
                 binding.layoutFilterStatus.backgroundTintList = resources.getColorStateList(R.color.grey_300, null)
+
+                binding.rvBills.visibility = View.VISIBLE
+                binding.emptyView.visibility = View.GONE
+                showRecyclerView(bills!!)
             }
         }
     }

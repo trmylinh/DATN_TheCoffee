@@ -2,32 +2,26 @@ package com.example.thecoffee.order.repository
 
 import android.app.Application
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.example.thecoffee.order.model.Category
 import com.example.thecoffee.order.model.Drink
 import com.example.thecoffee.order.model.Size
 import com.example.thecoffee.order.model.Topping
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.StorageReference
 
 class ProductRepository(_application: Application) {
-    private var application: Application
-    private var categoryList: MutableLiveData<ArrayList<Category>>
-    private var drinkList: MutableLiveData<ArrayList<Drink>>
-    private var toppingList: MutableLiveData<ArrayList<Topping>>
-    private val _loadingDrinkResult: MutableLiveData<Boolean>
-    private val _loadingDrinkResultBySale: MutableLiveData<Boolean>
-    private val _loadingCategoryResult: MutableLiveData<Boolean>
+    private var application: Application = _application
+    private var categoryList: MutableLiveData<ArrayList<Category>> = MutableLiveData<ArrayList<Category>>()
+    private var drinkList: MutableLiveData<ArrayList<Drink>> = MutableLiveData<ArrayList<Drink>>()
+    private var toppingList: MutableLiveData<ArrayList<Topping>> = MutableLiveData<ArrayList<Topping>>()
+    private val _loadingDrinkResult: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    private val _loadingDrinkResultBySale: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    private val _loadingCategoryResult: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    private val _loadingUpdatedData: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    private val _loadingDeleteData: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     private var db: FirebaseFirestore = FirebaseFirestore.getInstance()
-
-    init {
-        application = _application
-        categoryList = MutableLiveData<ArrayList<Category>>()
-        drinkList = MutableLiveData<ArrayList<Drink>>()
-        toppingList = MutableLiveData<ArrayList<Topping>>()
-        _loadingDrinkResult = MutableLiveData<Boolean>()
-        _loadingCategoryResult = MutableLiveData<Boolean>()
-        _loadingDrinkResultBySale = MutableLiveData<Boolean>()
-    }
 
     val getCategoryList: MutableLiveData<ArrayList<Category>>
         get() = categoryList
@@ -46,6 +40,12 @@ class ProductRepository(_application: Application) {
         get() = _loadingDrinkResultBySale
     val loadingCategoryResult: MutableLiveData<Boolean>
         get() = _loadingCategoryResult
+
+    val loadingUpdatedData: MutableLiveData<Boolean>
+        get() =  _loadingUpdatedData
+
+    val loadingDeleteData: MutableLiveData<Boolean>
+        get() =  _loadingDeleteData
 
     fun getDataCategoryList(){
         _loadingCategoryResult.postValue(true)
@@ -167,23 +167,40 @@ class ProductRepository(_application: Application) {
             }
     }
 
-    fun getDataTopping(){
-//        db.collection("Toppings").get()
-//            .addOnCompleteListener { task ->
-//                if(task.isSuccessful && task.result != null){
-//                    val list = ArrayList<Topping>()
-//                    for(document in task.result){
-//                        val id = document.id
-//                        val name = document.getString("name")
-//                        val price = document.get("price").toString().toInt()
-//                        list.add(Topping(id, name, price))
-//                    }
-//                    toppingList.postValue(list)
-//                }
-//            }.addOnFailureListener { error ->
-//                Log.d("getDataTopping", "Error getDataTopping: $error")
-//            }
+    fun updateDataDrink(idDrink: String, newItem: Drink){
+        _loadingUpdatedData.postValue(true)
+        val drinkRef = db.collection("Drinks").document(idDrink)
+        drinkRef.set(newItem).addOnCompleteListener {
+            if (it.isSuccessful) {
+                Toast.makeText(
+                    application,
+                    "update data successfully",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                Toast.makeText(application, it.exception.toString(), Toast.LENGTH_SHORT)
+                    .show()
+                Log.e("Firestore", "Error update data", it.exception)
+            }
+            _loadingUpdatedData.postValue(false)
+        }
     }
+
+    fun deleteDataDrink(idDrink: String){
+        _loadingDeleteData.postValue(true)
+        db.collection("Drinks").document(idDrink)
+            .delete()
+            .addOnSuccessListener {
+                Toast.makeText(application, "Document deleted!", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(application, "Error deleting document!", Toast.LENGTH_SHORT).show()
+            }.addOnCompleteListener {
+                _loadingDeleteData.postValue(false)
+            }
+    }
+
+
 
 
 

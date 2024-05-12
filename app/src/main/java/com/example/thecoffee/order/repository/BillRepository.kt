@@ -20,28 +20,18 @@ import java.util.Arrays
 import kotlin.reflect.typeOf
 
 class BillRepository(_application: Application) {
-    private var application: Application
+    private var application: Application = _application
     private var db: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
-    private val _loadingResult: MutableLiveData<Boolean>
-    private val _loadingBillsUserResult: MutableLiveData<Boolean>
-    private val _loadingBillsResult: MutableLiveData<Boolean>
-    private val _loadingBillUserByIdResult: MutableLiveData<Boolean>
-    private val _loadingUpdateStatusBillResult: MutableLiveData<Boolean>
-    private var billsUser: MutableLiveData<ArrayList<Bill>>
-    private var bills: MutableLiveData<ArrayList<Bill>> // admin
-    private var billUserById: MutableLiveData<Bill>
-    init {
-        application = _application
-        _loadingResult = MutableLiveData<Boolean>()
-        _loadingBillsUserResult = MutableLiveData<Boolean>()
-        _loadingBillsResult = MutableLiveData<Boolean>()
-        _loadingBillUserByIdResult = MutableLiveData<Boolean>()
-        _loadingUpdateStatusBillResult = MutableLiveData<Boolean>()
-        billsUser = MutableLiveData<ArrayList<Bill>>()
-        bills = MutableLiveData<ArrayList<Bill>>()
-        billUserById = MutableLiveData<Bill>()
-    }
+    private val _loadingResult: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    private val _loadingBillsUserResult: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    private val _loadingBillsResult: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    private val _loadingBillUserByIdResult: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    private val _loadingUpdateStatusBillResult: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    private var billsUser: MutableLiveData<ArrayList<Bill>> = MutableLiveData<ArrayList<Bill>>()
+    private var bills: MutableLiveData<ArrayList<Bill>> =
+        MutableLiveData<ArrayList<Bill>>() // admin
+    private var billUserById: MutableLiveData<Bill> = MutableLiveData<Bill>()
 
     val loadingResult: MutableLiveData<Boolean>
         get() = _loadingResult

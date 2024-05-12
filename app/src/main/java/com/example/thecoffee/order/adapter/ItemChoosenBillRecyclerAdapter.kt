@@ -17,7 +17,7 @@ class ItemChosenBillRecyclerAdapter(
 
     inner class ItemChosenBillViewHolder(binding: LayoutItemChosenBillBinding) :
         RecyclerView.ViewHolder(binding.root) {
-            var swipeRevealLayout: SwipeRevealLayout
+            var swipeRevealLayout: SwipeRevealLayout = binding.swipeLayout
         fun bind(cart: Cart) {
             binding.nameItem.text = "x${cart.quantity} ${cart.drinkName}"
             binding.sizeItem.text = cart.drinkSize
@@ -43,12 +43,6 @@ class ItemChosenBillRecyclerAdapter(
 
             binding.priceItem.text = "${String.format("%,d", cart.totalPrice)}đ"
 
-        }
-
-        init {
-            swipeRevealLayout = binding.swipeLayout
-
-            
         }
 
     }

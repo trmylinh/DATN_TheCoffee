@@ -19,6 +19,9 @@
     <color name="brown_100">#D4C7B6</color>
     <color name="brown_200">#C3A48F</color>
     <color name="red_900">#C5030C</color>
+    <color name="red_600">#F03029</color>
+    <color name="red_400">#FB4E48</color>
+    <color name="red_200">#F79A96</color>
     <color name="green_500">#00C61E</color>
     <color name="green_900">#1B5E20</color>
     <color name="green_300">#77D874</color>

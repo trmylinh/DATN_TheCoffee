@@ -1,6 +1,7 @@
 package com.example.thecoffee.admin.manage.order.view
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -119,6 +120,29 @@ class ManageOrderAdminFragment : Fragment() {
                 dialog.setOnDismissListener {
                     selectedRadioButtonId = radioGroup.checkedRadioButtonId
                 }
+
+                var statusFilter: Long = -2L
+                when(binding.statusName.text){
+                    getString(R.string.status_pre_confirm) -> statusFilter = 0L
+                    getString(R.string.status_confirm) -> statusFilter = 1L
+                    getString(R.string.status_delivery) -> statusFilter = 2L
+                    getString(R.string.status_done_delivery) -> statusFilter = 3L
+                    getString(R.string.status_cancel) -> statusFilter = -1L
+                    "Trạng thái" -> statusFilter = -2L
+                }
+                val filterBill = bills?.filter { it.status == statusFilter}
+                if(statusFilter != -2L){
+                    if (filterBill != null) {
+                        if(filterBill.isNotEmpty()){
+                            binding.rvBills.visibility = View.VISIBLE
+                            binding.emptyView.visibility = View.GONE
+                            showRecyclerView(filterBill)
+                        } else {
+                            binding.rvBills.visibility = View.GONE
+                            binding.emptyView.visibility = View.VISIBLE
+                        }
+                    }
+                }
             }
 
             btnClear.setOnClickListener {
@@ -127,6 +151,10 @@ class ManageOrderAdminFragment : Fragment() {
                 binding.statusName.text = "Trạng thái"
                 binding.statusName.setTextColor(resources.getColor(R.color.grey_700, null))
                 binding.layoutFilterStatus.backgroundTintList = resources.getColorStateList(R.color.grey_300, null)
+
+                binding.rvBills.visibility = View.VISIBLE
+                binding.emptyView.visibility = View.GONE
+                showRecyclerView(bills!!)
             }
         }
     }
