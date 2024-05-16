@@ -110,6 +110,9 @@
         <action
             android:id="@+id/action_managerDrinkAdminFragment_to_manageDrinkDetailAdminFragment"
             app:destination="@id/manageDrinkDetailAdminFragment" />
+        <action
+            android:id="@+id/action_managerDrinkAdminFragment_to_manageAddDrinkFragment"
+            app:destination="@id/manageAddDrinkFragment" />
     </fragment>
     <fragment
         android:id="@+id/manageDrinkDetailAdminFragment"
@@ -120,4 +123,9 @@
             android:name="detailDrink"
             app:argType="com.example.thecoffee.order.model.Drink"/>
     </fragment>
+    <fragment
+        android:id="@+id/manageAddDrinkFragment"
+        android:name="com.example.thecoffee.admin.manage.drink.view.ManageAddDrinkFragment"
+        android:label="fragment_manage_add_drink"
+        tools:layout="@layout/fragment_manage_add_drink" />
 </navigation>

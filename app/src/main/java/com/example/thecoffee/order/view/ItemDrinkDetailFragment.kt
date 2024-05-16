@@ -201,10 +201,4 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
         listTopping = emptyList()
         listOption.clear()
     }
-
-    private fun generateRandomId(): String {
-        return "${UUID.randomUUID()}"
-    }
-
-
 }

@@ -11,7 +11,7 @@ interface ItemCategoryRecyclerInterface {
     fun onClickItemDrink(position: Category)
 }
 class ItemCategoryRecyclerAdapter(
-    val list: List<Category>,
+    var list: List<Category>,
     val onClickItemDrink: ItemCategoryRecyclerInterface
 ): RecyclerView.Adapter<ItemCategoryRecyclerAdapter.ItemCategoryViewHolder>() {
     private lateinit var binding: LayoutItemCategoryBinding

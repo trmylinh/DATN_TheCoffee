@@ -1,7 +1,7 @@
 package com.example.thecoffee.order.model
 
-class Category (
-    val id: String? = null,
+data class Category (
+    val categoryId: String? = null,
     val name: String? = null,
     val image: String? = null
 ) {

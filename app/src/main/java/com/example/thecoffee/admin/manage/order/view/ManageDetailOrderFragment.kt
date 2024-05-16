@@ -81,11 +81,11 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.closeBtn.setOnClickListener {
             dismiss()
-            listener?.onBottomSheetClose(statusUpdate, billDetail.id!!)
+            listener?.onBottomSheetClose(statusUpdate, billDetail.billId!!)
             statusUpdate = -1L
         }
 
-        binding.billCode.text = "${billDetail.id}"
+        binding.billCode.text = "${billDetail.billId}"
 
         val adapter = ItemChosenBillRecyclerAdapter(billDetail.drinks!!)
         binding.rvItemChoosen.adapter = adapter
@@ -146,7 +146,7 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
                 when (billDetail.status) {
                     0L -> {
                         // dang cho xac nhan -> da xac nhan - giao hang
-                        billViewModel.updateStatusBillUser(billDetail.userId!!, billDetail.id!!, 1)
+                        billViewModel.updateStatusBillUser(billDetail.userId!!, billDetail.billId!!, 1)
                         billViewModel.loadingUpdateStatusBillResult.observe(viewLifecycleOwner) { loading ->
                             if (!loading) {
                                 statusUpdate = 1L
@@ -164,7 +164,7 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
 
                     1L -> {
                         // da xac nhan -> dang giao hang - hoan thanh
-                        billViewModel.updateStatusBillUser(billDetail.userId!!, billDetail.id!!, 2)
+                        billViewModel.updateStatusBillUser(billDetail.userId!!, billDetail.billId!!, 2)
                         billViewModel.loadingUpdateStatusBillResult.observe(viewLifecycleOwner) { loading ->
                             if (!loading) {
                                 statusUpdate = 2L
@@ -182,7 +182,7 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
 
                     2L -> {
                         // dang giao hang -> giao hang thanh cong
-                        billViewModel.updateStatusBillUser(billDetail.userId!!, billDetail.id!!, 3)
+                        billViewModel.updateStatusBillUser(billDetail.userId!!, billDetail.billId!!, 3)
                         billViewModel.loadingUpdateStatusBillResult.observe(viewLifecycleOwner) { loading ->
                             if (!loading) {
                                 statusUpdate = 3L

@@ -182,7 +182,7 @@ class ManageOrderAdminFragment : Fragment() {
                         if(status != -1L){
                             val newData = data.toMutableList()
                             for(item in newData){
-                                if(item.id == idBill){
+                                if(item.billId == idBill){
                                     item.status = status
                                 }
                             }

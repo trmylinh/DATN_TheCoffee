@@ -15,7 +15,7 @@ interface ItemDrinkCategoryRecyclerInterface {
     fun onClickItemDrink(position: Drink)
 }
 class ItemDrinkCategoryRecyclerAdapter(
-    val list: List<Any>,
+    var list: List<Any>,
     val onClickItemDrink: ItemDrinkCategoryRecyclerInterface,
     val marginBottom: Int,
     val isAdmin: Boolean,

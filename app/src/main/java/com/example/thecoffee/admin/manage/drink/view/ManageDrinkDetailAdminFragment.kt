@@ -15,6 +15,8 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -70,28 +72,40 @@ class ManageDrinkDetailAdminFragment : Fragment() {
             binding.descProduct.setExpandedTextColor(R.color.orange_900)
             binding.descProduct.setTrimLength(4)
 
-            if(result.size?.isNotEmpty() == true){
-                adapterSize = ManageDrinkInfoAdapter(result.size)
-                binding.rvSize.adapter = adapterSize
-                binding.rvSize.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            if (result.size?.isNotEmpty() == true) {
+                adapterSize = ManageDrinkInfoAdapter(result.size, null)
             } else {
+                adapterSize = ManageDrinkInfoAdapter(mutableListOf(), null)
                 binding.layoutRvSize.visibility = View.GONE
             }
+            binding.rvSize.adapter = adapterSize
+            binding.rvSize.layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
-            if(result.topping?.isNotEmpty() == true){
-                adapterTopping = ManageDrinkInfoAdapter(result.topping)
-                binding.rvTopping.adapter = adapterTopping
-                binding.rvTopping.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            if (result.topping?.isNotEmpty() == true) {
+                adapterTopping = ManageDrinkInfoAdapter(null, result.topping)
             } else {
+                adapterTopping = ManageDrinkInfoAdapter(null, mutableListOf())
                 binding.layoutRvTopping.visibility = View.GONE
             }
+            binding.rvTopping.adapter = adapterTopping
+            binding.rvTopping.layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
             var isEditable = false
             // btn update
             binding.btnUpdate.setOnClickListener {
+                if (result.size?.isEmpty() == true || result.size == null) {
+                    binding.layoutRvSize.visibility = View.VISIBLE
+                }
+
+                if (result.topping?.isEmpty() == true || result.topping == null) {
+                    binding.layoutRvTopping.visibility = View.VISIBLE
+                }
+
                 isEditable = !isEditable
 
-                if (isEditable){
+                if (isEditable) {
                     binding.nameProduct.visibility = View.GONE
                     binding.descProduct.visibility = View.GONE
 
@@ -140,20 +154,34 @@ class ManageDrinkDetailAdminFragment : Fragment() {
                     val edtDescProduct = binding.edtDescProduct.text.toString()
                     val imgProduct = imageUri ?: result.image
 
-                    val newItem = Drink(result.id, edtNameProduct, edtDescProduct,
-                        imgProduct.toString(), result.price, 0, result.categoryId, adapterSize.list as List<Size>, adapterTopping.list as List<Topping>)
-                    productViewModel.updateDataDrink(result.id!!, newItem)
+                    val newItem = Drink(
+                        result.drinkId,
+                        edtNameProduct,
+                        edtDescProduct,
+                        imgProduct.toString(),
+                        result.price,
+                        0,
+                        result.categoryId,
+                        adapterSize.listSize as List<Size>,
+                        adapterTopping.listTopping as List<Topping>
+                    )
+                    productViewModel.updateDataDrink(result.drinkId!!, newItem)
                 }
 
                 // size - topping
                 adapterSize.isEditable = !adapterSize.isEditable
                 adapterTopping.isEditable = !adapterTopping.isEditable
-
             }
 
+
             binding.btnDelete.setOnClickListener {
-                productViewModel.deleteDataDrink(result.id!!)
-                findNavController().popBackStack()
+                productViewModel.deleteDataDrink(result.drinkId!!)
+                productViewModel.loadingDeleteData.observe(viewLifecycleOwner) { loading ->
+                    if (!loading) {
+                        setFragmentResult("requestKey", bundleOf("id" to result.drinkId))
+                        findNavController().popBackStack()
+                    }
+                }
             }
         }
 
@@ -168,21 +196,20 @@ class ManageDrinkDetailAdminFragment : Fragment() {
     ) { result: ActivityResult ->
         if (result.resultCode == Activity.RESULT_OK) {
             if (result.data != null) {
-//                showDialog(true)
                 imageUri = result.data!!.data
                 Glide.with(requireContext()).load(imageUri).into(binding.imgProduct)
-
             }
         }
     }
 
-    private fun showDialogAddMore(title: String){
-        val customLayoutDialogAddMore = layoutInflater.inflate(R.layout.layout_edittext_dialog, null)
+    private fun showDialogAddMore(title: String) {
+        val customLayoutDialogAddMore =
+            layoutInflater.inflate(R.layout.layout_edittext_dialog, null)
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle(title)
         builder.setView(customLayoutDialogAddMore)
 
-        builder.setPositiveButton("Thêm"){ dialog,id ->
+        builder.setPositiveButton("Thêm") { dialog, id ->
             val edtNameSize = customLayoutDialogAddMore.findViewById<EditText>(R.id.edtTextName)
             val edtPriceSize = customLayoutDialogAddMore.findViewById<EditText>(R.id.edtTextPrice)
 
@@ -190,7 +217,7 @@ class ManageDrinkDetailAdminFragment : Fragment() {
                 "name" to edtNameSize.text.toString(),
                 "price" to edtPriceSize.text.toString()
             )
-            sendDialogDataToFragment(result, type= if(title == "Thêm size") "size" else "topping")
+            sendDialogDataToFragment(result, type = if (title == "Thêm size") "size" else "topping")
         }.setNegativeButton("Hủy") { dialog, id ->
             dialog.cancel()
         }
@@ -199,18 +226,17 @@ class ManageDrinkDetailAdminFragment : Fragment() {
         dialog.show()
     }
 
-    private fun sendDialogDataToFragment(data: Map<String, String>, type: String){
+    private fun sendDialogDataToFragment(data: Map<String, String>, type: String) {
         val name = data["name"]
         val price = data["price"]
-        if(type == "size"){
-            val insertPosition = adapterSize.list.size
-            (adapterSize.list as MutableList).add(Size(name, price?.toLong()))
-            adapterSize.notifyItemInserted(insertPosition)
+        if (type == "size") {
+            val insertPosition = adapterSize.listSize?.size
+            (adapterSize.listSize as MutableList).add(Size(name, price?.toLong()))
+            adapterSize.notifyItemInserted(insertPosition!!)
         } else {
-            val insertPosition = adapterTopping.list.size
-            (adapterTopping.list as MutableList).add(Topping(name, price?.toLong()))
-            adapterTopping.notifyItemInserted(insertPosition)
+            val insertPosition = adapterTopping.listTopping?.size
+            (adapterTopping.listTopping as MutableList).add(Topping(name, price?.toLong()))
+            adapterTopping.notifyItemInserted(insertPosition!!)
         }
-
     }
 }
