@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Linear layout as parent layout-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/_15sdp"
+    android:background="@color/white_900"
+    >
+
+    <!-- Text view to show the text Select course-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Chọn danh mục"
+        android:textSize="@dimen/_15sdp"
+        android:textStyle="bold"
+        />
+
+    <!-- Edit text to allow user to type name
+           of item he/she wants to search-->
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edit_text"
+        android:hint="Tìm kiếm..."
+        android:textSize="@dimen/_12sdp"
+        android:padding="@dimen/_8sdp"
+        android:singleLine="true"
+        android:layout_marginVertical="@dimen/_10sdp"
+        android:background="@drawable/custom_default_border"
+        />
+
+    <!-- List view to insert list of items-->
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/rv_category_spinner" />
+
+</LinearLayout>

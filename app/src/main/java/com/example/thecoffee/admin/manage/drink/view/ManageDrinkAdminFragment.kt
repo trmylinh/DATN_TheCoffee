@@ -90,10 +90,14 @@ class ManageDrinkAdminFragment : Fragment() {
         setFragmentResultListener("requestKey") { requestKey, bundle ->
             val id = bundle.getString("id")
             val newList = adapterListDrink?.list?.find { item ->
-                item is Drink && item.id == id
+                item is Drink && item.drinkId == id
             }
             (adapterListDrink?.list as MutableList).remove(newList)
             adapterListDrink?.notifyDataSetChanged()
+        }
+
+        binding.iconAdd.setOnClickListener {
+            findNavController().navigate(R.id.action_managerDrinkAdminFragment_to_manageAddDrinkFragment)
         }
     }
 
@@ -112,7 +116,7 @@ class ManageDrinkAdminFragment : Fragment() {
                 categoryList = categoryItems
                 for (category in categoryItems) {
                     CoroutineScope(Dispatchers.Main).launch {
-                        val list = filterDrink(category.id!!)
+                        val list = filterDrink(category.categoryId!!)
                         itemList.add(category.name!!)
                         itemList.addAll(list)
                     }

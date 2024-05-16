@@ -8,9 +8,11 @@ import com.example.thecoffee.databinding.LayoutItemDrinkHomeBinding
 import com.example.thecoffee.databinding.LayoutItemManageDrinkBinding
 import com.example.thecoffee.order.model.Size
 import com.example.thecoffee.order.model.Topping
+import java.io.Serializable
 
 class ManageDrinkInfoAdapter(
-    val list: List<Any>
+    val listSize: List<Size>? = null,
+    val listTopping: List<Topping>? = null,
 ): RecyclerView.Adapter<ManageDrinkInfoAdapter.DrinkInfoViewHolder>(){
     private lateinit var binding: LayoutItemManageDrinkBinding
 
@@ -52,9 +54,18 @@ class ManageDrinkInfoAdapter(
     }
 
     private fun removeItem(position: Int){
-        (list as MutableList).removeAt(position)
-        notifyItemRemoved(position)
-        notifyItemRangeChanged(position, list.size)
+        if(listSize != null){
+            (listSize as MutableList).removeAt(position)
+            notifyItemRemoved(position)
+            notifyItemRangeChanged(position, listSize.size)
+            return
+        }
+        if(listTopping != null){
+            (listTopping as MutableList).removeAt(position)
+            notifyItemRemoved(position)
+            notifyItemRangeChanged(position, listTopping.size)
+            return
+        }
     }
 
 
@@ -66,10 +77,18 @@ class ManageDrinkInfoAdapter(
     }
 
     override fun getItemCount(): Int {
-        return list.size
+        if(listSize != null){
+            return listSize.size
+        }
+
+        if(listTopping != null){
+            return listTopping.size
+        }
+
+        return 0
     }
 
     override fun onBindViewHolder(holder: DrinkInfoViewHolder, position: Int) {
-        holder.bind(list[position], isEditable)
+        holder.bind(if(listSize != null) listSize[position] else listTopping!![position], isEditable)
     }
 }

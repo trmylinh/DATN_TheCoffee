@@ -131,7 +131,7 @@ class BillRepository(_application: Application) {
                 val bills: List<Map<String, Any>> = mutableListOf()
 
                 val itemBill = hashMapOf(
-                    "id" to bill.id!!,
+                    "billId" to bill.billId!!,
                     "userId" to bill.userId!!,
                     "address" to bill.address!!,
                     "drinks" to bill.drinks!!,
@@ -198,7 +198,7 @@ class BillRepository(_application: Application) {
                     val bill = ArrayList<Bill>()
                     val data = task.result.data?.get("bill") as List<Map<*, *>>?
                     data?.forEach{ element ->
-                        val id = element["id"] as String
+                        val billId = element["billId"] as String
                         val userId = element["userId"] as String
                         val address = element["address"] as String
                         val status = element["status"] as Long
@@ -218,7 +218,7 @@ class BillRepository(_application: Application) {
 
                             drink.add(Cart(totalPrice, quantity, drinkName, drinkSize, drinkTopping, note))
                         }
-                        bill.add(Bill(id, userId, address, drink, status, shipFee, time))
+                        bill.add(Bill(billId, userId, address, drink, status, shipFee, time))
                     }
 
                     billsUser.postValue(bill)
@@ -237,7 +237,7 @@ class BillRepository(_application: Application) {
                     val data = task.result.data?.get("bill") as List<Map<*, *>>
                     var bill = Bill()
                     data.forEach { element->
-                        if(element["id"] == id){
+                        if(element["billId"] == id){
                             val userId = element["userId"] as String
                             val address = element["address"] as String
                             val status = element["status"] as Long
@@ -278,7 +278,7 @@ class BillRepository(_application: Application) {
                         val data = document.get("bill") as List<Map<*, *>>
 
                         data.forEach { element ->
-                            val id = element["id"] as String
+                            val billId = element["billId"] as String
                             val userId = element["userId"] as String
                             val address = element["address"] as String
                             val status = element["status"] as Long
@@ -307,7 +307,7 @@ class BillRepository(_application: Application) {
                                     )
                                 )
                             }
-                            bill.add(Bill(id, userId, address, drink, status, shipFee, time))
+                            bill.add(Bill(billId, userId, address, drink, status, shipFee, time))
                         }
                     }
 
@@ -331,7 +331,7 @@ class BillRepository(_application: Application) {
                     for(index in data.indices){
                         val element = data[index]
                         val address = element["address"] as String
-                        val id = element["id"] as String
+                        val billId = element["billId"] as String
                         val shipFee = element["shipFee"] as Long
                         val status = element["status"] as Long
                         val time = element["time"] as String
@@ -349,10 +349,10 @@ class BillRepository(_application: Application) {
 
                             drink.add(Cart(totalPrice, quantity, drinkName, drinkSize, drinkTopping, note))
                         }
-                        bill = if(element["id"] == idBill){
+                        bill = if(element["billId"] == idBill){
                             Bill(idBill, userId, address, drink, statusBill, shipFee, time)
                         } else {
-                            Bill(id, userId, address, drink, status, shipFee, time)
+                            Bill(billId, userId, address, drink, status, shipFee, time)
                         }
                         updates.add(bill)
                     }

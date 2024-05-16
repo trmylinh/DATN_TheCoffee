@@ -6,15 +6,6 @@
     android:paddingHorizontal="@dimen/_10sdp"
     android:paddingVertical="@dimen/_10sdp">
 
-<!--    <TextView-->
-<!--        android:id="@+id/title_dialog"-->
-<!--        android:text="Thêm size"-->
-<!--        android:textColor="@color/black_900"-->
-<!--        android:textStyle="bold"-->
-<!--        android:textSize="@dimen/_13sdp"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"/>-->
-
     <EditText
         android:id="@+id/edtTextName"
         android:layout_marginTop="@dimen/_10sdp"
@@ -37,4 +28,58 @@
         android:textSize="@dimen/_12sdp"
         android:paddingHorizontal="@dimen/_10sdp"
         android:paddingVertical="@dimen/_10sdp"/>
+    <LinearLayout
+        android:id="@+id/view_add_img_category"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
+        <ImageView
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:background="@drawable/circle_drawable"
+            android:padding="@dimen/_5sdp"
+            android:src="@drawable/icon_plus" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:text="Thêm ảnh"
+            android:textColor="@color/orange_900"
+            android:textSize="@dimen/_12sdp" />
+    </LinearLayout>
+    <RelativeLayout
+        android:id="@+id/view_img_category"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/img_new_category"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_200sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:scaleType="centerInside" />
+
+        <ImageView
+            android:id="@+id/icon_delete_img_category"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:layout_marginEnd="@dimen/_5sdp"
+            android:background="@drawable/circle_drawable"
+            android:backgroundTint="@color/grey_200"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="@dimen/_5sdp"
+            android:src="@drawable/icon_close_dark" />
+    </RelativeLayout>
 </LinearLayout>
