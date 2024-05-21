@@ -35,6 +35,7 @@ import com.example.thecoffee.order.viewmodel.ProductViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.tapadoo.alerter.Alerter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -88,8 +89,15 @@ class ManageDrinkAdminFragment : Fragment() {
 
         // delete hoặc back lại từ màn trước
         setFragmentResultListener("refresh") { _, bundle ->
-            val isRefreshing = bundle.getBoolean("isRefreshing")
-            binding.swipeRefreshLayout.isRefreshing = isRefreshing
+            val deleteMessage = bundle.getString("delete_message")
+            val createMessage = bundle.getString("create_message")
+            if (deleteMessage != null) {
+                showAlert(deleteMessage)
+            }
+            if(createMessage != null){
+                showAlert(createMessage)
+            }
+            binding.swipeRefreshLayout.isRefreshing = true
             drinkList.clear()
             (categoryList as MutableList).clear()
             itemList.clear()
@@ -104,6 +112,19 @@ class ManageDrinkAdminFragment : Fragment() {
         binding.iconBack.setOnClickListener {
             findNavController().popBackStack()
         }
+    }
+
+    //show alerter
+    private fun showAlert(message: String) {
+        Alerter.create(requireActivity())
+//            .setTitle("Thông báo")
+            .setText(message)
+            .enableSwipeToDismiss()
+            .setIcon(R.drawable.icon_bell)
+            .setIconColorFilter(0) // optional - removes white tint
+            .setBackgroundColorRes(R.color.orange_700)
+            .setDuration(5000)
+            .show()
     }
 
     private fun getCategory() {

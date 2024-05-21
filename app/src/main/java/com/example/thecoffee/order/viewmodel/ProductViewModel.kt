@@ -25,6 +25,9 @@ class ProductViewModel (application: Application) : AndroidViewModel(application
     private val _loadingUpdatedData: MutableLiveData<Boolean> = repository.loadingUpdatedData
     private val _loadingDeleteData: MutableLiveData<Boolean> = repository.loadingDeleteData
 
+    private val _messageDeleteDrink: MutableLiveData<String> = repository.getMessageDeleteDrink
+    private val _messageCreateDrink: MutableLiveData<String> = repository.getMessageCreateDrink
+
     val loadingDeleteData: MutableLiveData<Boolean>
         get() =  _loadingDeleteData
 
@@ -60,6 +63,12 @@ class ProductViewModel (application: Application) : AndroidViewModel(application
 
     val getToppingList : MutableLiveData<ArrayList<Topping>>
         get() = _toppingList
+
+    val getMessageDeleteDrink: MutableLiveData<String>
+        get() = _messageDeleteDrink
+
+    val getMessageCreateDrink: MutableLiveData<String>
+        get() = _messageCreateDrink
 
     init {
         _categoryList = repository.getCategoryList

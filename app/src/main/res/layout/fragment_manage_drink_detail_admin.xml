@@ -53,6 +53,39 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+            <CheckBox
+                android:id="@+id/out_of_stock"
+                android:text="Hết hàng"
+                android:layout_margin="@dimen/_10sdp"
+                android:textSize="@dimen/_13sdp"
+                android:textColor="@color/red_400"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
+            <LinearLayout
+                android:id="@+id/view_out_of_stock"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:layout_margin="@dimen/_10sdp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+                <ImageView
+                    android:id="@+id/icon_warning"
+                    android:src="@drawable/icon_error"
+                    android:layout_width="@dimen/_35sdp"
+                    android:layout_height="@dimen/_35sdp"
+                    />
+                <TextView
+                    android:id="@+id/tv_out_of_stock"
+                    android:text="Hết hàng"
+                    android:layout_margin="@dimen/_10sdp"
+                    android:textSize="@dimen/_13sdp"
+                    android:textColor="@color/red_400"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible"/>
+            </LinearLayout>
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"

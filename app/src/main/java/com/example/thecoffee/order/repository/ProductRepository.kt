@@ -35,6 +35,9 @@ class ProductRepository(_application: Application) {
 
     private var storageRef: StorageReference = FirebaseStorage.getInstance().reference
 
+    private val messageDeleteDrink: MutableLiveData<String> = MutableLiveData<String>()
+    private val messageCreateDrink: MutableLiveData<String> = MutableLiveData<String>()
+
     val getCategoryList: MutableLiveData<ArrayList<Category>>
         get() = categoryList
 
@@ -73,6 +76,12 @@ class ProductRepository(_application: Application) {
 
     val loadingDeleteData: MutableLiveData<Boolean>
         get() = _loadingDeleteData
+
+    val getMessageDeleteDrink: MutableLiveData<String>
+        get() = messageDeleteDrink
+
+    val getMessageCreateDrink: MutableLiveData<String>
+        get() = messageCreateDrink
 
     fun getDataCategoryList() {
         _loadingCategoryResult.postValue(true)
@@ -289,9 +298,11 @@ class ProductRepository(_application: Application) {
                     db.collection("Drinks").document(document.id).delete()
                         .addOnSuccessListener {
                             Log.d("Delete", "DocumentSnapshot successfully deleted!")
+                            messageDeleteDrink.postValue("Product successfully deleted!")
                         }
                         .addOnFailureListener {e ->
                             Log.w("Delete", "Error deleting document", e)
+                            messageDeleteDrink.postValue("Error deleting product: ${e.message}")
                         }
                 }
             }
@@ -317,17 +328,19 @@ class ProductRepository(_application: Application) {
                     )
                 )
                     .addOnSuccessListener {
-                        Toast.makeText(application, "Document added!", Toast.LENGTH_SHORT).show()
+//                        messageCreateDrink.postValue("Product successfully added!")
+                        Log.d("Firestore", "Document added!")
                     }
                     .addOnFailureListener { e ->
+//                        messageCreateDrink.postValue("Error adding product: ${e.message}")
                         Log.e("Firestore", "Error adding document", e)
-                    }
-                    .addOnCompleteListener {
-                        _loadingAddCategoryResult.postValue(false)
                     }
             }.addOnFailureListener { e ->
                 Log.e("Firestore", "Error download url image", e)
             }
+                .addOnCompleteListener {
+                    _loadingAddCategoryResult.postValue(false)
+                }
         }
     }
 
@@ -344,20 +357,22 @@ class ProductRepository(_application: Application) {
                     drink.price,
                     drink.discount,
                     drink.categoryId,
+                    false,
                     drink.size,
                     drink.topping
                 ))
                     .addOnSuccessListener {
-                        Toast.makeText(application, "Document added!", Toast.LENGTH_SHORT).show()
+                        messageCreateDrink.postValue("Product successfully added!")
+                        Log.d("Firestore", "Document added!")
                     }
                     .addOnFailureListener { e ->
+                        messageCreateDrink.postValue("Error adding product: ${e.message}")
                         Log.e("Firestore", "Error adding document", e)
-                    }
-                    .addOnCompleteListener {
-                        _loadingAddDrinkResult.postValue(false)
                     }
             }.addOnFailureListener { e ->
                 Log.e("Firestore", "Error download url image", e)
+            }.addOnCompleteListener {
+                _loadingAddDrinkResult.postValue(false)
             }
         }
 
