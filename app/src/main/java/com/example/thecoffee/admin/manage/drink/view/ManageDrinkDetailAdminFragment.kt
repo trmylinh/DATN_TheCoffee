@@ -178,7 +178,7 @@ class ManageDrinkDetailAdminFragment : Fragment() {
                 productViewModel.deleteDataDrink(result.drinkId!!)
                 productViewModel.loadingDeleteData.observe(viewLifecycleOwner) { loading ->
                     if (!loading) {
-                        setFragmentResult("requestKey", bundleOf("id" to result.drinkId))
+                        setFragmentResult("refresh", bundleOf("isRefreshing" to true))
                         findNavController().popBackStack()
                     }
                 }
@@ -186,6 +186,7 @@ class ManageDrinkDetailAdminFragment : Fragment() {
         }
 
         binding.iconBack.setOnClickListener {
+            setFragmentResult("refresh", bundleOf("isRefreshing" to true))
             findNavController().popBackStack()
         }
 
