@@ -87,9 +87,8 @@ class ProductRepository(_application: Application) {
                         list.add(Category(categoryId, name, image))
                     }
                     categoryList.postValue(list)
-
-                    _loadingCategoryResult.postValue(false)
                 }
+                _loadingCategoryResult.postValue(false)
             }.addOnFailureListener { error ->
                 Log.d("getDataCategoryList", "Error getDataCategoryList: $error")
             }
@@ -144,9 +143,8 @@ class ProductRepository(_application: Application) {
                         )
                     }
                     drinkList.postValue(list)
-
-                    _loadingDrinkResult.postValue(false)
                 }
+                _loadingDrinkResult.postValue(false)
             }
     }
 
@@ -195,9 +193,9 @@ class ProductRepository(_application: Application) {
                         )
                     }
                     drinkListBySale.postValue(list)
-                    _loadingDrinkResultBySale.postValue(false)
-                }
 
+                }
+                _loadingDrinkResultBySale.postValue(false)
             }
     }
 
@@ -246,40 +244,61 @@ class ProductRepository(_application: Application) {
                         )
                     }
                     drinkListByCategory.postValue(list)
-                    _loadingDrinkByCategoryResult.postValue(true)
+
                 }
+                _loadingDrinkByCategoryResult.postValue(true)
             }
     }
 
     fun updateDataDrink(idDrink: String, newItem: Drink) {
         _loadingUpdatedData.postValue(true)
-        val drinkRef = db.collection("Drinks").document(idDrink)
-        drinkRef.set(newItem).addOnCompleteListener {
-            if (it.isSuccessful) {
-                Toast.makeText(
-                    application,
-                    "update data successfully",
-                    Toast.LENGTH_SHORT
-                ).show()
-            } else {
-                Toast.makeText(application, it.exception.toString(), Toast.LENGTH_SHORT)
-                    .show()
-                Log.e("Firestore", "Error update data", it.exception)
+        db.collection("Drinks")
+            .whereEqualTo("drinkId", idDrink)
+            .get()
+            .addOnSuccessListener { documents->
+                for (document in documents) {
+                    db.collection("Drinks").document(document.id).set(newItem)
+                        .addOnCompleteListener {
+                            if (it.isSuccessful) {
+                                Toast.makeText(
+                                    application,
+                                    "update data successfully",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                Toast.makeText(application, it.exception.toString(), Toast.LENGTH_SHORT)
+                                    .show()
+                                Log.e("Firestore", "Error update data", it.exception)
+                            }
+                            _loadingUpdatedData.postValue(false)
+                        }
+                }
             }
-            _loadingUpdatedData.postValue(false)
-        }
+            .addOnFailureListener { e ->
+                Log.d("Query", "Error getting documents: ", e)
+            }
     }
 
     fun deleteDataDrink(idDrink: String) {
         _loadingDeleteData.postValue(true)
-        db.collection("Drinks").document(idDrink)
-            .delete()
-            .addOnSuccessListener {
-                Toast.makeText(application, "Document deleted!", Toast.LENGTH_SHORT).show()
+        db.collection("Drinks")
+            .whereEqualTo("drinkId", idDrink)
+            .get()
+            .addOnSuccessListener {documents ->
+                for (document in documents) {
+                    db.collection("Drinks").document(document.id).delete()
+                        .addOnSuccessListener {
+                            Log.d("Delete", "DocumentSnapshot successfully deleted!")
+                        }
+                        .addOnFailureListener {e ->
+                            Log.w("Delete", "Error deleting document", e)
+                        }
+                }
             }
             .addOnFailureListener { e ->
                 Toast.makeText(application, "Error deleting document!", Toast.LENGTH_SHORT).show()
-            }.addOnCompleteListener {
+            }
+            .addOnCompleteListener {
                 _loadingDeleteData.postValue(false)
             }
     }

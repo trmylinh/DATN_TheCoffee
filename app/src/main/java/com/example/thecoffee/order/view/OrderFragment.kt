@@ -22,16 +22,12 @@ import com.example.thecoffee.order.model.Drink
 import com.example.thecoffee.databinding.FragmentOrderBinding
 import com.example.thecoffee.base.MyViewModelFactory
 import com.example.thecoffee.order.model.Cart
+import com.example.thecoffee.order.utils.DrinksByCategory
 import com.example.thecoffee.order.viewmodel.ProductViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.util.UUID
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 class OrderFragment : Fragment() {
     private lateinit var binding: FragmentOrderBinding
@@ -39,7 +35,7 @@ class OrderFragment : Fragment() {
     private lateinit var productViewModel: ProductViewModel
     private var categoryList = listOf<Category>()
     private var drinkList = mutableListOf<Drink>()
-    private var itemList = mutableListOf<Any>()
+    private var itemList = mutableListOf<DrinksByCategory>()
     private lateinit var adapterBottom: ItemCategoryRecyclerAdapter
     private lateinit var adapterListDrink: ItemDrinkCategoryRecyclerAdapter
     private val bottomSheetDetail = ItemDrinkDetailFragment()
@@ -51,8 +47,8 @@ class OrderFragment : Fragment() {
         val viewModelFactory = MyViewModelFactory(requireActivity().application)
         productViewModel = ViewModelProvider(this, viewModelFactory)[ProductViewModel::class.java]
 
-        productViewModel.getDataCategoryList()
         productViewModel.getDataDrinkList()
+        productViewModel.getDataCategoryList()
     }
 
     override fun onCreateView(
@@ -65,24 +61,30 @@ class OrderFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // open bottom sheet category - menu danh muc spham
-        productViewModel.loadingCategoryResult.observe(viewLifecycleOwner) {
-            if (it) { // true show processing bar
-                binding.loadingCategoryList.visibility = View.VISIBLE
-            } else {
-                binding.loadingCategoryList.visibility = View.GONE
-                showMenuCategory()
+        binding.swipeRefreshLayout.apply {
+            setColorSchemeColors(resources.getColor(R.color.orange_700,null))
+            isRefreshing = true
+//            productViewModel.getDataCategoryList()
+            getCategory()
+            setOnRefreshListener {
+                drinkList.clear()
+                (categoryList as MutableList).clear()
+                itemList.clear()
+                productViewModel.getDataCategoryList()
+                productViewModel.getDataDrinkList()
             }
         }
 
-        // list item theo category
-        productViewModel.loadingDrinkResult.observe(viewLifecycleOwner) { loading ->
-            if (loading) { // true show processing bar
-                binding.loadingDrinkList.visibility = View.VISIBLE
-            } else {
-                binding.loadingDrinkList.visibility = View.GONE
-                showListDrink()
-            }
+    }
+
+    private fun getCategory(){
+                productViewModel.getCategoryList.observe(viewLifecycleOwner){ categories ->
+                    Log.d("TAG", "categories: $categories")
+                    categoryList = categories
+                    if(categoryList.isNotEmpty()){
+                        getDrink()
+                        showMenuCategory()
+                    }
         }
 
     }
@@ -97,34 +99,24 @@ class OrderFragment : Fragment() {
         btnClose.setOnClickListener {
             dialogCategory.dismiss()
         }
-        productViewModel.getCategoryList.observe(viewLifecycleOwner) { categoryItems ->
-            if (categoryItems != null) {
-                categoryList = categoryItems
-                for (category in categoryItems) {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        val list = filterDrink(category.id!!)
-                        itemList.add(category.name!!)
-                        itemList.addAll(list)
+
+        adapterBottom = ItemCategoryRecyclerAdapter(requireContext(),
+            object : ItemCategoryRecyclerInterface {
+                override fun onClickItemCategory(category: Category) {
+                    dialogCategory.dismiss()
+                    binding.titleCategory.text = category.name
+
+                    val positionCategoryName = getPositionOfItem(DrinksByCategory.TypeCategory(category.name!!))
+                    if (positionCategoryName != RecyclerView.NO_POSITION) {
+                        linearLayoutManager.scrollToPositionWithOffset(
+                            positionCategoryName, 0
+                        )
                     }
                 }
+            })
+        recyclerViewCategory.adapter = adapterBottom
 
-                adapterBottom = ItemCategoryRecyclerAdapter(categoryItems,
-                    object : ItemCategoryRecyclerInterface {
-                        override fun onClickItemDrink(position: Category) {
-                            dialogCategory.dismiss()
-                            binding.titleCategory.text = position.name
-
-                            val positionCategoryName = getPositionOfItem(position.name!!)
-                            if (positionCategoryName != RecyclerView.NO_POSITION) {
-                                linearLayoutManager.scrollToPositionWithOffset(
-                                    positionCategoryName, 0
-                                )
-                            }
-                        }
-                    })
-                recyclerViewCategory.adapter = adapterBottom
-            }
-        }
+        adapterBottom.submitList(categoryList)
 
         binding.titleCategory.setOnClickListener {
             recyclerViewCategory.layoutManager = GridLayoutManager(
@@ -141,22 +133,40 @@ class OrderFragment : Fragment() {
 
     }
 
-    private suspend fun filterDrink(categoryId: String): List<Drink> =
-        suspendCoroutine { continuation ->
-            productViewModel.getDrinkList.observe(viewLifecycleOwner) {
-                drinkList = it
-                val displayArr = drinkList.filter { item ->
-                    item.categoryId == categoryId
+    private fun getDrink(){
+                productViewModel.getDrinkList.observe(viewLifecycleOwner){drinks ->
+                    drinkList = drinks
+                   if(drinkList.isNotEmpty()){
+                       binding.swipeRefreshLayout.isRefreshing = false
+                       showListDrink()
+                   }
                 }
-                continuation.resume(displayArr)
-            }
-        }
-
+    }
 
     private fun showListDrink() {
+        var count = 0
+        while(count < categoryList.size){
+            val categoryName = DrinksByCategory.TypeCategory(categoryList[count].name!!)
+            itemList.add(categoryName)
+//            drinkList
+//                .filter { item -> item.categoryId == categoryList[count].categoryId }
+//                .forEach { itemList.add(DrinksByCategory.TypeDrink(it)) }
+            val filteredDrinks = drinkList.filter { item -> item.categoryId == categoryList[count].categoryId }
+            if (filteredDrinks.isEmpty()) {
+                itemList.add(DrinksByCategory.TypeEmpty("Hiện tại chưa có sản phẩm nào"))
+            } else {
+                filteredDrinks.forEach { drink ->
+                    itemList.add(DrinksByCategory.TypeDrink(drink))
+                }
+            }
+
+            count++
+        }
+        drinkList.clear()
+
         adapterListDrink =
             ItemDrinkCategoryRecyclerAdapter(
-                itemList,
+                requireContext(),
                 object : ItemDrinkCategoryRecyclerInterface {
                     override fun onClickItemDrink(position: Drink) {
                         // pass data -> item drink detail fragment
@@ -182,9 +192,6 @@ class OrderFragment : Fragment() {
                                 sharedPreferences.edit()
                                     .apply {
                                         putString("dataCart", value)
-
-                                        // tao idCart ~ idBill -> chi tao 1 lan
-//                                        putString("idCart", generateRandomId())
                                     }.apply()
 
 
@@ -264,16 +271,18 @@ class OrderFragment : Fragment() {
                 }, marginBottom = 150, false
             )
         binding.rvItemDrink.adapter = adapterListDrink
+        adapterListDrink.submitList(itemList)
+
         linearLayoutManager = LinearLayoutManager(
             requireContext(), LinearLayoutManager.VERTICAL, false
         )
         binding.rvItemDrink.layoutManager = linearLayoutManager
     }
 
-    private fun getPositionOfItem(item: String): Int {
+    private fun getPositionOfItem(item: DrinksByCategory.TypeCategory): Int {
         for (i in 0 until itemList.size) {
             val listItem = itemList[i]
-            if (listItem is String && listItem == item) {
+            if (listItem is DrinksByCategory.TypeCategory && listItem == item) {
                 return i
             }
         }
@@ -287,8 +296,8 @@ class OrderFragment : Fragment() {
                 val visiblePosition = linearLayoutManager.findFirstCompletelyVisibleItemPosition()
                 if (visiblePosition != RecyclerView.NO_POSITION) {
                     val firstVisibleItem = itemList[visiblePosition]
-                    if (firstVisibleItem is String && binding.titleCategory.text != firstVisibleItem) {
-                        binding.titleCategory.text = firstVisibleItem
+                    if (firstVisibleItem is DrinksByCategory.TypeCategory && binding.titleCategory.text != firstVisibleItem) {
+                        binding.titleCategory.text = firstVisibleItem.categoryName
                     }
                 }
             }
@@ -296,6 +305,12 @@ class OrderFragment : Fragment() {
     }
     private fun generateRandomId(): String {
         return "${UUID.randomUUID()}"
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        productViewModel.getCategoryList.removeObservers(viewLifecycleOwner)
+        productViewModel.getDrinkList.removeObservers(viewLifecycleOwner)
     }
 
 
