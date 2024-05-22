@@ -59,7 +59,6 @@ class ManageDrinkDetailAdminFragment : Fragment() {
         arguments?.let {
             val args = ManageDrinkDetailAdminFragmentArgs.fromBundle(it)
             val result = args.detailDrink
-            Log.d("result", "$result")
 
             binding.nameProduct.text = result.name
             Glide.with(requireContext()).load(result.image).into(binding.imgProduct)
@@ -71,6 +70,8 @@ class ManageDrinkDetailAdminFragment : Fragment() {
             binding.descProduct.setCollapsedTextColor(R.color.orange_900)
             binding.descProduct.setExpandedTextColor(R.color.orange_900)
             binding.descProduct.setTrimLength(4)
+
+            binding.viewOutOfStock.visibility = if (result.isOutOfStock == true) View.VISIBLE else View.GONE
 
             if (result.size?.isNotEmpty() == true) {
                 adapterSize = ManageDrinkInfoAdapter(result.size, null)
@@ -106,6 +107,10 @@ class ManageDrinkDetailAdminFragment : Fragment() {
                 isEditable = !isEditable
 
                 if (isEditable) {
+                    // duoc edit
+                    binding.checkboxOutOfStock.visibility = View.VISIBLE
+                    binding.viewOutOfStock.visibility = View.GONE
+
                     binding.nameProduct.visibility = View.GONE
                     binding.descProduct.visibility = View.GONE
 
@@ -136,7 +141,12 @@ class ManageDrinkDetailAdminFragment : Fragment() {
                         pickImage.launch(intent)
                     }
 
+                    binding.checkboxOutOfStock.isChecked = result.isOutOfStock!!
+
                 } else {
+//                    binding.outOfStock.visibility = View.VISIBLE
+//                    binding.viewOutOfStock.visibility = View.VISIBLE
+
                     binding.nameProduct.visibility = View.VISIBLE
                     binding.descProduct.visibility = View.VISIBLE
 
@@ -153,6 +163,17 @@ class ManageDrinkDetailAdminFragment : Fragment() {
                     val edtNameProduct = binding.edtNameProduct.text.toString()
                     val edtDescProduct = binding.edtDescProduct.text.toString()
                     val imgProduct = imageUri ?: result.image
+                    val isOutOfStock = binding.checkboxOutOfStock.isChecked
+
+                    Log.d("TAG", "onViewCreated: $isOutOfStock")
+
+                    if(!isOutOfStock){
+                        binding.viewOutOfStock.visibility = View.GONE
+                        binding.checkboxOutOfStock.visibility = View.GONE
+                    } else {
+                        binding.viewOutOfStock.visibility = View.VISIBLE
+                        binding.checkboxOutOfStock.visibility = View.GONE
+                    }
 
                     val newItem = Drink(
                         result.drinkId,
@@ -160,12 +181,12 @@ class ManageDrinkDetailAdminFragment : Fragment() {
                         edtDescProduct,
                         imgProduct.toString(),
                         result.price,
-                        0,
                         result.categoryId,
+                        result.isOutOfStock,
                         adapterSize.listSize as List<Size>,
                         adapterTopping.listTopping as List<Topping>
                     )
-                    productViewModel.updateDataDrink(result.drinkId!!, newItem)
+//                    productViewModel.updateDataDrink(result.drinkId!!, newItem)
                 }
 
                 // size - topping
@@ -178,8 +199,10 @@ class ManageDrinkDetailAdminFragment : Fragment() {
                 productViewModel.deleteDataDrink(result.drinkId!!)
                 productViewModel.loadingDeleteData.observe(viewLifecycleOwner) { loading ->
                     if (!loading) {
-                        setFragmentResult("refresh", bundleOf("isRefreshing" to true))
-                        findNavController().popBackStack()
+                        productViewModel.getMessageDeleteDrink.observe(viewLifecycleOwner){ message->
+                            setFragmentResult("refresh", bundleOf("delete_message" to message))
+                            findNavController().popBackStack()
+                        }
                     }
                 }
             }

@@ -167,6 +167,9 @@ dependencies {
     // volley
     implementation("com.android.volley:volley:1.2.1")
 
+    //alerter
+    implementation("com.tapadoo.android:alerter:2.0.4")
+
 }
 kapt {
     correctErrorTypes = true

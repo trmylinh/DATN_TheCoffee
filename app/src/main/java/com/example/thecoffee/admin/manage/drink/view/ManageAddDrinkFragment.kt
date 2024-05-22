@@ -25,7 +25,9 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.graphics.Color
+import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -74,6 +76,8 @@ class ManageAddDrinkFragment : Fragment() {
     private var categoryIdSpinner: String = ""
     private var categoryIdNew: String = ""
 
+    private lateinit var alertDialog: AlertDialog
+    private var newCategory: Category? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -96,6 +100,7 @@ class ManageAddDrinkFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.iconBack.setOnClickListener {
+            setFragmentResult("refresh", bundleOf("isRefreshing" to true))
             findNavController().popBackStack()
         }
 
@@ -121,7 +126,8 @@ class ManageAddDrinkFragment : Fragment() {
                             Log.d("category", "onCategorySelected: ${category.categoryId}")
                             binding.spinnerCategory.text = category.name
                             binding.imgCategory.visibility = View.VISIBLE
-                            Glide.with(requireContext()).load(category.image).into(binding.imgCategory)
+                            Glide.with(requireContext()).load(category.image)
+                                .into(binding.imgCategory)
 
                             categoryIdSpinner = category.categoryId!!
                             dialog.dismiss()
@@ -130,6 +136,13 @@ class ManageAddDrinkFragment : Fragment() {
                 rvCategory.adapter = categorySpinnerAdapter
                 rvCategory.layoutManager =
                     LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+
+                if(newCategory != null){
+                    (categorySpinnerAdapter.list as MutableList).add(newCategory!!)
+                    categorySpinnerAdapter.notifyItemInserted(
+                        categorySpinnerAdapter.list.size - 1
+                    )
+                }
 
                 edtText.addTextChangedListener(object : TextWatcher {
                     override fun beforeTextChanged(
@@ -197,14 +210,18 @@ class ManageAddDrinkFragment : Fragment() {
             val discount = 0
             val desc = binding.edtDesc.text.toString()
 
-            val drink = Drink(drinkId, name, desc, image, price,  discount,  categoryId, size, topping )
+            val drink =
+                Drink(drinkId, name, desc, image, price, categoryId, false, size, topping)
             productViewModel.createDrink(drink)
-            productViewModel.loadingAddDrinkResult.observe(viewLifecycleOwner){
-                if(it){
-                   binding.progressBarAddProduct.visibility = View.VISIBLE
+            productViewModel.loadingAddDrinkResult.observe(viewLifecycleOwner) {
+                if (it) {
+                    binding.progressBarAddProduct.visibility = View.VISIBLE
                 } else {
                     binding.progressBarAddProduct.visibility = View.GONE
-                    findNavController().popBackStack()
+                    productViewModel.getMessageCreateDrink.observe(viewLifecycleOwner) { message ->
+                        setFragmentResult("refresh", bundleOf("create_message" to message))
+                        findNavController().popBackStack()
+                    }
                 }
             }
 
@@ -215,15 +232,15 @@ class ManageAddDrinkFragment : Fragment() {
     private fun checkEditTexts() {
         var emptyFieldCount = 0
 
-        if(binding.edtName.text.isEmpty()){
+        if (binding.edtName.text.isEmpty()) {
             emptyFieldCount++
         }
 
-        if(binding.edtPrice.text.isEmpty()){
+        if (binding.edtPrice.text.isEmpty()) {
             emptyFieldCount++
         }
 
-        if(imageProductUri == null){
+        if (imageProductUri == null) {
             emptyFieldCount++
         }
 
@@ -269,7 +286,7 @@ class ManageAddDrinkFragment : Fragment() {
         dialog.show()
     }
 
-    private fun showDialogAddNewCategory(){
+    private fun showDialogAddNewCategory() {
         val customLayoutDialogAddMore =
             layoutInflater.inflate(R.layout.layout_edittext_dialog, null)
         val builder = AlertDialog.Builder(requireContext())
@@ -292,31 +309,44 @@ class ManageAddDrinkFragment : Fragment() {
             pickImageCategory.launch(intent)
         }
 
-        builder.setPositiveButton("Thêm") { dialog, id ->
-            categoryIdNew = generateRandomId()
-
-            val result = hashMapOf(
-                "id" to categoryIdNew,
-                "name" to edtName.text.toString(),
-                "image" to "$imageCategoryUri"
-            )
-
-            productViewModel.createCategory(Category(result["id"], result["name"], result["image"]))
-            productViewModel.loadingAddCategoryResult.observe(viewLifecycleOwner){ loading ->
-               if(loading){
-                   binding.progressBarAddProduct.visibility = View.VISIBLE
-               } else {
-                   binding.progressBarAddProduct.visibility = View.GONE
-                   sendDialogDataToFragment(result, type = "category")
-               }
+        builder.setPositiveButton("Thêm", null)
+            .setNegativeButton("Hủy") { dialog, id ->
+                dialog.cancel()
             }
 
-        }.setNegativeButton("Hủy") { dialog, id ->
-            dialog.cancel()
-        }
+        alertDialog = builder.create()
 
-        val dialog = builder.create()
-        dialog.show()
+        alertDialog.setOnShowListener {
+            val positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            positiveButton.isEnabled = false
+
+            positiveButton.setOnClickListener {
+                if (imageCategoryUri != null) {
+                    categoryIdNew = generateRandomId()
+                    val result = hashMapOf(
+                        "id" to categoryIdNew,
+                        "name" to edtName.text.toString(),
+                        "image" to "$imageCategoryUri"
+                    )
+                    val newCategory = Category(
+                        result["id"],
+                        result["name"],
+                        result["image"]
+                    )
+                    productViewModel.createCategory(newCategory)
+                    productViewModel.loadingAddCategoryResult.observe(viewLifecycleOwner) { loading ->
+                        if (loading) {
+                            binding.progressBarAddProduct.visibility = View.VISIBLE
+                        } else {
+                            binding.progressBarAddProduct.visibility = View.GONE
+                            sendDialogDataToFragment(result, type = "category")
+                        }
+                        alertDialog.dismiss()
+                    }
+                }
+            }
+        }
+        alertDialog.show()
     }
 
     private fun sendDialogDataToFragment(data: Map<String, Any>, type: String) {
@@ -334,9 +364,15 @@ class ManageAddDrinkFragment : Fragment() {
                 binding.rvSize.layoutManager =
                     LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
                 val insertPosition = adapterSize.listSize?.size
-                (adapterSize.listSize as MutableList).add(Size(name.toString(), price.toString().toLong()))
+                (adapterSize.listSize as MutableList).add(
+                    Size(
+                        name.toString(),
+                        price.toString().toLong()
+                    )
+                )
                 adapterSize.notifyItemInserted(insertPosition!!)
             }
+
             "topping" -> {
                 binding.rvTopping.visibility = View.VISIBLE
                 adapterTopping = ManageDrinkInfoAdapter(null, listTopping)
@@ -345,13 +381,20 @@ class ManageAddDrinkFragment : Fragment() {
                 binding.rvTopping.layoutManager =
                     LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
                 val insertPosition = adapterTopping.listTopping?.size
-                (adapterTopping.listTopping as MutableList).add(Topping(name.toString(), price.toString().toLong()))
+                (adapterTopping.listTopping as MutableList).add(
+                    Topping(
+                        name.toString(),
+                        price.toString().toLong()
+                    )
+                )
                 adapterTopping.notifyItemInserted(insertPosition!!)
             }
+
             else -> {
                 binding.imgCategory.visibility = View.VISIBLE
                 Glide.with(requireContext()).load(image).into(binding.imgCategory)
                 binding.spinnerCategory.text = name.toString()
+                newCategory = Category(id.toString(), name.toString(), image.toString())
             }
         }
 
@@ -390,6 +433,8 @@ class ManageAddDrinkFragment : Fragment() {
                 viewAddImgCategory.visibility = View.GONE
                 viewImgCategory.visibility = View.VISIBLE
                 Glide.with(requireContext()).load(imageCategoryUri).into(imageViewInDialog)
+
+                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = true
 
                 clearImgCategory.setOnClickListener {
                     imageCategoryUri = null

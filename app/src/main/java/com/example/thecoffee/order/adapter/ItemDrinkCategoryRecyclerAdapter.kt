@@ -44,8 +44,12 @@ class ItemDrinkCategoryRecyclerAdapter(
             binding.priceDrink.text ="${String.format("%,d", drink.price)}đ"
             Glide.with(itemView.context).load(drink.image).into(binding.imageDrink)
 
+            binding.viewDisable.visibility =  if(drink.isOutOfStock == true) View.VISIBLE else View.GONE
+            binding.tvOutOfStock.visibility =  if(drink.isOutOfStock == true) View.VISIBLE else View.GONE
+
             if(isAdmin){
                 binding.cardVideBtnAdd.visibility = View.GONE
+                binding.viewDisable.visibility = View.GONE
             }
         }
         init {
