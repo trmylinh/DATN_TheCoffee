@@ -71,7 +71,7 @@ class ManageDrinkDetailAdminFragment : Fragment() {
             binding.descProduct.setExpandedTextColor(R.color.orange_900)
             binding.descProduct.setTrimLength(4)
 
-            binding.viewOutOfStock.visibility = if (result.outOfStock == true) View.VISIBLE else View.GONE
+            binding.viewOutOfStock.visibility = if (result.isOutOfStock == true) View.VISIBLE else View.GONE
 
             if (result.size?.isNotEmpty() == true) {
                 adapterSize = ManageDrinkInfoAdapter(result.size, null)
@@ -107,8 +107,9 @@ class ManageDrinkDetailAdminFragment : Fragment() {
                 isEditable = !isEditable
 
                 if (isEditable) {
-                    binding.outOfStock.visibility = View.VISIBLE
-//                    binding.viewOutOfStock.visibility = View.VISIBLE
+                    // duoc edit
+                    binding.checkboxOutOfStock.visibility = View.VISIBLE
+                    binding.viewOutOfStock.visibility = View.GONE
 
                     binding.nameProduct.visibility = View.GONE
                     binding.descProduct.visibility = View.GONE
@@ -140,6 +141,8 @@ class ManageDrinkDetailAdminFragment : Fragment() {
                         pickImage.launch(intent)
                     }
 
+                    binding.checkboxOutOfStock.isChecked = result.isOutOfStock!!
+
                 } else {
 //                    binding.outOfStock.visibility = View.VISIBLE
 //                    binding.viewOutOfStock.visibility = View.VISIBLE
@@ -160,6 +163,17 @@ class ManageDrinkDetailAdminFragment : Fragment() {
                     val edtNameProduct = binding.edtNameProduct.text.toString()
                     val edtDescProduct = binding.edtDescProduct.text.toString()
                     val imgProduct = imageUri ?: result.image
+                    val isOutOfStock = binding.checkboxOutOfStock.isChecked
+
+                    Log.d("TAG", "onViewCreated: $isOutOfStock")
+
+                    if(!isOutOfStock){
+                        binding.viewOutOfStock.visibility = View.GONE
+                        binding.checkboxOutOfStock.visibility = View.GONE
+                    } else {
+                        binding.viewOutOfStock.visibility = View.VISIBLE
+                        binding.checkboxOutOfStock.visibility = View.GONE
+                    }
 
                     val newItem = Drink(
                         result.drinkId,
@@ -167,9 +181,8 @@ class ManageDrinkDetailAdminFragment : Fragment() {
                         edtDescProduct,
                         imgProduct.toString(),
                         result.price,
-                        0,
                         result.categoryId,
-                        result.outOfStock,
+                        result.isOutOfStock,
                         adapterSize.listSize as List<Size>,
                         adapterTopping.listTopping as List<Topping>
                     )

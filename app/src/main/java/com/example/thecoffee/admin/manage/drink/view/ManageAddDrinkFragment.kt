@@ -211,7 +211,7 @@ class ManageAddDrinkFragment : Fragment() {
             val desc = binding.edtDesc.text.toString()
 
             val drink =
-                Drink(drinkId, name, desc, image, price, discount, categoryId, false, size, topping)
+                Drink(drinkId, name, desc, image, price, categoryId, false, size, topping)
             productViewModel.createDrink(drink)
             productViewModel.loadingAddDrinkResult.observe(viewLifecycleOwner) {
                 if (it) {

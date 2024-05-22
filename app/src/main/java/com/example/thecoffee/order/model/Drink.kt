@@ -1,6 +1,5 @@
 package com.example.thecoffee.order.model
 
-import android.net.Uri
 import java.io.Serializable
 
 data class Drink (
@@ -9,9 +8,8 @@ data class Drink (
     val desc: String? = null,
     val image: String? = null,
     val price: Int? = null,
-    val discount: Int? = null,
     val categoryId: String? = null,
-    val outOfStock: Boolean? = false,
+    val isOutOfStock: Boolean? = null,
     val size: List<Size>? = emptyList(),
     val topping: List<Topping>? = emptyList()
 ): Serializable {

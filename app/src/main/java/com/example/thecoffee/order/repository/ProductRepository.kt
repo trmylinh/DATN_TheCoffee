@@ -117,8 +117,8 @@ class ProductRepository(_application: Application) {
                         val desc = document.getString("desc")
                         val image = document.getString("image")
                         val price = document.get("price").toString().toInt()
-                        val discount = document.get("discount").toString().toInt()
                         val categoryId = document.getString("categoryId")
+                        val isOutOfStock = document.getBoolean("isOutOfStock")
                         val sizeList = document.get("size") as List<Map<String, Number>>?
                         val toppingList = document.get("topping") as List<Map<String, Number>>?
 
@@ -145,7 +145,7 @@ class ProductRepository(_application: Application) {
 
                         list.add(
                             Drink(
-                                drinkId, name, desc, image, price, discount, categoryId,
+                                drinkId, name, desc, image, price, categoryId,isOutOfStock,
                                 size = if (sizeList == null) null else size,
                                 topping = if (toppingList == null) null else topping
                             )
@@ -171,7 +171,6 @@ class ProductRepository(_application: Application) {
                         val desc = document.getString("desc")
                         val image = document.getString("image")
                         val price = document.get("price").toString().toInt()
-                        val discount = document.get("discount").toString().toInt()
                         val categoryId = document.getString("categoryId")
                         val sizeList = document.get("size") as List<Map<String, Number>>?
                         val toppingList = document.get("topping") as List<Map<String, Number>>?
@@ -195,7 +194,7 @@ class ProductRepository(_application: Application) {
                         }
                         list.add(
                             Drink(
-                                drinkId, name, desc, image, price, discount, categoryId,
+                                drinkId, name, desc, image, price, categoryId,
                                 size = if (sizeList == null) null else size,
                                 topping = if (toppingList == null) null else topping
                             )
@@ -222,7 +221,6 @@ class ProductRepository(_application: Application) {
                         val desc = document.getString("desc")
                         val image = document.getString("image")
                         val price = document.get("price").toString().toInt()
-                        val discount = document.get("discount").toString().toInt()
                         val categoryId = document.getString("categoryId")
                         val sizeList = document.get("size") as List<Map<String, Number>>?
                         val toppingList = document.get("topping") as List<Map<String, Number>>?
@@ -246,7 +244,7 @@ class ProductRepository(_application: Application) {
                         }
                         list.add(
                             Drink(
-                                drinkId, name, desc, image, price, discount, categoryId,
+                                drinkId, name, desc, image, price, categoryId,
                                 size = if (sizeList == null) null else size,
                                 topping = if (toppingList == null) null else topping
                             )
@@ -355,7 +353,6 @@ class ProductRepository(_application: Application) {
                     drink.desc,
                     uri.toString(),
                     drink.price,
-                    drink.discount,
                     drink.categoryId,
                     false,
                     drink.size,

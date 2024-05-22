@@ -105,27 +105,28 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
 
 
     private fun getDataDetail() {
+        Log.d("dataDrink", "${drinkDetail.name} - ${drinkDetail.isOutOfStock}")
         listOption["size"] = drinkDetail.price!!.toLong()
         updateTotalPriceText()
 
         Glide.with(requireActivity()).load(drinkDetail.image).into(binding.imageDrink)
         binding.nameDrink.text = drinkDetail.name
 
-        // discount
-        if (drinkDetail.discount!! > 0) {
-            binding.viewDiscount.visibility = View.VISIBLE
-            binding.priceDefaultDrink.visibility = View.VISIBLE
-
-            binding.priceDiscountDrink.text = "-${String.format("%,d", drinkDetail.discount)}đ"
-
-            val priceAfterDiscount = drinkDetail.price!! - drinkDetail.discount!!
-            binding.priceDrink.text = "${String.format("%,d", priceAfterDiscount)}đ"
-
-            binding.priceDefaultDrink.text = "${String.format("%,d", drinkDetail.price)}đ"
-            binding.priceDefaultDrink.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
-        } else {
-            binding.priceDrink.text = "${String.format("%,d", drinkDetail.price)}đ"
-        }
+//        // discount
+//        if (drinkDetail.discount!! > 0) {
+//            binding.viewDiscount.visibility = View.VISIBLE
+//            binding.priceDefaultDrink.visibility = View.VISIBLE
+//
+//            binding.priceDiscountDrink.text = "-${String.format("%,d", drinkDetail.discount)}đ"
+//
+//            val priceAfterDiscount = drinkDetail.price!! - drinkDetail.discount!!
+//            binding.priceDrink.text = "${String.format("%,d", priceAfterDiscount)}đ"
+//
+//            binding.priceDefaultDrink.text = "${String.format("%,d", drinkDetail.price)}đ"
+//            binding.priceDefaultDrink.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+//        } else {
+//            binding.priceDrink.text = "${String.format("%,d", drinkDetail.price)}đ"
+//        }
 
         // read more - text
         binding.descDrink.text = drinkDetail.desc
