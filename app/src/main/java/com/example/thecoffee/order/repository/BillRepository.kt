@@ -33,6 +33,8 @@ class BillRepository(_application: Application) {
         MutableLiveData<ArrayList<Bill>>() // admin
     private var billUserById: MutableLiveData<Bill> = MutableLiveData<Bill>()
 
+    private val messageUpdateBill: MutableLiveData<String> = MutableLiveData<String>()
+
     val loadingResult: MutableLiveData<Boolean>
         get() = _loadingResult
 
@@ -56,6 +58,9 @@ class BillRepository(_application: Application) {
 
     val getBillUserById: MutableLiveData<Bill>
         get() = billUserById
+
+    val getMessageUpdateBill: MutableLiveData<String>
+        get() = messageUpdateBill
 
     // add cart to firestore database
     fun addToCart(cart: Cart){
@@ -359,17 +364,19 @@ class BillRepository(_application: Application) {
 
                     billRef.update("bill", updates).addOnCompleteListener {
                         if (it.isSuccessful) {
+                            messageUpdateBill.postValue("Update status bill successfully")
                             Toast.makeText(
                                 application,
                                 "update status bill successfully",
                                 Toast.LENGTH_SHORT
                             ).show()
-                            _loadingUpdateStatusBillResult.postValue(false)
                         } else {
+                            messageUpdateBill.postValue("Error update status bill ${it.exception}")
                             Toast.makeText(application, it.exception.toString(), Toast.LENGTH_SHORT)
                                 .show()
                             Log.e("Firestore", "Error setting bill", it.exception)
                         }
+                        _loadingUpdateStatusBillResult.postValue(false)
                     }
                 }
             }

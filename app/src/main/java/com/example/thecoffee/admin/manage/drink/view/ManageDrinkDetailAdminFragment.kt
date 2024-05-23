@@ -187,7 +187,7 @@ class ManageDrinkDetailAdminFragment : Fragment() {
                         adapterSize.listSize as List<Size>,
                         adapterTopping.listTopping as List<Topping>
                     )
-//                    productViewModel.updateDataDrink(result.drinkId!!, newItem)
+                    productViewModel.updateDataDrink(result.drinkId!!, newItem)
                 }
 
                 // size - topping
@@ -201,7 +201,7 @@ class ManageDrinkDetailAdminFragment : Fragment() {
                 productViewModel.loadingDeleteData.observe(viewLifecycleOwner) { loading ->
                     if (!loading) {
                         productViewModel.getMessageDeleteDrink.observe(viewLifecycleOwner){ message->
-                            setFragmentResult("refresh", bundleOf("delete_message" to message))
+                            setFragmentResult("refresh", bundleOf("deleteDrink_message" to message))
                             findNavController().popBackStack()
                         }
                     }
