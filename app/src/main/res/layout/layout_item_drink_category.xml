@@ -30,6 +30,28 @@
                 android:layout_height="@dimen/_100sdp" />
         </androidx.cardview.widget.CardView>
 
+        <ImageView
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_toEndOf="@id/cardView_img"
+            android:id="@+id/icon_tag_voucher"
+            android:src="@drawable/icon_tag"
+            android:layout_width="@dimen/_15sdp"
+            android:layout_height="@dimen/_15sdp"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/name_voucher"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_toEndOf="@id/icon_tag_voucher"
+            android:text="@string/name_drink"
+            android:textColor="@color/orange_900"
+            android:textSize="@dimen/_10sdp"
+            android:visibility="gone"/>
+
         <TextView
             android:id="@+id/name_drink"
             android:layout_width="wrap_content"
@@ -37,6 +59,7 @@
             android:layout_marginTop="@dimen/_5sdp"
             android:layout_marginStart="@dimen/_15sdp"
             android:layout_toEndOf="@id/cardView_img"
+            android:layout_below="@id/icon_tag_voucher"
             android:text="@string/name_drink"
             android:textColor="@color/black_900"
             android:textSize="@dimen/_12sdp"
@@ -53,6 +76,20 @@
             android:text="@string/name_drink"
             android:textColor="@color/black_900"
             android:textSize="@dimen/_12sdp" />
+
+        <TextView
+            android:id="@+id/price_default_drink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/name_drink"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_7sdp"
+            android:layout_toEndOf="@id/price_drink"
+            android:text="40.000d"
+            android:textColor="@color/grey_800"
+            android:textSize="@dimen/_10sdp"
+            android:visibility="gone" />
+
         <TextView
             android:id="@+id/tv_out_of_stock"
             android:layout_width="wrap_content"

@@ -1,12 +1,17 @@
 package com.example.thecoffee.voucher.model
 
+import java.io.Serializable
+
 data class Voucher(
-    val id: String? = null,
-    val startDate: String? = null,
-    val endDate: String? = null,
-    val desc: String? = null,
-    val title: String? = null,
-    val min: Number? = null, // voucher giam toi thieu la bao nhieu
-    val max: Number? = null, // voucher giam toi da la bao nhieu
-    val condition: String? = null, // dieu kien ap dung voucher
-)
+    val voucherId: String? = null,
+    val unit: String? = null, // don vi tien te cua voucher -> dong hay %
+    val type: String? = null, // ap dung cho spham hay la van chuyen -> Drink or Ship
+    val supportIdItems: List<String>? = null, // luu categoryId -> ap dung do voi cac spham cung loai
+    val start_date: String? = null,
+    val end_date: String? = null,
+    val name: String? = null,
+    val discount: Int? = null,
+    val amount: Int? = null,
+    val expired: Boolean? = null,
+): Serializable {
+}

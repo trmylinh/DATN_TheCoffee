@@ -40,19 +40,40 @@
                     android:id="@+id/image_drink"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_300sdp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/img" />
+                    android:scaleType="centerCrop" />
+
+                <ImageView
+                    android:layout_marginTop="@dimen/_15sdp"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_below="@id/image_drink"
+                    android:id="@+id/icon_tag_voucher"
+                    android:src="@drawable/icon_tag"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/name_voucher"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_15sdp"
+                    android:layout_marginHorizontal="@dimen/_5sdp"
+                    android:layout_toEndOf="@id/icon_tag_voucher"
+                    android:layout_toStartOf="@id/favorite"
+                    android:layout_below="@id/image_drink"
+                    android:textColor="@color/orange_900"
+                    android:textSize="@dimen/_12sdp"
+                    android:visibility="gone"/>
 
                 <TextView
                     android:id="@+id/name_drink"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/image_drink"
+                    android:layout_below="@id/name_voucher"
                     android:layout_alignParentStart="true"
                     android:layout_marginHorizontal="@dimen/_10sdp"
                     android:layout_marginTop="@dimen/_15sdp"
                     android:layout_toStartOf="@id/favorite"
-                    android:text="Oolong Tu Quy Kim Quat Tran Chau"
                     android:textColor="@color/black_900"
                     android:textSize="@dimen/_20sdp"
                     android:textStyle="bold" />
@@ -86,7 +107,6 @@
                     android:layout_below="@id/view_discount"
                     android:layout_marginStart="@dimen/_12sdp"
                     android:layout_marginTop="@dimen/_5sdp"
-                    android:text="35.000d"
                     android:textColor="@color/black_900"
                     android:textSize="@dimen/_14sdp" />
 
@@ -112,7 +132,6 @@
                     android:layout_marginTop="@dimen/_10sdp"
                     android:layout_marginEnd="@dimen/_10sdp"
                     android:layout_marginBottom="@dimen/_10sdp"
-                    android:text="@string/terms_and_conditions"
                     android:textColor="@color/black_900"
                     android:textSize="@dimen/_11sdp" />
 
@@ -120,7 +139,7 @@
                     android:id="@+id/favorite"
                     android:layout_width="@dimen/_22sdp"
                     android:layout_height="@dimen/_22sdp"
-                    android:layout_below="@id/image_drink"
+                    android:layout_below="@id/name_voucher"
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="@dimen/_20sdp"
                     android:layout_marginEnd="@dimen/_10sdp"

@@ -9,9 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.thecoffee.R
+import com.example.thecoffee.base.MyViewModelFactory
 import com.example.thecoffee.order.adapter.ItemToppingRecyclerAdapter
 import com.example.thecoffee.order.adapter.ItemToppingRecyclerInterface
 import com.example.thecoffee.databinding.FragmentItemDrinkDetailBinding
@@ -21,6 +23,8 @@ import com.example.thecoffee.order.adapter.ItemSizeRecyclerInterface
 import com.example.thecoffee.order.model.Bill
 import com.example.thecoffee.order.model.Cart
 import com.example.thecoffee.order.viewmodel.BillViewModel
+import com.example.thecoffee.voucher.model.Voucher
+import com.example.thecoffee.voucher.viewmodel.VoucherViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
@@ -42,9 +46,16 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
     private var drinkSize: String = ""
     var listener: BottomSheetListener? = null
 
+    private lateinit var voucherViewModel: VoucherViewModel
+    private var voucherList = mutableListOf<Voucher>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val viewModelFactory = MyViewModelFactory(requireActivity().application)
+        voucherViewModel = ViewModelProvider(this, viewModelFactory)[VoucherViewModel::class.java]
+
+        voucherViewModel.getVoucherList()
         drinkDetail = arguments?.getSerializable("dataDrink")!! as Drink
     }
 
@@ -59,12 +70,14 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        getVoucher()
+
         binding.btnBack.setOnClickListener {
             reset()
             dismiss()
         }
 
-        getDataDetail()
+//        getDataDetail()
 
         // handle amount of item
         binding.viewPlus.setOnClickListener {
@@ -96,6 +109,13 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
 
     }
 
+    private fun getVoucher() {
+        voucherViewModel.getVoucherList.observe(viewLifecycleOwner) { vouchers ->
+            voucherList = vouchers
+            getDataDetail()
+        }
+    }
+
 
     private fun addToCartSharedPrefer(cart: Cart){
         val gson = Gson()
@@ -105,28 +125,44 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
 
 
     private fun getDataDetail() {
-        Log.d("dataDrink", "${drinkDetail.name} - ${drinkDetail.isOutOfStock}")
-        listOption["size"] = drinkDetail.price!!.toLong()
+        val voucherFound = voucherList.find { voucher ->
+            if (voucher.type?.lowercase() == "category" && voucher.expired == false) {
+                voucher.supportIdItems?.contains(drinkDetail.categoryId) == true
+            } else if (voucher.type?.lowercase() == "drink" && voucher.expired == false) {
+                voucher.supportIdItems?.contains(drinkDetail.drinkId) == true
+            } else {
+                false
+            }
+        }
+
+        if(voucherFound != null){
+            binding.iconTagVoucher.visibility = View.VISIBLE
+            binding.nameVoucher.visibility = View.VISIBLE
+            binding.nameVoucher.text = voucherFound.name
+        }
+
+        listOption["size"] = (if (drinkDetail.discount != null && drinkDetail.discount!! > 0) (drinkDetail.price!! - drinkDetail.discount!!) else drinkDetail.price!!).toLong()
         updateTotalPriceText()
 
         Glide.with(requireActivity()).load(drinkDetail.image).into(binding.imageDrink)
         binding.nameDrink.text = drinkDetail.name
 
-//        // discount
-//        if (drinkDetail.discount!! > 0) {
-//            binding.viewDiscount.visibility = View.VISIBLE
-//            binding.priceDefaultDrink.visibility = View.VISIBLE
-//
-//            binding.priceDiscountDrink.text = "-${String.format("%,d", drinkDetail.discount)}đ"
-//
-//            val priceAfterDiscount = drinkDetail.price!! - drinkDetail.discount!!
-//            binding.priceDrink.text = "${String.format("%,d", priceAfterDiscount)}đ"
-//
-//            binding.priceDefaultDrink.text = "${String.format("%,d", drinkDetail.price)}đ"
-//            binding.priceDefaultDrink.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
-//        } else {
-//            binding.priceDrink.text = "${String.format("%,d", drinkDetail.price)}đ"
-//        }
+        // discount
+        if (drinkDetail.discount != null && drinkDetail.discount!! > 0) {
+            binding.viewDiscount.visibility = View.VISIBLE
+            binding.priceDefaultDrink.visibility = View.VISIBLE
+
+            binding.priceDiscountDrink.text = "-${String.format("%,d", drinkDetail.discount)}đ"
+
+            val priceAfterDiscount = drinkDetail.price!! - drinkDetail.discount!!
+            binding.priceDrink.text = "${String.format("%,d", priceAfterDiscount)}đ"
+            binding.priceDrink.setTextColor(resources.getColor(R.color.light_blue_900, null))
+
+            binding.priceDefaultDrink.text = "${String.format("%,d", drinkDetail.price)}đ"
+            binding.priceDefaultDrink.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+        } else {
+            binding.priceDrink.text = "${String.format("%,d", drinkDetail.price)}đ"
+        }
 
         // read more - text
         binding.descDrink.text = drinkDetail.desc
@@ -140,7 +176,7 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
         if(drinkDetail.size?.isNotEmpty() == true){
             binding.viewSize.visibility = View.VISIBLE
             drinkSize = drinkDetail.size?.get(1)?.name.toString()
-            val adapterViewSize = ItemSizeRecyclerAdapter(drinkDetail.size!!, object : ItemSizeRecyclerInterface{
+            val adapterViewSize = ItemSizeRecyclerAdapter(drinkDetail.size!!, drinkDetail.discount, object : ItemSizeRecyclerInterface{
                 override fun onRadioChanged(price: Long?, sizeName: String) {
                     listOption["size"] = price!!
                     drinkSize = sizeName

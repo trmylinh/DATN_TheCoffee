@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.thecoffee.R
+import com.example.thecoffee.voucher.model.Voucher
+import com.example.thecoffee.voucher.viewmodel.VoucherViewModel
 import com.example.thecoffee.order.adapter.ItemCategoryRecyclerAdapter
 import com.example.thecoffee.order.adapter.ItemCategoryRecyclerInterface
 import com.example.thecoffee.order.adapter.ItemDrinkCategoryRecyclerAdapter
@@ -33,6 +35,10 @@ class OrderFragment : Fragment() {
     private lateinit var binding: FragmentOrderBinding
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var productViewModel: ProductViewModel
+    private lateinit var voucherViewModel: VoucherViewModel
+
+    private var voucherList = mutableListOf<Voucher>()
+
     private var categoryList = listOf<Category>()
     private var drinkList = mutableListOf<Drink>()
     private var itemList = mutableListOf<DrinksByCategory>()
@@ -47,8 +53,13 @@ class OrderFragment : Fragment() {
         val viewModelFactory = MyViewModelFactory(requireActivity().application)
         productViewModel = ViewModelProvider(this, viewModelFactory)[ProductViewModel::class.java]
 
+        voucherViewModel = ViewModelProvider(this, viewModelFactory)[VoucherViewModel::class.java]
+
         productViewModel.getDataDrinkList()
         productViewModel.getDataCategoryList()
+
+        //voucher
+        voucherViewModel.getVoucherList()
     }
 
     override fun onCreateView(
@@ -62,14 +73,16 @@ class OrderFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.swipeRefreshLayout.apply {
-            setColorSchemeColors(resources.getColor(R.color.orange_700,null))
+            setColorSchemeColors(resources.getColor(R.color.orange_700, null))
             isRefreshing = true
-//            productViewModel.getDataCategoryList()
             getCategory()
             setOnRefreshListener {
                 drinkList.clear()
                 (categoryList as MutableList).clear()
                 itemList.clear()
+                voucherList.clear()
+
+                voucherViewModel.getVoucherList()
                 productViewModel.getDataCategoryList()
                 productViewModel.getDataDrinkList()
             }
@@ -77,16 +90,24 @@ class OrderFragment : Fragment() {
 
     }
 
-    private fun getCategory(){
-                productViewModel.getCategoryList.observe(viewLifecycleOwner){ categories ->
-                    Log.d("TAG", "categories: $categories")
-                    categoryList = categories
-                    if(categoryList.isNotEmpty()){
-                        getDrink()
-                        showMenuCategory()
-                    }
+    private fun getCategory() {
+        productViewModel.getCategoryList.observe(viewLifecycleOwner) { categories ->
+            Log.d("TAG", "categories: $categories")
+            categoryList = categories
+            if (categoryList.isNotEmpty()) {
+                getVoucher()
+//                getDrink()
+                showMenuCategory()
+            }
         }
 
+    }
+
+    private fun getVoucher() {
+        voucherViewModel.getVoucherList.observe(viewLifecycleOwner) { vouchers ->
+            voucherList = vouchers
+            getDrink()
+        }
     }
 
     private fun showMenuCategory() {
@@ -106,7 +127,8 @@ class OrderFragment : Fragment() {
                     dialogCategory.dismiss()
                     binding.titleCategory.text = category.name
 
-                    val positionCategoryName = getPositionOfItem(DrinksByCategory.TypeCategory(category.name!!))
+                    val positionCategoryName =
+                        getPositionOfItem(DrinksByCategory.TypeCategory(category.name!!))
                     if (positionCategoryName != RecyclerView.NO_POSITION) {
                         linearLayoutManager.scrollToPositionWithOffset(
                             positionCategoryName, 0
@@ -133,14 +155,15 @@ class OrderFragment : Fragment() {
 
     }
 
-    private fun getDrink(){
-                productViewModel.getDrinkList.observe(viewLifecycleOwner){drinks ->
-                    drinkList = drinks
-                   if(drinkList.isNotEmpty()){
-                       binding.swipeRefreshLayout.isRefreshing = false
-                       showListDrink()
-                   }
-                }
+    private fun getDrink() {
+        productViewModel.getDrinkList.observe(viewLifecycleOwner) { drinks ->
+            drinkList = drinks
+            if (drinkList.isNotEmpty()) {
+                binding.swipeRefreshLayout.isRefreshing = false
+//                getVoucher()
+                showListDrink()
+            }
+        }
     }
 
     private fun showListDrink() {
@@ -151,11 +174,31 @@ class OrderFragment : Fragment() {
 //            drinkList
 //                .filter { item -> item.categoryId == categoryList[count].categoryId }
 //                .forEach { itemList.add(DrinksByCategory.TypeDrink(it)) }
-            val filteredDrinks = drinkList.filter { item -> item.categoryId == categoryList[count].categoryId }
+            val filteredDrinks =
+                drinkList.filter { item -> item.categoryId == categoryList[count].categoryId }
             if (filteredDrinks.isEmpty()) {
                 itemList.add(DrinksByCategory.TypeEmpty("Hiện tại chưa có sản phẩm nào"))
             } else {
                 filteredDrinks.forEach { drink ->
+                    val voucherFound = voucherList.find { voucher ->
+                        if (voucher.type?.lowercase() == "category" && voucher.expired == false) {
+                            voucher.supportIdItems?.contains(drink.categoryId) == true
+                        } else if (voucher.type?.lowercase() == "drink" && voucher.expired == false) {
+                            voucher.supportIdItems?.contains(drink.drinkId) == true
+                        } else {
+                           false
+                        }
+                    }
+
+                    // voucher con han su dung
+                    if(voucherFound?.expired == false){
+                        if(voucherFound?.unit == "%"){
+                            drink.discount =  voucherFound.discount!! * drink.price!! / 100
+                        } else {
+                            drink.discount =  voucherFound?.discount
+                        }
+                    }
+
                     itemList.add(DrinksByCategory.TypeDrink(drink))
                 }
             }
@@ -181,7 +224,7 @@ class OrderFragment : Fragment() {
                                     Context.MODE_PRIVATE
                                 )
                                 val isIdCartExist = sharedPreferences.contains("idCart")
-                                if(!isIdCartExist){
+                                if (!isIdCartExist) {
                                     sharedPreferences.edit()
                                         .apply {
                                             // tao idCart ~ idBill -> chi tao 1 lan
@@ -205,20 +248,21 @@ class OrderFragment : Fragment() {
 
                                 // case -> add trung spham
                                 var found = false
-                                for (item in listCartItem){
-                                    if(itemCart == item){
+                                for (item in listCartItem) {
+                                    if (itemCart == item) {
                                         found = true
                                         break
                                     }
                                 }
 
                                 // xử lý tăng số lượng của spham trùng
-                                if(found){
+                                if (found) {
                                     val updateList = listCartItem.map { item ->
-                                        if(item == itemCart){
+                                        if (item == itemCart) {
                                             item.copy(
                                                 totalPrice = item.totalPrice?.plus(itemCart.totalPrice!!),
-                                                quantity = item.quantity?.plus(itemCart.quantity!!))
+                                                quantity = item.quantity?.plus(itemCart.quantity!!)
+                                            )
                                         } else {
                                             item
                                         }
@@ -246,12 +290,13 @@ class OrderFragment : Fragment() {
                                         val jsonListCartItem = gson.toJson(listCartItem)
                                         bundleBill.putString("dataBill", jsonListCartItem)
                                         bottomSheetConfirmBill.arguments = bundleBill
-                                        bottomSheetConfirmBill.listener = object: ConfirmOrderBillFragmentListener{
-                                            override fun onBottomSheetClear() {
-                                                binding.viewCart.visibility = View.GONE
-                                                listCartItem.removeAll(listCartItem)
+                                        bottomSheetConfirmBill.listener =
+                                            object : ConfirmOrderBillFragmentListener {
+                                                override fun onBottomSheetClear() {
+                                                    binding.viewCart.visibility = View.GONE
+                                                    listCartItem.removeAll(listCartItem)
+                                                }
                                             }
-                                        }
 
                                         // hien thi confirm bill ui
                                         bottomSheetConfirmBill.show(
@@ -303,6 +348,7 @@ class OrderFragment : Fragment() {
             }
         })
     }
+
     private fun generateRandomId(): String {
         return "${UUID.randomUUID()}"
     }

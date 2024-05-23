@@ -32,6 +32,8 @@ import com.example.thecoffee.order.utils.DrinksByCategory
 import com.example.thecoffee.order.view.BottomSheetListener
 import com.example.thecoffee.order.view.ConfirmOrderBillFragmentListener
 import com.example.thecoffee.order.viewmodel.ProductViewModel
+import com.example.thecoffee.voucher.model.Voucher
+import com.example.thecoffee.voucher.viewmodel.VoucherViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -226,7 +228,8 @@ class ManageDrinkAdminFragment : Fragment() {
 //            drinkList
 //                .filter { item -> item.categoryId == categoryList[count].categoryId }
 //                .forEach { itemList.add(DrinksByCategory.TypeDrink(it)) }
-            val filteredDrinks = drinkList.filter { item -> item.categoryId == categoryList[count].categoryId }
+            val filteredDrinks =
+                drinkList.filter { item -> item.categoryId == categoryList[count].categoryId }
             if (filteredDrinks.isEmpty()) {
                 itemList.add(DrinksByCategory.TypeEmpty("Hiện tại chưa có sản phẩm nào"))
             } else {
