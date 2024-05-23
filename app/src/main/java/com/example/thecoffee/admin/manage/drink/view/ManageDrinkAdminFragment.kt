@@ -91,8 +91,8 @@ class ManageDrinkAdminFragment : Fragment() {
 
         // delete hoặc back lại từ màn trước
         setFragmentResultListener("refresh") { _, bundle ->
-            val deleteMessage = bundle.getString("delete_message")
-            val createMessage = bundle.getString("create_message")
+            val deleteMessage = bundle.getString("deleteDrink_message")
+            val createMessage = bundle.getString("createDrink_message")
             if (deleteMessage != null) {
                 showAlert(deleteMessage)
             }

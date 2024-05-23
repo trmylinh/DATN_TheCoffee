@@ -6,6 +6,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.volley.RequestQueue
@@ -26,6 +28,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.RemoteMessage
+import com.tapadoo.alerter.Alerter
 import okhttp3.Call
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -41,7 +44,7 @@ import java.io.IOException
 import kotlin.properties.Delegates
 
 interface ManageDetailOrderFragmentListener {
-    fun onBottomSheetClose(status: Long, idBill: String)
+    fun onBottomSheetClose()
 }
 
 class ManageDetailOrderFragment : BottomSheetDialogFragment() {
@@ -82,7 +85,7 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.closeBtn.setOnClickListener {
             dismiss()
-            listener?.onBottomSheetClose(statusUpdate, billDetail.billId!!)
+            listener?.onBottomSheetClose()
             statusUpdate = -1L
         }
 
@@ -159,6 +162,10 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
                                 binding.btnConfirmStatusBill.text =
                                     getString(R.string.btn_status_delivery)
                                 binding.progressBar.visibility = View.GONE
+
+                                billViewModel.getMessageUpdateBill.observe(viewLifecycleOwner){ message ->
+                                    showAlert(message)
+                                }
                             } else {
                                 binding.progressBar.visibility = View.VISIBLE
                                 binding.statusBill.visibility = View.GONE
@@ -177,6 +184,10 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
                                 binding.btnConfirmStatusBill.text =
                                     getString(R.string.btn_status_done_delivery)
                                 binding.progressBar.visibility = View.GONE
+
+                                billViewModel.getMessageUpdateBill.observe(viewLifecycleOwner){ message ->
+                                    showAlert(message)
+                                }
                             } else {
                                 binding.progressBar.visibility = View.VISIBLE
                                 binding.statusBill.visibility = View.GONE
@@ -194,6 +205,10 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
                                 binding.statusBill.text = getString(R.string.status_done_delivery)
                                 binding.layoutBtnConfirmStatusBill.visibility = View.GONE
                                 binding.progressBar.visibility = View.GONE
+
+                                billViewModel.getMessageUpdateBill.observe(viewLifecycleOwner){ message ->
+                                    showAlert(message)
+                                }
                             } else {
                                 binding.progressBar.visibility = View.VISIBLE
                                 binding.statusBill.visibility = View.GONE
@@ -211,6 +226,18 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
         } else {
             binding.layoutBtnConfirmStatusBill.visibility = View.GONE
         }
+    }
+
+    private fun showAlert(message: String) {
+        Alerter.create(requireActivity())
+//            .setTitle("Thông báo")
+            .setText(message)
+            .enableSwipeToDismiss()
+            .setIcon(R.drawable.icon_bell)
+            .setIconColorFilter(0) // optional - removes white tint
+            .setBackgroundColorRes(R.color.orange_700)
+            .setDuration(5000)
+            .show()
     }
 
     private fun sendNotification(token: String, title: String, message: String) {

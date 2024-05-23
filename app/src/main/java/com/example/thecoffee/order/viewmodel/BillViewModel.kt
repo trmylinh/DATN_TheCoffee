@@ -20,6 +20,8 @@ class BillViewModel (application: Application) : AndroidViewModel(application) {
     private var bills: MutableLiveData<ArrayList<Bill>> = repository.getBills
     private var billUserById: MutableLiveData<Bill> = repository.getBillUserById
 
+    private val _messageUpdateBill: MutableLiveData<String> = repository.getMessageUpdateBill
+
     val loadingResult: MutableLiveData<Boolean>
     get() = _loadingResult
 
@@ -37,6 +39,9 @@ class BillViewModel (application: Application) : AndroidViewModel(application) {
 
     val getBills: MutableLiveData<ArrayList<Bill>>
         get() = bills
+
+    val getMessageUpdateBill: MutableLiveData<String>
+        get() = _messageUpdateBill
 
     fun addToCart(cart: Cart){
         repository.addToCart(cart)

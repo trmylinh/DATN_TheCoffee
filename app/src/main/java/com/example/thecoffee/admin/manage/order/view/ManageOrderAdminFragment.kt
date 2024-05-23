@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,6 +21,7 @@ import com.example.thecoffee.databinding.FragmentManageOrderAdminBinding
 import com.example.thecoffee.order.model.Bill
 import com.example.thecoffee.order.viewmodel.BillViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.tapadoo.alerter.Alerter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -61,33 +63,20 @@ class ManageOrderAdminFragment : Fragment() {
             findNavController().popBackStack()
         }
 
-        // show UI
-        billViewModel.loadingBillsResult.observe(viewLifecycleOwner){loading ->
-            if(loading){
-                binding.progressBar.visibility = View.VISIBLE
-            } else {
-                binding.progressBar.visibility = View.GONE
-                CoroutineScope(Dispatchers.Main).launch {
-                    bills = getAllBills()
-                    if(bills?.isNotEmpty() == true){
-                        binding.emptyView.visibility = View.GONE
-                        binding.rvBills.visibility = View.VISIBLE
-                        binding.layoutFilterStatus.visibility = View.VISIBLE
+        binding.swipeRefreshLayout.apply {
+            setColorSchemeColors(resources.getColor(R.color.orange_700, null))
+            isRefreshing = true
+            getBills()
+            setOnRefreshListener {
+                binding.statusName.text = "Trạng thái"
+                binding.statusName.setTextColor(resources.getColor(R.color.grey_700, null))
+                binding.layoutFilterStatus.backgroundTintList = resources.getColorStateList(R.color.grey_300, null)
 
-                        //filter status bottom dialog
-                        displayBottomSheetDialogFilterStatus()
-
-                        // noi dung
-                        showRecyclerView(bills!!)
-                    }
-                    else {
-                        binding.rvBills.visibility = View.GONE
-                        binding.layoutFilterStatus.visibility = View.GONE
-                        binding.emptyView.visibility = View.VISIBLE
-                    }
-                }
+                (bills as MutableList).clear()
+                billViewModel.getAllBills()
             }
         }
+
     }
 
     private fun displayBottomSheetDialogFilterStatus() {
@@ -134,11 +123,11 @@ class ManageOrderAdminFragment : Fragment() {
                 if(statusFilter != -2L){
                     if (filterBill != null) {
                         if(filterBill.isNotEmpty()){
-                            binding.rvBills.visibility = View.VISIBLE
+                            binding.swipeRefreshLayout.visibility = View.VISIBLE
                             binding.emptyView.visibility = View.GONE
                             showRecyclerView(filterBill)
                         } else {
-                            binding.rvBills.visibility = View.GONE
+                            binding.swipeRefreshLayout.visibility = View.GONE
                             binding.emptyView.visibility = View.VISIBLE
                         }
                     }
@@ -152,21 +141,35 @@ class ManageOrderAdminFragment : Fragment() {
                 binding.statusName.setTextColor(resources.getColor(R.color.grey_700, null))
                 binding.layoutFilterStatus.backgroundTintList = resources.getColorStateList(R.color.grey_300, null)
 
-                binding.rvBills.visibility = View.VISIBLE
+                binding.swipeRefreshLayout.visibility = View.VISIBLE
                 binding.emptyView.visibility = View.GONE
                 showRecyclerView(bills!!)
             }
         }
     }
 
-    private suspend fun getAllBills(): List<Bill>? =
-        suspendCoroutine { continuation ->
-            billViewModel.getBills.observe(viewLifecycleOwner){
-                val dateFormat = SimpleDateFormat("HH:mm:ss dd/MM/yyyy", Locale.getDefault())
-                val sortedItems = it.sortedByDescending  { item -> dateFormat.parse(item.time!!) }
-                continuation.resume(sortedItems)
+    private fun getBills(){
+        billViewModel.getBills.observe(viewLifecycleOwner){ items ->
+            bills = items
+            binding.swipeRefreshLayout.isRefreshing = false
+            if(bills?.isNotEmpty() == true){
+                binding.emptyView.visibility = View.GONE
+                binding.swipeRefreshLayout.visibility = View.VISIBLE
+                binding.layoutFilterStatus.visibility = View.VISIBLE
+
+                //filter status bottom dialog
+                displayBottomSheetDialogFilterStatus()
+
+                // noi dung
+                showRecyclerView(bills!!)
+            }
+            else {
+                binding.swipeRefreshLayout.visibility = View.GONE
+                binding.layoutFilterStatus.visibility = View.GONE
+                binding.emptyView.visibility = View.VISIBLE
             }
         }
+    }
 
     private fun showRecyclerView(data: List<Bill>){
         adapter = ManageItemBillAdapter(data, object: ManageItemBillAdapterInterface{
@@ -178,16 +181,9 @@ class ManageOrderAdminFragment : Fragment() {
                 bottomSheetManageDetailOrder.arguments = bundleBill
                 bottomSheetManageDetailOrder.listener = object:
                     ManageDetailOrderFragmentListener {
-                    override fun onBottomSheetClose(status: Long, idBill: String){
-                        if(status != -1L){
-                            val newData = data.toMutableList()
-                            for(item in newData){
-                                if(item.billId == idBill){
-                                    item.status = status
-                                }
-                            }
-                            showRecyclerView(newData)
-                        }
+                    override fun onBottomSheetClose(){
+                        binding.swipeRefreshLayout.isRefreshing = true
+                        billViewModel.getAllBills()
                     }
                 }
 

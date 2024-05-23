@@ -32,6 +32,7 @@ class ManageItemBillAdapter(
                 0L -> {
                     // dang cho xac nhan - xac nhan
                     binding.statusBill.text =  context.getString(R.string.status_pre_confirm)
+                    binding.statusBill.setTextColor(context.resources.getColor(R.color.grey_700,null))
                 }
                 1L -> {
                     // da xac nhan - giao hang

@@ -123,7 +123,6 @@ class ManageAddDrinkFragment : Fragment() {
                     categories,
                     object : ManageCategorySpinnerInterface {
                         override fun onCategorySelected(category: Category) {
-                            Log.d("category", "onCategorySelected: ${category.categoryId}")
                             binding.spinnerCategory.text = category.name
                             binding.imgCategory.visibility = View.VISIBLE
                             Glide.with(requireContext()).load(category.image)
@@ -219,7 +218,7 @@ class ManageAddDrinkFragment : Fragment() {
                 } else {
                     binding.progressBarAddProduct.visibility = View.GONE
                     productViewModel.getMessageCreateDrink.observe(viewLifecycleOwner) { message ->
-                        setFragmentResult("refresh", bundleOf("create_message" to message))
+                        setFragmentResult("refresh", bundleOf("createDrink_message" to message))
                         findNavController().popBackStack()
                     }
                 }
