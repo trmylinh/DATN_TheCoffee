@@ -17,6 +17,7 @@ import com.example.thecoffee.databinding.FragmentConfirmOrderBillBinding
 import com.example.thecoffee.databinding.FragmentManageDetailOrderBinding
 import com.example.thecoffee.fcm.MyFirebaseMessagingService.Companion.FCM_TOKEN
 import com.example.thecoffee.order.adapter.ItemChosenBillRecyclerAdapter
+import com.example.thecoffee.order.adapter.ItemChosenBillRecyclerInterface
 import com.example.thecoffee.order.model.Bill
 import com.example.thecoffee.order.model.Drink
 import com.example.thecoffee.order.view.ConfirmOrderBillFragmentListener
@@ -87,7 +88,10 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
 
         binding.billCode.text = "${billDetail.billId}"
 
-        val adapter = ItemChosenBillRecyclerAdapter(billDetail.drinks!!)
+        val adapter = ItemChosenBillRecyclerAdapter(billDetail.drinks!!, object: ItemChosenBillRecyclerInterface{
+            override fun onItemDeleteListener(position: Int) {
+            }
+        }, true)
         binding.rvItemChoosen.adapter = adapter
         binding.rvItemChoosen.layoutManager = LinearLayoutManager(
             requireContext(), LinearLayoutManager.VERTICAL, false

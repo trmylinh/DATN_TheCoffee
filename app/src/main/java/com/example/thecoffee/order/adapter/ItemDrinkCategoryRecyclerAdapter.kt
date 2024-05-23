@@ -42,7 +42,7 @@ class ItemDrinkCategoryRecyclerAdapter(
     inner class ProductViewHolder(val binding: LayoutItemDrinkCategoryBinding) : RecyclerView.ViewHolder (binding.root){
         fun bind(drink: Drink){
             binding.nameDrink.text = drink.name
-            binding.priceDrink.text ="${String.format("%,d", drink.price)}đ"
+
             Glide.with(itemView.context).load(drink.image).into(binding.imageDrink)
 
             //out of stock
@@ -59,6 +59,10 @@ class ItemDrinkCategoryRecyclerAdapter(
                 val priceAfterDiscount = drink.price!! - drink.discount!!
                 binding.priceDrink.text = "${String.format("%,d", priceAfterDiscount)}đ"
                 binding.priceDrink.setTextColor(itemView.context.resources.getColor(R.color.light_blue_900, null))
+            } else {
+                binding.priceDefaultDrink.visibility = View.GONE
+                binding.priceDrink.text ="${String.format("%,d", drink.price)}đ"
+                binding.priceDrink.setTextColor(itemView.context.resources.getColor(R.color.black_900, null))
             }
 
 //            if(voucherName != null){

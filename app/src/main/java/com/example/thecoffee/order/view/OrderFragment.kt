@@ -190,13 +190,10 @@ class OrderFragment : Fragment() {
                         }
                     }
 
-                    // voucher con han su dung
-                    if(voucherFound?.expired == false){
-                        if(voucherFound?.unit == "%"){
-                            drink.discount =  voucherFound.discount!! * drink.price!! / 100
-                        } else {
-                            drink.discount =  voucherFound?.discount
-                        }
+                    if(voucherFound?.unit == "%"){
+                        drink.discount =  voucherFound.discount!! * drink.price!! / 100
+                    } else {
+                        drink.discount =  voucherFound?.discount
                     }
 
                     itemList.add(DrinksByCategory.TypeDrink(drink))
@@ -295,6 +292,21 @@ class OrderFragment : Fragment() {
                                                 override fun onBottomSheetClear() {
                                                     binding.viewCart.visibility = View.GONE
                                                     listCartItem.removeAll(listCartItem)
+                                                }
+
+                                                override fun onBottomSheetClose(newList: List<Cart>?) {
+                                                    if(newList != null){
+                                                        listCartItem = newList.toMutableList()
+                                                        total = 0
+                                                        countItem = 0
+                                                        for (item in listCartItem) {
+                                                            total += item.totalPrice!!
+                                                            countItem += item.quantity!!
+                                                        }
+                                                        binding.viewCart.visibility = View.VISIBLE
+                                                        binding.amount.text = countItem.toString()
+                                                        binding.totalPrice.text = "${String.format("%,d", total)}đ"
+                                                    }
                                                 }
                                             }
 
