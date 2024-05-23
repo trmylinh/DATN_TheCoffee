@@ -14,6 +14,7 @@ interface ItemSizeRecyclerInterface {
 
 class ItemSizeRecyclerAdapter(
     val list: List<Size>,
+    val discount: Int?,
     val onRadioChanged: ItemSizeRecyclerInterface
 ) : RecyclerView.Adapter<ItemSizeRecyclerAdapter.ItemSizeViewHolder>() {
     private lateinit var binding: LayoutItemSizeBinding
@@ -27,7 +28,7 @@ class ItemSizeRecyclerAdapter(
             binding.radioBtn.isChecked = position == selectedPosition
 
             binding.radioBtn.text = size.name
-            binding.priceSize.text = "${String.format("%,d", size.price)}đ"
+            binding.priceSize.text = if(discount != null) "${String.format("%,d", (size.price!! - discount))}đ" else "${String.format("%,d", size.price)}đ"
 
 
             binding.radioBtn.setOnCheckedChangeListener { buttonView, isChecked ->

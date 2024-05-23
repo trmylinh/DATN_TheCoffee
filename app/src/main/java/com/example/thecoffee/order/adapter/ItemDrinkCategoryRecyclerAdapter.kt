@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.chauthai.swipereveallayout.SwipeRevealLayout
 import com.chauthai.swipereveallayout.ViewBinderHelper
+import com.example.thecoffee.R
 import com.example.thecoffee.order.model.Drink
 import com.example.thecoffee.databinding.LayoutCategoryNameBinding
 import com.example.thecoffee.databinding.LayoutEmptyWarningBinding
@@ -41,11 +42,34 @@ class ItemDrinkCategoryRecyclerAdapter(
     inner class ProductViewHolder(val binding: LayoutItemDrinkCategoryBinding) : RecyclerView.ViewHolder (binding.root){
         fun bind(drink: Drink){
             binding.nameDrink.text = drink.name
-            binding.priceDrink.text ="${String.format("%,d", drink.price)}đ"
+
             Glide.with(itemView.context).load(drink.image).into(binding.imageDrink)
 
+            //out of stock
             binding.viewDisable.visibility =  if(drink.isOutOfStock == true) View.VISIBLE else View.GONE
             binding.tvOutOfStock.visibility =  if(drink.isOutOfStock == true) View.VISIBLE else View.GONE
+
+            // discount
+            if(drink.discount != null && drink.discount!! > 0){
+                binding.priceDefaultDrink.visibility = View.VISIBLE
+
+                binding.priceDefaultDrink.text = "${String.format("%,d", drink.price)}đ"
+                binding.priceDefaultDrink.paint.isStrikeThruText = true
+
+                val priceAfterDiscount = drink.price!! - drink.discount!!
+                binding.priceDrink.text = "${String.format("%,d", priceAfterDiscount)}đ"
+                binding.priceDrink.setTextColor(itemView.context.resources.getColor(R.color.light_blue_900, null))
+            } else {
+                binding.priceDefaultDrink.visibility = View.GONE
+                binding.priceDrink.text ="${String.format("%,d", drink.price)}đ"
+                binding.priceDrink.setTextColor(itemView.context.resources.getColor(R.color.black_900, null))
+            }
+
+//            if(voucherName != null){
+//                binding.iconTagVoucher.visibility = View.VISIBLE
+//                binding.nameVoucher.visibility = View.VISIBLE
+//                binding.nameVoucher.text = voucherName
+//            }
 
             if(isAdmin){
                 binding.cardVideBtnAdd.visibility = View.GONE

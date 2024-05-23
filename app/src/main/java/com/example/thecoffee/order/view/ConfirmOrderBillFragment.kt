@@ -18,6 +18,7 @@ import com.example.thecoffee.R
 import com.example.thecoffee.base.MyViewModelFactory
 import com.example.thecoffee.databinding.FragmentConfirmOrderBillBinding
 import com.example.thecoffee.order.adapter.ItemChosenBillRecyclerAdapter
+import com.example.thecoffee.order.adapter.ItemChosenBillRecyclerInterface
 import com.example.thecoffee.order.model.Bill
 import com.example.thecoffee.order.model.Cart
 import com.example.thecoffee.order.viewmodel.BillViewModel
@@ -39,6 +40,7 @@ import kotlin.coroutines.suspendCoroutine
 
 interface ConfirmOrderBillFragmentListener {
     fun onBottomSheetClear()
+    fun onBottomSheetClose(newList: List<Cart>? = null)
 }
 
 class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
@@ -88,6 +90,7 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
         )
 
         binding.closeBtn.setOnClickListener {
+            listener?.onBottomSheetClose(dataBill)
             dismiss()
         }
 
@@ -185,6 +188,11 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
     }
 
     private fun updateUIBill() {
+        val sharedPreferences = requireContext().getSharedPreferences(
+            "cart",
+            Context.MODE_PRIVATE
+        )
+
         priceItems = 0
         countItem = 0
         for (item in dataBill) {
@@ -194,16 +202,26 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
         binding.itemsPrice.text = "${String.format("%,d", priceItems)}đ"
 
         // recycler view items chosen
-        adapter = ItemChosenBillRecyclerAdapter(dataBill)
+        adapter = ItemChosenBillRecyclerAdapter(dataBill, object: ItemChosenBillRecyclerInterface{
+            override fun onItemDeleteListener(position: Int) {
+                (dataBill as MutableList).removeAt(position)
+                adapter.notifyItemRemoved(position)
+                adapter.notifyItemRangeChanged(position, adapter.itemCount)
+//                sharedPreferences.edit().apply{
+//                    putString("dataCart", dataBill.toString())
+//                }.apply()
+            }
+        }, false)
         binding.rvItemChoosen.adapter = adapter
         binding.rvItemChoosen.layoutManager = LinearLayoutManager(
             requireContext(), LinearLayoutManager.VERTICAL, false
         )
 
         // giao hang
+        val shipFee = 15000
         binding.totalAmountItems.text = "$countItem sản phẩm"
-        binding.pricePayFinal.text = "${String.format("%,d", priceItems)}đ"
-        binding.totalPay.text = "${String.format("%,d", priceItems)}đ"
+        binding.pricePayFinal.text = "${String.format("%,d", (priceItems+shipFee))}đ"
+        binding.totalPay.text = "${String.format("%,d", (priceItems+shipFee))}đ"
 
     }
 

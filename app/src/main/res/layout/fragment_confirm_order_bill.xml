@@ -396,7 +396,7 @@
                         android:id="@+id/price_ship"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="12.000d"
+                        android:text="15.000đ"
                         android:textColor="@color/black_900"
                         android:textSize="@dimen/_13sdp" />
                 </LinearLayout>
@@ -407,35 +407,35 @@
                     android:layout_marginTop="@dimen/_10sdp"
                     android:background="@color/grey_300" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_15sdp"
-                    android:orientation="horizontal">
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="@dimen/_15sdp"-->
+<!--                    android:orientation="horizontal">-->
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Chọn khuyến mãi/đổi bean"
-                        android:textColor="@color/blue_900"
-                        android:textSize="@dimen/_13sdp" />
+<!--                    <TextView-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_weight="1"-->
+<!--                        android:text="Chọn ưu đãi"-->
+<!--                        android:textColor="@color/blue_900"-->
+<!--                        android:textSize="@dimen/_13sdp" />-->
 
-                    <ImageView
-                        android:id="@+id/arrowRightVoucher"
-                        android:layout_width="@dimen/_15sdp"
-                        android:layout_height="@dimen/_15sdp"
-                        android:layout_gravity="center"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:src="@drawable/icon_arrow_right" />
-                </LinearLayout>
+<!--                    <ImageView-->
+<!--                        android:id="@+id/arrowRightVoucher"-->
+<!--                        android:layout_width="@dimen/_15sdp"-->
+<!--                        android:layout_height="@dimen/_15sdp"-->
+<!--                        android:layout_gravity="center"-->
+<!--                        android:clickable="true"-->
+<!--                        android:focusable="true"-->
+<!--                        android:src="@drawable/icon_arrow_right" />-->
+<!--                </LinearLayout>-->
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/_1sdp"
-                    android:layout_marginTop="@dimen/_10sdp"
-                    android:background="@color/grey_300" />
+<!--                <View-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="@dimen/_1sdp"-->
+<!--                    android:layout_marginTop="@dimen/_10sdp"-->
+<!--                    android:background="@color/grey_300" />-->
 
                 <LinearLayout
                     android:layout_width="match_parent"

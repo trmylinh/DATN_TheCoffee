@@ -181,6 +181,7 @@ class ManageDrinkDetailAdminFragment : Fragment() {
                         edtDescProduct,
                         imgProduct.toString(),
                         result.price,
+                        0,
                         result.categoryId,
                         result.isOutOfStock,
                         adapterSize.listSize as List<Size>,

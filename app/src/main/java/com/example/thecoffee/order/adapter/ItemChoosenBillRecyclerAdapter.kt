@@ -9,8 +9,13 @@ import com.chauthai.swipereveallayout.ViewBinderHelper
 import com.example.thecoffee.databinding.LayoutItemChosenBillBinding
 import com.example.thecoffee.order.model.Cart
 
+interface ItemChosenBillRecyclerInterface{
+    fun onItemDeleteListener(position: Int)
+}
 class ItemChosenBillRecyclerAdapter(
-    val list: List<Cart>
+    val list: List<Cart>,
+    val onItemDeleteListener: ItemChosenBillRecyclerInterface,
+    val isAdmin: Boolean
 ) : RecyclerView.Adapter<ItemChosenBillRecyclerAdapter.ItemChosenBillViewHolder>() {
     private lateinit var binding: LayoutItemChosenBillBinding
     private var viewBinderHelper: ViewBinderHelper = ViewBinderHelper()
@@ -42,6 +47,14 @@ class ItemChosenBillRecyclerAdapter(
             }
 
             binding.priceItem.text = "${String.format("%,d", cart.totalPrice)}đ"
+
+            // delete
+            binding.btnDelete.setOnClickListener {
+                onItemDeleteListener.onItemDeleteListener(adapterPosition)
+            }
+
+            binding.swipeLayoutContent.visibility = if(isAdmin) View.GONE else View.VISIBLE
+            binding.iconCanEdit.visibility = if(isAdmin) View.GONE else View.VISIBLE
 
         }
 

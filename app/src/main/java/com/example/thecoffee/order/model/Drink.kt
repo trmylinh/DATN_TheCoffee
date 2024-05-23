@@ -8,6 +8,7 @@ data class Drink (
     val desc: String? = null,
     val image: String? = null,
     val price: Int? = null,
+    var discount: Int? = null,
     val categoryId: String? = null,
     val isOutOfStock: Boolean? = null,
     val size: List<Size>? = emptyList(),
