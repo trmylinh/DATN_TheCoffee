@@ -91,6 +91,9 @@
         <action
             android:id="@+id/action_homeAdminFragment_to_managerDrinkAdminFragment"
             app:destination="@id/managerDrinkAdminFragment" />
+        <action
+            android:id="@+id/action_homeAdminFragment_to_manageVoucherAdminFragment"
+            app:destination="@id/manageVoucherAdminFragment" />
     </fragment>
     <fragment
         android:id="@+id/manageOrderAdminFragment"
@@ -128,4 +131,9 @@
         android:name="com.example.thecoffee.admin.manage.drink.view.ManageAddDrinkFragment"
         android:label="fragment_manage_add_drink"
         tools:layout="@layout/fragment_manage_add_drink" />
+    <fragment
+        android:id="@+id/manageVoucherAdminFragment"
+        android:name="com.example.thecoffee.admin.manage.voucher.view.ManageVoucherAdminFragment"
+        android:label="fragment_manage_voucher_admin"
+        tools:layout="@layout/fragment_manage_voucher_admin" />
 </navigation>

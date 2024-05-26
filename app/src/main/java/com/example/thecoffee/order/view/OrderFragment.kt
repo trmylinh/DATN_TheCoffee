@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,12 +25,16 @@ import com.example.thecoffee.order.model.Category
 import com.example.thecoffee.order.model.Drink
 import com.example.thecoffee.databinding.FragmentOrderBinding
 import com.example.thecoffee.base.MyViewModelFactory
+import com.example.thecoffee.base.SharedViewModel
+import com.example.thecoffee.home.view.HomeFragment
 import com.example.thecoffee.order.model.Cart
 import com.example.thecoffee.order.utils.DrinksByCategory
 import com.example.thecoffee.order.viewmodel.ProductViewModel
+import com.example.thecoffee.voucher.view.VoucherFragment
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.util.Date
 import java.util.UUID
 
 class OrderFragment : Fragment() {
@@ -46,7 +52,18 @@ class OrderFragment : Fragment() {
     private lateinit var adapterListDrink: ItemDrinkCategoryRecyclerAdapter
     private val bottomSheetDetail = ItemDrinkDetailFragment()
     private val bottomSheetConfirmBill = ConfirmOrderBillFragment()
-    private var listCartItem = mutableListOf<Cart>()
+
+    private val voucherFragment = VoucherFragment()
+
+//    private var homeFragment = HomeFragment()
+    private lateinit var listCartItem: MutableList<Cart>
+
+    private val gson = Gson()
+
+    private var listValue= mutableListOf<String>()
+
+    private val sharedViewModel: SharedViewModel by activityViewModels()
+    private var dataObserver: Observer<List<String>>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,6 +83,30 @@ class OrderFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         binding = FragmentOrderBinding.inflate(inflater, container, false)
+
+        // Khởi tạo adapter một lần
+        adapterListDrink = ItemDrinkCategoryRecyclerAdapter(
+            requireContext(),
+            object : ItemDrinkCategoryRecyclerInterface {
+                override fun onClickItemDrink(position: Drink) {
+                    // pass data -> item drink detail fragment
+                    val bundleDetail = Bundle()
+                    bundleDetail.putSerializable("dataDrink", position)
+                    bottomSheetDetail.arguments = bundleDetail
+                    bottomSheetDetail.listener = object : BottomSheetListener {
+                        override fun onResult(value: String) {
+                            sharedViewModel.addData(value)
+                        }
+                    }
+                    bottomSheetDetail.show(parentFragmentManager, bottomSheetDetail.tag)
+                    bottomSheetDetail.isCancelable = false
+                }
+            },
+            marginBottom = 150,
+            false
+        )
+        binding.rvItemDrink.adapter = adapterListDrink
+
         return binding.root
     }
 
@@ -88,15 +129,19 @@ class OrderFragment : Fragment() {
             }
         }
 
+        dataObserver = Observer { data ->
+           listValue = data.toMutableList()
+            showCartView()
+        }
+
+        sharedViewModel.sharedData.observe(viewLifecycleOwner, dataObserver!!)
     }
 
     private fun getCategory() {
         productViewModel.getCategoryList.observe(viewLifecycleOwner) { categories ->
-            Log.d("TAG", "categories: $categories")
             categoryList = categories
             if (categoryList.isNotEmpty()) {
                 getVoucher()
-//                getDrink()
                 showMenuCategory()
             }
         }
@@ -180,22 +225,28 @@ class OrderFragment : Fragment() {
                 itemList.add(DrinksByCategory.TypeEmpty("Hiện tại chưa có sản phẩm nào"))
             } else {
                 filteredDrinks.forEach { drink ->
-                    val voucherFound = voucherList.find { voucher ->
-                        if (voucher.type?.lowercase() == "category" && voucher.expired == false) {
-                            voucher.supportIdItems?.contains(drink.categoryId) == true
-                        } else if (voucher.type?.lowercase() == "drink" && voucher.expired == false) {
-                            voucher.supportIdItems?.contains(drink.drinkId) == true
+                    if(drink.isOutOfStock == false){
+                        val currentDate = voucherFragment.getDateOnly(Date())
+                        val voucherFound = voucherList.find { voucher ->
+                            if (voucher.type?.lowercase() == "category" &&
+                                (voucherFragment.stringToLocalDate(voucher.end_date!!)!!.after(currentDate)
+                                        || voucherFragment.stringToLocalDate(voucher.end_date) == currentDate)) {
+                                voucher.supportIdItems?.contains(drink.categoryId) == true
+                            } else if (voucher.type?.lowercase() == "drink" &&
+                                (voucherFragment.stringToLocalDate(voucher.end_date!!)!!.after(currentDate)
+                                        || voucherFragment.stringToLocalDate(voucher.end_date) == currentDate)) {
+                                voucher.supportIdItems?.contains(drink.drinkId) == true
+                            } else {
+                                false
+                            }
+                        }
+
+                        if(voucherFound?.unit == "%"){
+                            drink.discount =  voucherFound.discount!! * drink.price!! / 100
                         } else {
-                           false
+                            drink.discount =  voucherFound?.discount
                         }
                     }
-
-                    if(voucherFound?.unit == "%"){
-                        drink.discount =  voucherFound.discount!! * drink.price!! / 100
-                    } else {
-                        drink.discount =  voucherFound?.discount
-                    }
-
                     itemList.add(DrinksByCategory.TypeDrink(drink))
                 }
             }
@@ -204,75 +255,123 @@ class OrderFragment : Fragment() {
         }
         drinkList.clear()
 
-        adapterListDrink =
-            ItemDrinkCategoryRecyclerAdapter(
-                requireContext(),
-                object : ItemDrinkCategoryRecyclerInterface {
-                    override fun onClickItemDrink(position: Drink) {
-                        // pass data -> item drink detail fragment
-                        val bundleDetail = Bundle()
-                        bundleDetail.putSerializable("dataDrink", position)
-                        bottomSheetDetail.arguments = bundleDetail
-                        bottomSheetDetail.listener = object : BottomSheetListener {
-                            override fun onResult(value: String) {
-                                // luu cart vao sharedPreferences
-                                val sharedPreferences = requireContext().getSharedPreferences(
-                                    "cart",
-                                    Context.MODE_PRIVATE
-                                )
-                                val isIdCartExist = sharedPreferences.contains("idCart")
-                                if (!isIdCartExist) {
-                                    sharedPreferences.edit()
-                                        .apply {
-                                            // tao idCart ~ idBill -> chi tao 1 lan
-                                            putString("idCart", generateRandomId())
-                                        }.apply()
-                                }
+//        adapterListDrink =
+//            ItemDrinkCategoryRecyclerAdapter(
+//                requireContext(),
+//                object : ItemDrinkCategoryRecyclerInterface {
+//                    override fun onClickItemDrink(position: Drink) {
+//                        // pass data -> item drink detail fragment
+//                        val bundleDetail = Bundle()
+//                        bundleDetail.putSerializable("dataDrink", position)
+//                        bottomSheetDetail.arguments = bundleDetail
+//                        bottomSheetDetail.listener = bottomSheetListener
+//                        bottomSheetDetail.show(parentFragmentManager, bottomSheetDetail.tag)
+//                        bottomSheetDetail.isCancelable = false
+//                    }
+//
+//                }, marginBottom = 150, false
+//            )
+//        binding.rvItemDrink.adapter = adapterListDrink
+        adapterListDrink.submitList(itemList)
 
-                                sharedPreferences.edit()
-                                    .apply {
-                                        putString("dataCart", value)
-                                    }.apply()
+        linearLayoutManager = LinearLayoutManager(
+            requireContext(), LinearLayoutManager.VERTICAL, false
+        )
+        binding.rvItemDrink.layoutManager = linearLayoutManager
 
 
-                                // doc chuoi JSON tu sharedPreferences
-                                val gson = Gson()
-                                val json = sharedPreferences.getString("dataCart", null)
-                                val type = object : TypeToken<Cart>() {}.type
+//        if(resultValue != null){
+//            showCartView()
+//        }
+    }
 
-                                // chuyen doi JSON -> cart object
-                                val itemCart: Cart = gson.fromJson(json, type)
+    private fun showCartView() {
+        listCartItem = mutableListOf()
+        Log.d("check", "showCartView ${listValue.size} ${listValue}")
+        // luu cart vao sharedPreferences
+        val sharedPreferences = requireContext().getSharedPreferences(
+            "cart",
+            Context.MODE_PRIVATE
+        )
+        val isIdCartExist = sharedPreferences.contains("idCart")
+        if (!isIdCartExist) {
+            sharedPreferences.edit()
+                .apply {
+                    // tao idCart ~ idBill -> chi tao 1 lan
+                    putString("idCart", "${UUID.randomUUID()}")
+                }.apply()
+        }
 
-                                // case -> add trung spham
-                                var found = false
-                                for (item in listCartItem) {
-                                    if (itemCart == item) {
-                                        found = true
-                                        break
-                                    }
-                                }
+        for(value in listValue){
+            sharedPreferences.edit()
+                .apply {
+                    putString("dataCart", value)
+                }.apply()
 
-                                // xử lý tăng số lượng của spham trùng
-                                if (found) {
-                                    val updateList = listCartItem.map { item ->
-                                        if (item == itemCart) {
-                                            item.copy(
-                                                totalPrice = item.totalPrice?.plus(itemCart.totalPrice!!),
-                                                quantity = item.quantity?.plus(itemCart.quantity!!)
-                                            )
-                                        } else {
-                                            item
-                                        }
-                                    }
-                                    listCartItem = updateList.toMutableList()
-                                } else {
-                                    listCartItem.add(itemCart)
-                                }
+            val json = sharedPreferences.getString("dataCart", null)
+            val type = object : TypeToken<Cart>() {}.type
+
+            // chuyen doi JSON -> cart object
+            val itemCart: Cart = gson.fromJson(json, type)
 
 
-                                if (listCartItem.isNotEmpty()) {
-                                    var total: Long = 0
-                                    var countItem: Long = 0
+            // case -> add trung spham
+            var found = false
+            for (item in listCartItem) {
+                if (itemCart == item) {
+                    found = true
+                    break
+                }
+            }
+
+            // xử lý tăng số lượng của spham trùng
+            if (found) {
+                val updateList = listCartItem.map { item ->
+                    if (item == itemCart) {
+                        item.copy(
+                            totalPrice = item.totalPrice?.plus(itemCart.totalPrice!!),
+                            quantity = item.quantity?.plus(itemCart.quantity!!)
+                        )
+                    } else {
+                        item
+                    }
+                }
+                listCartItem = updateList.toMutableList()
+            } else {
+                listCartItem.add(itemCart)
+            }
+
+
+            if (listCartItem.isNotEmpty()) {
+                var total: Long = 0
+                var countItem: Long = 0
+                for (item in listCartItem) {
+                    total += item.totalPrice!!
+                    countItem += item.quantity!!
+                }
+                binding.viewCart.visibility = View.VISIBLE
+                binding.amount.text = countItem.toString()
+                binding.totalPrice.text = "${String.format("%,d", total)}đ"
+
+                binding.viewCart.setOnClickListener {
+                    // pass data -> confirm order bill fragment
+                    val bundleBill = Bundle()
+                    val jsonListCartItem = gson.toJson(listCartItem)
+                    bundleBill.putString("dataBill", jsonListCartItem)
+                    bottomSheetConfirmBill.arguments = bundleBill
+                    bottomSheetConfirmBill.listener =
+                        object : ConfirmOrderBillFragmentListener {
+                            override fun onBottomSheetClear() {
+                                binding.viewCart.visibility = View.GONE
+                                listCartItem.removeAll(listCartItem)
+                                sharedViewModel.sharedData.value.orEmpty().toMutableList().clear()
+                            }
+
+                            override fun onBottomSheetClose(newList: List<Cart>?) {
+                                if (newList != null) {
+                                    listCartItem = newList.toMutableList()
+                                    total = 0
+                                    countItem = 0
                                     for (item in listCartItem) {
                                         total += item.totalPrice!!
                                         countItem += item.quantity!!
@@ -280,60 +379,21 @@ class OrderFragment : Fragment() {
                                     binding.viewCart.visibility = View.VISIBLE
                                     binding.amount.text = countItem.toString()
                                     binding.totalPrice.text = "${String.format("%,d", total)}đ"
-
-                                    binding.viewCart.setOnClickListener {
-                                        // pass data -> confirm order bill fragment
-                                        val bundleBill = Bundle()
-                                        val jsonListCartItem = gson.toJson(listCartItem)
-                                        bundleBill.putString("dataBill", jsonListCartItem)
-                                        bottomSheetConfirmBill.arguments = bundleBill
-                                        bottomSheetConfirmBill.listener =
-                                            object : ConfirmOrderBillFragmentListener {
-                                                override fun onBottomSheetClear() {
-                                                    binding.viewCart.visibility = View.GONE
-                                                    listCartItem.removeAll(listCartItem)
-                                                }
-
-                                                override fun onBottomSheetClose(newList: List<Cart>?) {
-                                                    if(newList != null){
-                                                        listCartItem = newList.toMutableList()
-                                                        total = 0
-                                                        countItem = 0
-                                                        for (item in listCartItem) {
-                                                            total += item.totalPrice!!
-                                                            countItem += item.quantity!!
-                                                        }
-                                                        binding.viewCart.visibility = View.VISIBLE
-                                                        binding.amount.text = countItem.toString()
-                                                        binding.totalPrice.text = "${String.format("%,d", total)}đ"
-                                                    }
-                                                }
-                                            }
-
-                                        // hien thi confirm bill ui
-                                        bottomSheetConfirmBill.show(
-                                            parentFragmentManager,
-                                            bottomSheetConfirmBill.tag
-                                        )
-                                        bottomSheetConfirmBill.isCancelable = false
-                                    }
                                 }
-
                             }
                         }
-                        bottomSheetDetail.show(parentFragmentManager, bottomSheetDetail.tag)
-                        bottomSheetDetail.isCancelable = false
-                    }
+                    // hien thi confirm bill ui
+                    bottomSheetConfirmBill.show(
+                        parentFragmentManager,
+                        bottomSheetConfirmBill.tag
+                    )
+                    bottomSheetConfirmBill.isCancelable = false
+                }
+            }
+        }
 
-                }, marginBottom = 150, false
-            )
-        binding.rvItemDrink.adapter = adapterListDrink
-        adapterListDrink.submitList(itemList)
-
-        linearLayoutManager = LinearLayoutManager(
-            requireContext(), LinearLayoutManager.VERTICAL, false
-        )
-        binding.rvItemDrink.layoutManager = linearLayoutManager
+        listValue.clear()
+        Log.d("check", "clear: $listValue")
     }
 
     private fun getPositionOfItem(item: DrinksByCategory.TypeCategory): Int {
@@ -369,6 +429,20 @@ class OrderFragment : Fragment() {
         super.onDestroyView()
         productViewModel.getCategoryList.removeObservers(viewLifecycleOwner)
         productViewModel.getDrinkList.removeObservers(viewLifecycleOwner)
+
+        // Hủy observer khi Fragment bị hủy View
+        sharedViewModel.sharedData.removeObserver(dataObserver!!)
+    }
+    override fun onPause() {
+        super.onPause()
+        // Hủy observer khi Fragment vào trạng thái onPause
+        sharedViewModel.sharedData.removeObserver(dataObserver!!)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Khôi phục observer khi Fragment quay lại onResume
+        sharedViewModel.sharedData.observe(viewLifecycleOwner, dataObserver!!)
     }
 
 

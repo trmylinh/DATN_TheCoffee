@@ -45,6 +45,10 @@ class HomeAdminFragment : Fragment() {
         binding.qlDrink.setOnClickListener {
             findNavController().navigate(R.id.action_homeAdminFragment_to_managerDrinkAdminFragment)
         }
+
+        binding.qlVoucher.setOnClickListener {
+            findNavController().navigate(R.id.action_homeAdminFragment_to_manageVoucherAdminFragment)
+        }
     }
 
 

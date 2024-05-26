@@ -11,7 +11,7 @@ data class Voucher(
     val end_date: String? = null,
     val name: String? = null,
     val discount: Int? = null,
-    val amount: Int? = null,
-    val expired: Boolean? = null,
+    val amount: Int? = null,  // SOS -> khong xử lý được case giới hạn số lượng voucher -> cần có BE
+    val expired: Boolean? = null,  // SOS: khong dung den
 ): Serializable {
 }
