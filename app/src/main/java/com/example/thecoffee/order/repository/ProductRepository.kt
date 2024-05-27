@@ -298,17 +298,17 @@ class ProductRepository(_application: Application) {
                 for (document in documents) {
                     db.collection("Drinks").document(document.id).delete()
                         .addOnSuccessListener {
-                            Log.d("Delete", "DocumentSnapshot successfully deleted!")
+                            Log.d("Delete", "Drink successfully deleted!")
                             messageDeleteDrink.postValue("Product successfully deleted!")
                         }
                         .addOnFailureListener {e ->
-                            Log.w("Delete", "Error deleting document", e)
+                            Log.w("Delete", "Error deleting drink", e)
                             messageDeleteDrink.postValue("Error deleting product: ${e.message}")
                         }
                 }
             }
             .addOnFailureListener { e ->
-                Toast.makeText(application, "Error deleting document!", Toast.LENGTH_SHORT).show()
+                Log.w("Delete", "Error deleting document", e)
             }
             .addOnCompleteListener {
                 _loadingDeleteData.postValue(false)

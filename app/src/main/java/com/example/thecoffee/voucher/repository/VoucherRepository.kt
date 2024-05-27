@@ -1,6 +1,8 @@
 package com.example.thecoffee.voucher.repository
 
 import android.app.Application
+import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.example.thecoffee.voucher.model.Voucher
 import com.google.firebase.firestore.FirebaseFirestore
@@ -11,6 +13,8 @@ class VoucherRepository(_application: Application) {
     private val _loadingVoucherResult: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     private val messageCreateVoucher: MutableLiveData<String> = MutableLiveData<String>()
     private val messageDeleteVoucher: MutableLiveData<String> = MutableLiveData<String>()
+    private val _loadingDeleteVoucher: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+
 
     private var db: FirebaseFirestore = FirebaseFirestore.getInstance()
 
@@ -25,6 +29,9 @@ class VoucherRepository(_application: Application) {
 
     val getMessageDeleteVoucher: MutableLiveData<String>
         get() = messageDeleteVoucher
+
+    val loadingDeleteVoucher: MutableLiveData<Boolean>
+        get() = _loadingDeleteVoucher
 
     fun getVoucherList(){
         _loadingVoucherResult.postValue(true)
@@ -49,6 +56,32 @@ class VoucherRepository(_application: Application) {
                     voucherList.postValue(list)
                     _loadingVoucherResult.postValue(false)
                 }
+            }
+
+    }
+
+    fun deleteVoucher(voucherId: String){
+        _loadingDeleteVoucher.postValue(true)
+        db.collection("Vouchers").whereEqualTo("voucherId", voucherId)
+            .get()
+            .addOnSuccessListener {documents ->
+                for (document in documents) {
+                    db.collection("Vouchers").document(document.id).delete()
+                        .addOnSuccessListener {
+                            Log.d("Delete", "Voucher successfully deleted!")
+                            messageDeleteVoucher.postValue("Voucher successfully deleted!")
+                        }
+                        .addOnFailureListener {e ->
+                            Log.w("Delete", "Error deleting voucher", e)
+                            messageDeleteVoucher.postValue("Error deleting voucher: ${e.message}")
+                        }
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.w("Delete", "Error deleting voucher", e)
+            }
+            .addOnCompleteListener {
+                _loadingDeleteVoucher.postValue(false)
             }
 
     }

@@ -20,6 +20,7 @@ import com.example.thecoffee.voucher.adapter.VoucherRecyclerAdapter
 import com.example.thecoffee.voucher.adapter.VoucherRecyclerInterface
 import com.example.thecoffee.voucher.model.Voucher
 import com.example.thecoffee.voucher.viewmodel.VoucherViewModel
+import com.tapadoo.alerter.Alerter
 import java.util.Date
 
 class ManageVoucherAdminFragment : Fragment() {
@@ -70,6 +71,10 @@ class ManageVoucherAdminFragment : Fragment() {
         }
 
         setFragmentResultListener("refresh") { _, bundle ->
+            val deleteVoucherMessage = bundle.getString("deleteVoucher")
+            if(deleteVoucherMessage != null){
+                showAlert(deleteVoucherMessage)
+            }
             binding.swipeRefreshLayout.isRefreshing = true
             voucherList.clear()
             voucherViewModel.getVoucherList()
@@ -107,6 +112,19 @@ class ManageVoucherAdminFragment : Fragment() {
                 }
             }
         }
+    }
+
+    //show alerter
+    private fun showAlert(message: String) {
+        Alerter.create(requireActivity())
+//            .setTitle("Thông báo")
+            .setText(message)
+            .enableSwipeToDismiss()
+            .setIcon(R.drawable.icon_bell_white)
+            .setIconColorFilter(0) // optional - removes white tint
+            .setBackgroundColorRes(R.color.black_900)
+            .setDuration(5000)
+            .show()
     }
 
     private fun showVouchers(){

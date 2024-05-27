@@ -112,7 +112,4 @@ class ProductViewModel (application: Application) : AndroidViewModel(application
         repository.getDrinkByCategory(idCategory)
     }
 
-
-
-
 }

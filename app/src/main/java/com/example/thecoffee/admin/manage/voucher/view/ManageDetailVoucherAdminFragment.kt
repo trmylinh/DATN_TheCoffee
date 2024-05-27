@@ -19,13 +19,17 @@ import com.example.thecoffee.order.adapter.ItemDrinkCategoryRecyclerAdapter
 import com.example.thecoffee.order.model.Drink
 import com.example.thecoffee.order.utils.DrinksByCategory
 import com.example.thecoffee.order.viewmodel.ProductViewModel
+import com.example.thecoffee.voucher.viewmodel.VoucherViewModel
 
 class ManageDetailVoucherAdminFragment : Fragment() {
     private lateinit var binding: FragmentManageDetailVoucherAdminBinding
     private lateinit var adapterDrink: ItemDrinkCategoryRecyclerAdapter
+    private lateinit var voucherViewModel: VoucherViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val viewModelFactory = MyViewModelFactory(requireActivity().application)
+        voucherViewModel = ViewModelProvider(this, viewModelFactory)[VoucherViewModel::class.java]
 
     }
 
@@ -62,6 +66,20 @@ class ManageDetailVoucherAdminFragment : Fragment() {
             binding.rvItemsVoucher.adapter = adapterDrink
             adapterDrink.submitList(data)
             binding.rvItemsVoucher.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+
+
+            //delete
+            binding.btnDelete.setOnClickListener {
+                voucherViewModel.deleteVoucher(result.voucherId!!)
+                voucherViewModel.loadingDeleteVoucher.observe(viewLifecycleOwner){ loading->
+                    if(!loading){
+                        voucherViewModel.getMessageDeleteVoucher.observe(viewLifecycleOwner){message ->
+                            setFragmentResult("refresh", bundleOf("deleteVoucher" to message))
+                            findNavController().popBackStack()
+                        }
+                    }
+                }
+            }
         }
 
     }
