@@ -20,7 +20,7 @@ import java.util.Locale
 import java.util.concurrent.Executors
 
 interface VoucherRecyclerInterface {
-    fun onClickItemVoucher(position: Int)
+    fun onClickItemVoucher(voucher: Voucher)
 }
 
 class VoucherRecyclerAdapter(
@@ -45,7 +45,7 @@ class VoucherRecyclerAdapter(
 
         init {
             binding.layoutItemVoucher.setOnClickListener {
-                onClickItemVoucher.onClickItemVoucher(adapterPosition)
+                onClickItemVoucher.onClickItemVoucher(getItem(adapterPosition))
             }
         }
 
