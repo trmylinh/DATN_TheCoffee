@@ -46,8 +46,8 @@ class ItemDrinkCategoryRecyclerAdapter(
             Glide.with(itemView.context).load(drink.image).into(binding.imageDrink)
 
             //out of stock
-            binding.viewDisable.visibility =  if(drink.isOutOfStock == true) View.VISIBLE else View.GONE
-            binding.tvOutOfStock.visibility =  if(drink.isOutOfStock == true) View.VISIBLE else View.GONE
+            binding.viewDisable.visibility =  if(drink.outOfStock == true) View.VISIBLE else View.GONE
+            binding.tvOutOfStock.visibility =  if(drink.outOfStock == true) View.VISIBLE else View.GONE
 
             // discount
             if(drink.discount != null && drink.discount!! > 0){

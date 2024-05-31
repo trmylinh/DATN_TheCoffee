@@ -10,7 +10,7 @@ data class Drink (
     val price: Int? = null,
     var discount: Int? = null,
     val categoryId: String? = null,
-    val isOutOfStock: Boolean? = null,
+    val outOfStock: Boolean? = null,
     val size: List<Size>? = emptyList(),
     val topping: List<Topping>? = emptyList()
 ): Serializable {

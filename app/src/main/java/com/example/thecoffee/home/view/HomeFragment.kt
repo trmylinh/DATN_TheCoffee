@@ -172,11 +172,9 @@ class HomeFragment : Fragment() {
             drinkList = it
             val voucherFilter =
                 voucherList.filter { voucher -> voucher.type?.lowercase() == "drink" }
-
-            Log.d("voucher", voucherFilter.toString())
             val currentDate = voucherFragment.getDateOnly(Date())
             drinkList.forEach { drink ->
-                if (drink.isOutOfStock == false) {
+                if (drink.outOfStock == false) {
                     val voucherFound = voucherFilter.find { voucher ->
                         if (voucherFragment.stringToLocalDate(voucher.end_date!!) == currentDate) {
                             voucher.supportIdItems?.contains(drink.drinkId) == true

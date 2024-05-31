@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.thecoffee.R
@@ -30,7 +31,6 @@ class ManageDetailVoucherAdminFragment : Fragment() {
         super.onCreate(savedInstanceState)
         val viewModelFactory = MyViewModelFactory(requireActivity().application)
         voucherViewModel = ViewModelProvider(this, viewModelFactory)[VoucherViewModel::class.java]
-
     }
 
     override fun onCreateView(
@@ -61,6 +61,7 @@ class ManageDetailVoucherAdminFragment : Fragment() {
             binding.nameVoucher.text = result.name
             binding.voucherEndDate.text = result.end_date
             binding.voucherTimeline.text = "- Áp dụng từ ngày ${result.start_date} đến hết ${result.end_date}"
+            binding.tvDiscountVoucher.text = "- Giảm giá: ${result.discount} ${result.unit}/1 sản phẩm"
 
             adapterDrink = ItemDrinkCategoryRecyclerAdapter(requireContext(), null, null, null)
             binding.rvItemsVoucher.adapter = adapterDrink
@@ -79,6 +80,14 @@ class ManageDetailVoucherAdminFragment : Fragment() {
                         }
                     }
                 }
+            }
+
+            binding.btnEditVoucher.setOnClickListener {
+                val action = ManageDetailVoucherAdminFragmentDirections.actionManageDetailVoucherAdminFragmentToManageUpdateVoucherFragment(result)
+                val navOptions = NavOptions.Builder()
+                    .setLaunchSingleTop(true)
+                    .build()
+                findNavController().navigate(action, navOptions)
             }
         }
 

@@ -90,7 +90,8 @@ class VoucherFragment : Fragment() {
         val voucherAvailable = voucherList.filter { stringToLocalDate(it.end_date!!)!!.after(currentDate) || currentDate.compareTo(stringToLocalDate(it.end_date)) == 0 }
 
         voucherAdapter = VoucherRecyclerAdapter(requireContext(), object: VoucherRecyclerInterface{
-            override fun onClickItemVoucher(position: Int) {
+            override fun onClickItemVoucher(voucher: Voucher) {
+
             }
         }, false)
 

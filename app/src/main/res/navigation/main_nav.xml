@@ -139,6 +139,9 @@
         <action
             android:id="@+id/action_manageVoucherAdminFragment_to_manageDetailVoucherAdminFragment"
             app:destination="@id/manageDetailVoucherAdminFragment" />
+        <action
+            android:id="@+id/action_manageVoucherAdminFragment_to_manageAddVoucherFragment"
+            app:destination="@id/manageAddVoucherFragment" />
     </fragment>
     <fragment
         android:id="@+id/manageDetailVoucherAdminFragment"
@@ -152,5 +155,25 @@
             android:name="detailVoucherDrinks"
             app:argType="string[]"
             app:nullable="false"/>
+        <action
+            android:id="@+id/action_manageDetailVoucherAdminFragment_to_manageUpdateVoucherFragment"
+            app:destination="@id/manageUpdateVoucherFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/manageAddVoucherFragment"
+        android:name="com.example.thecoffee.admin.manage.voucher.view.ManageAddVoucherFragment"
+        android:label="fragment_manage_add_voucher"
+        tools:layout="@layout/fragment_manage_add_voucher"/>
+    <fragment
+        android:id="@+id/manageUpdateVoucherFragment"
+        android:name="com.example.thecoffee.admin.manage.voucher.view.ManageUpdateVoucherFragment"
+        android:label="fragment_manage_update_voucher"
+        tools:layout="@layout/fragment_manage_update_voucher">
+        <argument
+            android:name="detailVoucher"
+            app:argType="com.example.thecoffee.voucher.model.Voucher"/>
+        <action
+            android:id="@+id/action_manageUpdateVoucherFragment_to_manageVoucherAdminFragment"
+            app:destination="@id/manageVoucherAdminFragment" />
     </fragment>
 </navigation>

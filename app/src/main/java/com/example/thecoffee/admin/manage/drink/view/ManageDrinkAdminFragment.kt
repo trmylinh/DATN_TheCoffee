@@ -125,7 +125,7 @@ class ManageDrinkAdminFragment : Fragment() {
             .setIcon(R.drawable.icon_bell_white)
             .setIconColorFilter(0) // optional - removes white tint
             .setBackgroundColorRes(R.color.black_900)
-            .setDuration(5000)
+            .setDuration(3000)
             .show()
     }
 

@@ -225,7 +225,7 @@ class OrderFragment : Fragment() {
                 itemList.add(DrinksByCategory.TypeEmpty("Hiện tại chưa có sản phẩm nào"))
             } else {
                 filteredDrinks.forEach { drink ->
-                    if(drink.isOutOfStock == false){
+                    if(drink.outOfStock == false){
                         val currentDate = voucherFragment.getDateOnly(Date())
                         val voucherFound = voucherList.find { voucher ->
                             if (voucher.type?.lowercase() == "category" &&
@@ -287,7 +287,6 @@ class OrderFragment : Fragment() {
 
     private fun showCartView() {
         listCartItem = mutableListOf()
-        Log.d("check", "showCartView ${listValue.size} ${listValue}")
         // luu cart vao sharedPreferences
         val sharedPreferences = requireContext().getSharedPreferences(
             "cart",
@@ -393,7 +392,6 @@ class OrderFragment : Fragment() {
         }
 
         listValue.clear()
-        Log.d("check", "clear: $listValue")
     }
 
     private fun getPositionOfItem(item: DrinksByCategory.TypeCategory): Int {

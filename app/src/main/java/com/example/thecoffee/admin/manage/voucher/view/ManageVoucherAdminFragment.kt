@@ -1,6 +1,7 @@
 package com.example.thecoffee.admin.manage.voucher.view
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -59,6 +60,10 @@ class ManageVoucherAdminFragment : Fragment() {
             findNavController().popBackStack()
         }
 
+        binding.iconAdd.setOnClickListener {
+            findNavController().navigate(R.id.action_manageVoucherAdminFragment_to_manageAddVoucherFragment)
+        }
+
         binding.swipeRefreshLayout.apply {
             binding.swipeRefreshLayout.visibility = View.VISIBLE
             setColorSchemeColors(resources.getColor(R.color.orange_700, null))
@@ -72,9 +77,21 @@ class ManageVoucherAdminFragment : Fragment() {
 
         setFragmentResultListener("refresh") { _, bundle ->
             val deleteVoucherMessage = bundle.getString("deleteVoucher")
+            val createVoucherMessage = bundle.getString("createVoucher_message")
+            val updateVoucherMessage = bundle.getString("updateVoucher_message")
             if(deleteVoucherMessage != null){
                 showAlert(deleteVoucherMessage)
             }
+
+            if(createVoucherMessage != null){
+                Log.d("TAG", "createVoucherMessage: $createVoucherMessage")
+                showAlert(createVoucherMessage)
+            }
+
+            if(updateVoucherMessage != null){
+                showAlert(updateVoucherMessage)
+            }
+
             binding.swipeRefreshLayout.isRefreshing = true
             voucherList.clear()
             voucherViewModel.getVoucherList()
@@ -121,9 +138,8 @@ class ManageVoucherAdminFragment : Fragment() {
             .setText(message)
             .enableSwipeToDismiss()
             .setIcon(R.drawable.icon_bell_white)
-            .setIconColorFilter(0) // optional - removes white tint
-            .setBackgroundColorRes(R.color.black_900)
-            .setDuration(5000)
+            .setBackgroundColorRes(R.color.light_blue_900)
+            .setDuration(3000)
             .show()
     }
 

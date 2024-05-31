@@ -236,7 +236,7 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
             .setIcon(R.drawable.icon_bell)
             .setIconColorFilter(0) // optional - removes white tint
             .setBackgroundColorRes(R.color.orange_700)
-            .setDuration(5000)
+            .setDuration(3000)
             .show()
     }
 
