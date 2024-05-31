@@ -170,6 +170,8 @@ dependencies {
     //alerter
     implementation("com.tapadoo.android:alerter:2.0.4")
 
+    //chart
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }
 kapt {
     correctErrorTypes = true

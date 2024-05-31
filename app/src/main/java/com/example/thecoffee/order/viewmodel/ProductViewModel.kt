@@ -27,6 +27,7 @@ class ProductViewModel (application: Application) : AndroidViewModel(application
 
     private val _messageDeleteDrink: MutableLiveData<String> = repository.getMessageDeleteDrink
     private val _messageCreateDrink: MutableLiveData<String> = repository.getMessageCreateDrink
+    private val _messageUpdateDrink: MutableLiveData<String> = repository.getMessageUpdateDrink
 
     val loadingDeleteData: MutableLiveData<Boolean>
         get() =  _loadingDeleteData
@@ -70,6 +71,9 @@ class ProductViewModel (application: Application) : AndroidViewModel(application
     val getMessageCreateDrink: MutableLiveData<String>
         get() = _messageCreateDrink
 
+    val getMessageUpdateDrink: MutableLiveData<String>
+        get() = _messageUpdateDrink
+
     init {
         _categoryList = repository.getCategoryList
         _drinkList = repository.getDrinkList
@@ -111,7 +115,5 @@ class ProductViewModel (application: Application) : AndroidViewModel(application
     fun getDrinkByCategory(idCategory: String){
         repository.getDrinkByCategory(idCategory)
     }
-
-
 
 }

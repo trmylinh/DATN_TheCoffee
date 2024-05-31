@@ -23,9 +23,10 @@ class ItemDrinkHomeRecyclerAdapter(
             binding.nameDrink.text = drink.name
             binding.priceDrink.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG // gach ngang text
             binding.priceDrink.text = "${String.format("%,d", drink.price)}đ"
-//            binding.discountDrink.text = "-${String.format("%,d", drink.discount)}đ"
-//            val priceDis = drink.price!! - drink.discount!!
-//            binding.priceDisDrink.text =  "${String.format("%,d", priceDis)}đ"
+
+            binding.discountDrink.text = "-${String.format("%,d", drink.discount)}đ"
+            val priceDis = drink.price!! - drink.discount!!
+            binding.priceDisDrink.text =  "${String.format("%,d", priceDis)}đ"
 
         }
         init {

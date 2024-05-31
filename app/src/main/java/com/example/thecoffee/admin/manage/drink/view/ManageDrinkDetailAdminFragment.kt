@@ -30,6 +30,7 @@ import com.example.thecoffee.order.model.Drink
 import com.example.thecoffee.order.model.Size
 import com.example.thecoffee.order.model.Topping
 import com.example.thecoffee.order.viewmodel.ProductViewModel
+import com.tapadoo.alerter.Alerter
 
 class ManageDrinkDetailAdminFragment : Fragment() {
     private lateinit var binding: FragmentManageDrinkDetailAdminBinding
@@ -71,7 +72,7 @@ class ManageDrinkDetailAdminFragment : Fragment() {
             binding.descProduct.setExpandedTextColor(R.color.orange_900)
             binding.descProduct.setTrimLength(4)
 
-            binding.viewOutOfStock.visibility = if (result.isOutOfStock == true) View.VISIBLE else View.GONE
+            binding.viewOutOfStock.visibility = if (result.outOfStock == true) View.VISIBLE else View.GONE
 
             if (result.size?.isNotEmpty() == true) {
                 adapterSize = ManageDrinkInfoAdapter(result.size, null)
@@ -141,7 +142,7 @@ class ManageDrinkDetailAdminFragment : Fragment() {
                         pickImage.launch(intent)
                     }
 
-                    binding.checkboxOutOfStock.isChecked = result.isOutOfStock!!
+                    binding.checkboxOutOfStock.isChecked = result.outOfStock!!
 
                 } else {
 //                    binding.outOfStock.visibility = View.VISIBLE
@@ -165,8 +166,6 @@ class ManageDrinkDetailAdminFragment : Fragment() {
                     val imgProduct = imageUri ?: result.image
                     val isOutOfStock = binding.checkboxOutOfStock.isChecked
 
-                    Log.d("TAG", "onViewCreated: $isOutOfStock")
-
                     if(!isOutOfStock){
                         binding.viewOutOfStock.visibility = View.GONE
                         binding.checkboxOutOfStock.visibility = View.GONE
@@ -176,18 +175,33 @@ class ManageDrinkDetailAdminFragment : Fragment() {
                     }
 
                     val newItem = Drink(
-                        result.drinkId,
-                        edtNameProduct,
-                        edtDescProduct,
-                        imgProduct.toString(),
-                        result.price,
-                        0,
-                        result.categoryId,
-                        result.isOutOfStock,
-                        adapterSize.listSize as List<Size>,
-                        adapterTopping.listTopping as List<Topping>
+                        drinkId = result.drinkId,
+                        name = edtNameProduct,
+                        desc = edtDescProduct,
+                        image = imgProduct.toString(),
+                        price = result.price,
+                        discount = 0,
+                        categoryId = result.categoryId,
+                        outOfStock = isOutOfStock,
+                        size = adapterSize.listSize as List<Size>,
+                        topping = adapterTopping.listTopping as List<Topping>
                     )
                     productViewModel.updateDataDrink(result.drinkId!!, newItem)
+                    productViewModel.loadingUpdatedData.observe(viewLifecycleOwner) { loading ->
+                        if (loading) {
+                            binding.progressBarAddVoucher.visibility = View.VISIBLE
+                        } else {
+                            binding.progressBarAddVoucher.visibility = View.GONE
+                            productViewModel.getMessageUpdateDrink.observe(viewLifecycleOwner) { message ->
+//                                setFragmentResult(
+//                                    "refresh",
+//                                    bundleOf("updateDrink_message" to message)
+//                                )
+//                                findNavController().popBackStack()
+                                showAlert(message)
+                            }
+                        }
+                    }
                 }
 
                 // size - topping
@@ -214,6 +228,18 @@ class ManageDrinkDetailAdminFragment : Fragment() {
             findNavController().popBackStack()
         }
 
+    }
+
+    private fun showAlert(message: String) {
+        Alerter.create(requireActivity())
+//            .setTitle("Thông báo")
+            .setText(message)
+            .enableSwipeToDismiss()
+            .setIcon(R.drawable.icon_bell_white)
+            .setIconColorFilter(0) // optional - removes white tint
+            .setBackgroundColorRes(R.color.black_900)
+            .setDuration(3000)
+            .show()
     }
 
     private val pickImage = registerForActivityResult(

@@ -100,7 +100,8 @@ class HistoryOrderFragment : Fragment() {
                 bottomSheetManageDetailOrder.arguments = bundleBill
                 bottomSheetManageDetailOrder.listener = object:
                     ManageDetailOrderFragmentListener {
-                    override fun onBottomSheetClose(status: Long, idBill: String) {}
+                    override fun onBottomSheetClose() {
+                    }
                 }
 
                 // hien thi confirm bill ui

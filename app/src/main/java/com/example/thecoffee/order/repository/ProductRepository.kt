@@ -37,6 +37,7 @@ class ProductRepository(_application: Application) {
 
     private val messageDeleteDrink: MutableLiveData<String> = MutableLiveData<String>()
     private val messageCreateDrink: MutableLiveData<String> = MutableLiveData<String>()
+    private val messageUpdateDrink: MutableLiveData<String> = MutableLiveData<String>()
 
     val getCategoryList: MutableLiveData<ArrayList<Category>>
         get() = categoryList
@@ -77,11 +78,17 @@ class ProductRepository(_application: Application) {
     val loadingDeleteData: MutableLiveData<Boolean>
         get() = _loadingDeleteData
 
+    val loadingUpdateData: MutableLiveData<Boolean>
+        get() = _loadingUpdatedData
+
     val getMessageDeleteDrink: MutableLiveData<String>
         get() = messageDeleteDrink
 
     val getMessageCreateDrink: MutableLiveData<String>
         get() = messageCreateDrink
+
+    val getMessageUpdateDrink: MutableLiveData<String>
+        get() = messageUpdateDrink
 
     fun getDataCategoryList() {
         _loadingCategoryResult.postValue(true)
@@ -119,7 +126,7 @@ class ProductRepository(_application: Application) {
                         val price = document.get("price").toString().toInt()
                         val discount = document.get("discount").toString().toInt()
                         val categoryId = document.getString("categoryId")
-                        val isOutOfStock = document.getBoolean("isOutOfStock")
+                        val isOutOfStock = document.getBoolean("outOfStock")
                         val sizeList = document.get("size") as List<Map<String, Number>>?
                         val toppingList = document.get("topping") as List<Map<String, Number>>?
 
@@ -146,7 +153,7 @@ class ProductRepository(_application: Application) {
 
                         list.add(
                             Drink(
-                                drinkId, name, desc, image, price, discount, categoryId,isOutOfStock,
+                                drinkId, name, desc, image, price, discount, categoryId, isOutOfStock,
                                 size = if (sizeList == null) null else size,
                                 topping = if (toppingList == null) null else topping
                             )
@@ -176,6 +183,7 @@ class ProductRepository(_application: Application) {
                         val categoryId = document.getString("categoryId")
                         val sizeList = document.get("size") as List<Map<String, Number>>?
                         val toppingList = document.get("topping") as List<Map<String, Number>>?
+                        val isOutOfStock = document.getBoolean("outOfStock")
 
                         val size = mutableListOf<Size>()
                         val topping = mutableListOf<Topping>()
@@ -196,7 +204,7 @@ class ProductRepository(_application: Application) {
                         }
                         list.add(
                             Drink(
-                                drinkId, name, desc, image, price, discount, categoryId,
+                                drinkId, name, desc, image, price, discount, categoryId, isOutOfStock,
                                 size = if (sizeList == null) null else size,
                                 topping = if (toppingList == null) null else topping
                             )
@@ -227,6 +235,7 @@ class ProductRepository(_application: Application) {
                         val categoryId = document.getString("categoryId")
                         val sizeList = document.get("size") as List<Map<String, Number>>?
                         val toppingList = document.get("topping") as List<Map<String, Number>>?
+                        val isOutOfStock = document.getBoolean("outOfStock")
 
                         val size = mutableListOf<Size>()
                         val topping = mutableListOf<Topping>()
@@ -247,7 +256,7 @@ class ProductRepository(_application: Application) {
                         }
                         list.add(
                             Drink(
-                                drinkId, name, desc, image, price, discount, categoryId,
+                                drinkId, name, desc, image, price, discount, categoryId, isOutOfStock,
                                 size = if (sizeList == null) null else size,
                                 topping = if (toppingList == null) null else topping
                             )
@@ -268,24 +277,21 @@ class ProductRepository(_application: Application) {
             .addOnSuccessListener { documents->
                 for (document in documents) {
                     db.collection("Drinks").document(document.id).set(newItem)
-                        .addOnCompleteListener {
-                            if (it.isSuccessful) {
-                                Toast.makeText(
-                                    application,
-                                    "update data successfully",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            } else {
-                                Toast.makeText(application, it.exception.toString(), Toast.LENGTH_SHORT)
-                                    .show()
-                                Log.e("Firestore", "Error update data", it.exception)
-                            }
-                            _loadingUpdatedData.postValue(false)
+                        .addOnSuccessListener {
+                            Log.d("Update", "Drink successfully Update!")
+                            messageUpdateDrink.postValue("Cập nhật sản phẩm thành công!!!")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.w("Update", "Lỗi cập nhật sản phẩm!!!", e)
+                            messageUpdateDrink.postValue("Error Update Drink: ${e.message}")
                         }
                 }
             }
             .addOnFailureListener { e ->
-                Log.d("Query", "Error getting documents: ", e)
+                Log.w("Update", "Error Drink voucher", e)
+            }
+            .addOnCompleteListener {
+                _loadingUpdatedData.postValue(false)
             }
     }
 
@@ -298,17 +304,17 @@ class ProductRepository(_application: Application) {
                 for (document in documents) {
                     db.collection("Drinks").document(document.id).delete()
                         .addOnSuccessListener {
-                            Log.d("Delete", "DocumentSnapshot successfully deleted!")
-                            messageDeleteDrink.postValue("Product successfully deleted!")
+                            Log.d("Delete", "Drink successfully deleted!")
+                            messageDeleteDrink.postValue("Xóa sản phẩm thành công!!!")
                         }
                         .addOnFailureListener {e ->
-                            Log.w("Delete", "Error deleting document", e)
-                            messageDeleteDrink.postValue("Error deleting product: ${e.message}")
+                            Log.w("Delete", "Error deleting drink", e)
+                            messageDeleteDrink.postValue("Lỗi xóa sản phẩm: ${e.message}")
                         }
                 }
             }
             .addOnFailureListener { e ->
-                Toast.makeText(application, "Error deleting document!", Toast.LENGTH_SHORT).show()
+                Log.w("Delete", "Error deleting document", e)
             }
             .addOnCompleteListener {
                 _loadingDeleteData.postValue(false)
@@ -329,11 +335,9 @@ class ProductRepository(_application: Application) {
                     )
                 )
                     .addOnSuccessListener {
-//                        messageCreateDrink.postValue("Product successfully added!")
                         Log.d("Firestore", "Document added!")
                     }
                     .addOnFailureListener { e ->
-//                        messageCreateDrink.postValue("Error adding product: ${e.message}")
                         Log.e("Firestore", "Error adding document", e)
                     }
             }.addOnFailureListener { e ->
@@ -363,12 +367,12 @@ class ProductRepository(_application: Application) {
                     drink.topping
                 ))
                     .addOnSuccessListener {
-                        messageCreateDrink.postValue("Product successfully added!")
-                        Log.d("Firestore", "Document added!")
+                        messageCreateDrink.postValue("Tạo sản phẩm mới thành công!!!")
+                        Log.d("Firestore", "drink added!")
                     }
                     .addOnFailureListener { e ->
-                        messageCreateDrink.postValue("Error adding product: ${e.message}")
-                        Log.e("Firestore", "Error adding document", e)
+                        messageCreateDrink.postValue("Lỗi tạo sản phẩm mới: ${e.message}")
+                        Log.e("Firestore", "Error adding dribk", e)
                     }
             }.addOnFailureListener { e ->
                 Log.e("Firestore", "Error download url image", e)

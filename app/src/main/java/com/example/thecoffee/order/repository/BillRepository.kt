@@ -364,14 +364,9 @@ class BillRepository(_application: Application) {
 
                     billRef.update("bill", updates).addOnCompleteListener {
                         if (it.isSuccessful) {
-                            messageUpdateBill.postValue("Update status bill successfully")
-                            Toast.makeText(
-                                application,
-                                "update status bill successfully",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            messageUpdateBill.postValue("Cập nhật trạng thái đơn hàng thành công!!")
                         } else {
-                            messageUpdateBill.postValue("Error update status bill ${it.exception}")
+                            messageUpdateBill.postValue("Lỗi cập nhật trạng thái đơn hàng: ${it.exception}")
                             Toast.makeText(application, it.exception.toString(), Toast.LENGTH_SHORT)
                                 .show()
                             Log.e("Firestore", "Error setting bill", it.exception)

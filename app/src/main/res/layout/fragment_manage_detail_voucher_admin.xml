@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".admin.manage.voucher.view.ManageDetailVoucherAdminFragment"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:padding="@dimen/_20sdp"
+        android:background="@color/grey_300"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/icon_back"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginBottom="@dimen/_5sdp"
+                android:src="@drawable/icon_back" />
+            <TextView
+                android:id="@+id/btn_delete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:text="Xóa"
+                android:clickable="true"
+                android:focusable="true"
+                android:textAlignment="textEnd"
+                android:textColor="@color/black_900"
+                android:textSize="@dimen/_15sdp"/>
+        </LinearLayout>
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:orientation="vertical"
+                android:paddingVertical="@dimen/_10sdp"
+                android:background="@drawable/round_corner"
+                android:backgroundTint="@color/white_900"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:id="@+id/image_voucher"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:src="@drawable/image_voucher_gift"
+                        android:layout_width="@dimen/_35sdp"
+                        android:layout_height="@dimen/_35sdp"
+                        android:layout_gravity="center_vertical"/>
+                    <TextView
+                        android:id="@+id/name_voucher"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/_10sdp"
+                        android:layout_gravity="center"
+                        android:text="Tuan Le Tra Trai Cay Mua 1 Tang 1 Va Uu dai mua he"
+                        android:textAlignment="center"
+                        android:textColor="@color/black_900"
+                        android:textSize="@dimen/_16sdp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_1sdp"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:background="@color/grey_300"
+                    android:layout_marginVertical="@dimen/_5sdp"/>
+                <LinearLayout
+                    android:paddingVertical="@dimen/_5sdp"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_10sdp"
+                        android:text="Hết hạn vào"
+                        android:textAlignment="textStart"
+                        android:textColor="@color/black_900"
+                        android:textSize="@dimen/_10sdp"/>
+                    <TextView
+                        android:id="@+id/voucher_end_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/_10sdp"
+                        android:text="31/05/2024"
+                        android:textAlignment="textEnd"
+                        android:textColor="@color/red_600"
+                        android:textSize="@dimen/_12sdp"/>
+                </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_1sdp"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:background="@color/grey_300"
+                    android:layout_marginVertical="@dimen/_5sdp"/>
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/voucher_timeline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_10sdp"
+                        android:layout_marginVertical="5dp"
+                        android:text=""
+                        android:textAlignment="textStart"
+                        android:textColor="@color/grey_700"
+                        android:textSize="@dimen/_12sdp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_10sdp"
+                        android:layout_marginVertical="5dp"
+                        android:text="- Áp dụng dịch vụ Giao hàng khi đặt hàng qua App"
+                        android:textAlignment="textStart"
+                        android:textColor="@color/grey_700"
+                        android:textSize="@dimen/_12sdp"/>
+                    <TextView
+                        android:id="@+id/tv_discount_voucher"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_10sdp"
+                        android:layout_marginVertical="5dp"
+                        android:text=""
+                        android:textAlignment="textStart"
+                        android:textColor="@color/grey_700"
+                        android:textSize="@dimen/_12sdp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_10sdp"
+                        android:layout_marginVertical="5dp"
+                        android:text="- Sản phẩm áp dụng:"
+                        android:textAlignment="textStart"
+                        android:textColor="@color/grey_700"
+                        android:textSize="@dimen/_12sdp"/>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_items_voucher"
+                        android:layout_marginHorizontal="@dimen/_10sdp"
+                        android:layout_marginVertical="5dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_10sdp"
+                        android:layout_marginVertical="5dp"
+                        android:text="- Không áp dụng topping"
+                        android:textAlignment="textStart"
+                        android:textColor="@color/grey_700"
+                        android:textSize="@dimen/_12sdp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_10sdp"
+                        android:layout_marginVertical="5dp"
+                        android:text="- Không áp dụng song song các chương trình khuyến mãi khác"
+                        android:textAlignment="textStart"
+                        android:textColor="@color/grey_700"
+                        android:textSize="@dimen/_12sdp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_10sdp"
+                        android:layout_marginVertical="5dp"
+                        android:text="- Chương trình có thể kết thúc sớm hơn dự kiến nếu hết lượng ưu đãi"
+
+                        android:textAlignment="textStart"
+                        android:textColor="@color/grey_700"
+                        android:textSize="@dimen/_12sdp"/>
+                </LinearLayout>
+                <Button
+                    android:id="@+id/btn_edit_voucher"
+                    android:text="Chỉnh sửa ưu đãi"
+                    android:layout_margin="@dimen/_10sdp"
+                    android:backgroundTint="@color/black_900"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
+
+
+
+</LinearLayout>

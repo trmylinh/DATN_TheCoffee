@@ -25,9 +25,9 @@ interface ItemDrinkCategoryRecyclerInterface {
 }
 class ItemDrinkCategoryRecyclerAdapter(
     context: Context,
-    val onClickItemDrink: ItemDrinkCategoryRecyclerInterface,
-    val marginBottom: Int,
-    val isAdmin: Boolean,
+    val onClickItemDrink: ItemDrinkCategoryRecyclerInterface?,
+    val marginBottom: Int?,
+    val isAdmin: Boolean?,
 ): ListAdapter<DrinksByCategory, RecyclerView.ViewHolder>(
 // chỉ định là DrinksByCategoryDiffCallBack được chạy dưới BackgroundThread để tránh gây giật lag View
     AsyncDifferConfig.Builder(DrinksByCategoryDiffCallBack())
@@ -46,8 +46,8 @@ class ItemDrinkCategoryRecyclerAdapter(
             Glide.with(itemView.context).load(drink.image).into(binding.imageDrink)
 
             //out of stock
-            binding.viewDisable.visibility =  if(drink.isOutOfStock == true) View.VISIBLE else View.GONE
-            binding.tvOutOfStock.visibility =  if(drink.isOutOfStock == true) View.VISIBLE else View.GONE
+            binding.viewDisable.visibility =  if(drink.outOfStock == true) View.VISIBLE else View.GONE
+            binding.tvOutOfStock.visibility =  if(drink.outOfStock == true) View.VISIBLE else View.GONE
 
             // discount
             if(drink.discount != null && drink.discount!! > 0){
@@ -71,7 +71,7 @@ class ItemDrinkCategoryRecyclerAdapter(
 //                binding.nameVoucher.text = voucherName
 //            }
 
-            if(isAdmin){
+            if(isAdmin == true){
                 binding.cardVideBtnAdd.visibility = View.GONE
                 binding.viewDisable.visibility = View.GONE
             }
@@ -81,7 +81,7 @@ class ItemDrinkCategoryRecyclerAdapter(
                 val position = adapterPosition
                 if(position != RecyclerView.NO_POSITION){
                     val drink = getItem(position) as DrinksByCategory.TypeDrink
-                    onClickItemDrink.onClickItemDrink(drink.drink)
+                    onClickItemDrink?.onClickItemDrink(drink.drink)
                 }
             }
 
@@ -89,7 +89,7 @@ class ItemDrinkCategoryRecyclerAdapter(
                 val position = adapterPosition
                 if(position != RecyclerView.NO_POSITION){
                     val drink = getItem(position) as DrinksByCategory.TypeDrink
-                    onClickItemDrink.onClickItemDrink(drink.drink)
+                    onClickItemDrink?.onClickItemDrink(drink.drink)
                 }
             }
         }
@@ -152,7 +152,9 @@ class ItemDrinkCategoryRecyclerAdapter(
             is ProductViewHolder -> {
                 val product = item as DrinksByCategory.TypeDrink
                 holder.bind(product.drink)
-                holder.setMarginForLastItem(isLastItem, marginBottom)
+                if (marginBottom != null) {
+                    holder.setMarginForLastItem(isLastItem, marginBottom)
+                }
             }
             is EmptyWarningViewHolder -> {
                 val error = item as DrinksByCategory.TypeEmpty

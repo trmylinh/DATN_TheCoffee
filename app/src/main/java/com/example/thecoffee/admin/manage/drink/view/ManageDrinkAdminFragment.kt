@@ -122,10 +122,10 @@ class ManageDrinkAdminFragment : Fragment() {
 //            .setTitle("Thông báo")
             .setText(message)
             .enableSwipeToDismiss()
-            .setIcon(R.drawable.icon_bell)
+            .setIcon(R.drawable.icon_bell_white)
             .setIconColorFilter(0) // optional - removes white tint
-            .setBackgroundColorRes(R.color.orange_700)
-            .setDuration(5000)
+            .setBackgroundColorRes(R.color.black_900)
+            .setDuration(3000)
             .show()
     }
 

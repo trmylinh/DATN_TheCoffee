@@ -30,7 +30,11 @@ class MainActivity : AppCompatActivity() {
                     R.id.manageOrderAdminFragment,
                     R.id.historyOrderFragment,
                     R.id.managerDrinkAdminFragment,
-                    R.id.manageAddDrinkFragment
+                    R.id.manageAddDrinkFragment,
+                    R.id.manageVoucherAdminFragment,
+                    R.id.manageDetailVoucherAdminFragment,
+                    R.id.manageAddVoucherFragment,
+                    R.id.manageUpdateVoucherFragment,
                     -> View.GONE
 
                     else -> View.VISIBLE

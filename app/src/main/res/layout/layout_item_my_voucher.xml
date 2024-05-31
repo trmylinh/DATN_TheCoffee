@@ -4,7 +4,10 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="@dimen/_10sdp"
     android:background="@drawable/round_corner"
-    android:backgroundTint="@color/white_900">
+    android:backgroundTint="@color/white_900"
+    android:id="@+id/layout_item_voucher"
+    android:clickable="true"
+    android:focusable="true">
     <ImageView
         android:id="@+id/image_voucher"
         android:layout_marginStart="@dimen/_5sdp"
@@ -20,11 +23,23 @@
         android:textSize="@dimen/_13sdp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/text_amount"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_marginHorizontal="@dimen/_15sdp"
+        android:layout_below="@+id/title_voucher"
+        android:textSize="@dimen/_11sdp"
+        android:textColor="@color/grey_600"
+        android:layout_toEndOf="@id/image_voucher"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
     <TextView
         android:id="@+id/text_date"
         android:layout_marginTop="@dimen/_10sdp"
         android:layout_marginHorizontal="@dimen/_15sdp"
-        android:layout_below="@+id/title_voucher"
+        android:layout_below="@+id/text_amount"
         android:text="Het han trong 6 tieng"
         android:textSize="@dimen/_11sdp"
         android:textColor="@color/red_900"
