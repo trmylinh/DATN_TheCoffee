@@ -10,12 +10,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.thecoffee.R
 import com.example.thecoffee.base.MyViewModelFactory
+import com.example.thecoffee.base.SharedViewModel
 import com.example.thecoffee.databinding.FragmentConfirmOrderBillBinding
 import com.example.thecoffee.order.adapter.ItemChosenBillRecyclerAdapter
 import com.example.thecoffee.order.adapter.ItemChosenBillRecyclerInterface
@@ -40,7 +42,7 @@ import kotlin.coroutines.suspendCoroutine
 
 interface ConfirmOrderBillFragmentListener {
     fun onBottomSheetClear()
-    fun onBottomSheetClose(newList: List<Cart>? = null)
+    fun onBottomSheetClose(newList: List<Cart>? = null, event: String? = null)
 }
 
 class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
@@ -59,6 +61,9 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
     private var timeProgress = 0
     private var pauseOffSet: Long = 0
     private var isStart = true
+
+    private val sharedViewModel: SharedViewModel by activityViewModels()
+    private var event: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,7 +95,7 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
         )
 
         binding.closeBtn.setOnClickListener {
-            listener?.onBottomSheetClose(dataBill)
+            listener?.onBottomSheetClose(dataBill, event)
             dismiss()
         }
 
@@ -106,6 +111,8 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
                         .apply {
                             clear()
                         }.apply()
+
+                    sharedViewModel.clearData()
 
                     (dataBill as MutableList).removeAll(dataBill)
 
@@ -151,10 +158,13 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
                                 binding.viewCancel.visibility = View.GONE
 
                                 order(idOrder!!, -1)
+                                event = "clear"
                                 sharedPreferences.edit()
                                     .apply {
                                         clear()
                                     }.apply()
+
+                                sharedViewModel.clearData()
 
                                 listener?.onBottomSheetClear()
                             }
@@ -173,10 +183,13 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
                             binding.viewCancel.visibility = View.GONE
 
                             order(idOrder!!, 0)
+                            event = "clear"
                             sharedPreferences.edit()
                                 .apply {
                                     clear()
                                 }.apply()
+
+                            sharedViewModel.clearData()
 
                             listener?.onBottomSheetClear()
                         }

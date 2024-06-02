@@ -131,7 +131,12 @@ class OrderFragment : Fragment() {
 
         dataObserver = Observer { data ->
            listValue = data.toMutableList()
-            showCartView()
+           if(listValue.isNotEmpty()){
+               binding.viewCart.visibility = View.VISIBLE
+               showCartView()
+           } else {
+               binding.viewCart.visibility = View.GONE
+           }
         }
 
         sharedViewModel.sharedData.observe(viewLifecycleOwner, dataObserver!!)
@@ -255,23 +260,6 @@ class OrderFragment : Fragment() {
         }
         drinkList.clear()
 
-//        adapterListDrink =
-//            ItemDrinkCategoryRecyclerAdapter(
-//                requireContext(),
-//                object : ItemDrinkCategoryRecyclerInterface {
-//                    override fun onClickItemDrink(position: Drink) {
-//                        // pass data -> item drink detail fragment
-//                        val bundleDetail = Bundle()
-//                        bundleDetail.putSerializable("dataDrink", position)
-//                        bottomSheetDetail.arguments = bundleDetail
-//                        bottomSheetDetail.listener = bottomSheetListener
-//                        bottomSheetDetail.show(parentFragmentManager, bottomSheetDetail.tag)
-//                        bottomSheetDetail.isCancelable = false
-//                    }
-//
-//                }, marginBottom = 150, false
-//            )
-//        binding.rvItemDrink.adapter = adapterListDrink
         adapterListDrink.submitList(itemList)
 
         linearLayoutManager = LinearLayoutManager(
@@ -279,14 +267,11 @@ class OrderFragment : Fragment() {
         )
         binding.rvItemDrink.layoutManager = linearLayoutManager
 
-
-//        if(resultValue != null){
-//            showCartView()
-//        }
     }
 
     private fun showCartView() {
         listCartItem = mutableListOf()
+        listCartItem.clear()
         // luu cart vao sharedPreferences
         val sharedPreferences = requireContext().getSharedPreferences(
             "cart",
@@ -363,21 +348,27 @@ class OrderFragment : Fragment() {
                             override fun onBottomSheetClear() {
                                 binding.viewCart.visibility = View.GONE
                                 listCartItem.removeAll(listCartItem)
-                                sharedViewModel.sharedData.value.orEmpty().toMutableList().clear()
+//                                sharedViewModel.sharedData.value?.toMutableList()?.clear()
+                                listValue.clear()
+                                sharedViewModel.clearData()
                             }
 
-                            override fun onBottomSheetClose(newList: List<Cart>?) {
-                                if (newList != null) {
-                                    listCartItem = newList.toMutableList()
-                                    total = 0
-                                    countItem = 0
-                                    for (item in listCartItem) {
-                                        total += item.totalPrice!!
-                                        countItem += item.quantity!!
+                            override fun onBottomSheetClose(newList: List<Cart>?, event: String?) {
+                                if(event != null){
+                                    sharedViewModel.clearData()
+                                } else {
+                                    if (newList != null) {
+                                        listCartItem = newList.toMutableList()
+                                        total = 0
+                                        countItem = 0
+                                        for (item in listCartItem) {
+                                            total += item.totalPrice!!
+                                            countItem += item.quantity!!
+                                        }
+                                        binding.viewCart.visibility = View.VISIBLE
+                                        binding.amount.text = countItem.toString()
+                                        binding.totalPrice.text = "${String.format("%,d", total)}đ"
                                     }
-                                    binding.viewCart.visibility = View.VISIBLE
-                                    binding.amount.text = countItem.toString()
-                                    binding.totalPrice.text = "${String.format("%,d", total)}đ"
                                 }
                             }
                         }
@@ -388,6 +379,9 @@ class OrderFragment : Fragment() {
                     )
                     bottomSheetConfirmBill.isCancelable = false
                 }
+            }
+            else {
+                binding.viewCart.visibility = View.GONE
             }
         }
 
