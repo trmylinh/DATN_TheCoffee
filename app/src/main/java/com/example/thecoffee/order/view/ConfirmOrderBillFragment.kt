@@ -206,13 +206,7 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
             Context.MODE_PRIVATE
         )
 
-        priceItems = 0
-        countItem = 0
-        for (item in dataBill) {
-            priceItems += item.totalPrice!!
-            countItem += item.quantity!!
-        }
-        binding.itemsPrice.text = "${String.format("%,d", priceItems)}đ"
+        calculatePrice()
 
         // recycler view items chosen
         adapter = ItemChosenBillRecyclerAdapter(dataBill, object: ItemChosenBillRecyclerInterface{
@@ -220,9 +214,19 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
                 (dataBill as MutableList).removeAt(position)
                 adapter.notifyItemRemoved(position)
                 adapter.notifyItemRangeChanged(position, adapter.itemCount)
-//                sharedPreferences.edit().apply{
-//                    putString("dataCart", dataBill.toString())
-//                }.apply()
+
+                calculatePrice()
+
+                if(dataBill.isEmpty()){
+                    sharedPreferences.edit()
+                        .apply {
+                            clear()
+                        }.apply()
+
+                    sharedViewModel.clearData()
+                    dismiss()
+                    listener?.onBottomSheetClear()
+                }
             }
         }, false)
         binding.rvItemChoosen.adapter = adapter
@@ -230,16 +234,9 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
             requireContext(), LinearLayoutManager.VERTICAL, false
         )
 
-        // giao hang
-        val shipFee = 15000
-        binding.totalAmountItems.text = "$countItem sản phẩm"
-        binding.pricePayFinal.text = "${String.format("%,d", (priceItems+shipFee))}đ"
-        binding.totalPay.text = "${String.format("%,d", (priceItems+shipFee))}đ"
-
     }
 
     private fun order(id: String, statusBill: Long) {
-//        val id: String = generateRandomId()
         val userId: String = auth.currentUser?.uid!!
         val address: String = "165 Cau Giay"
         val status: Long = statusBill
@@ -268,6 +265,22 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
             }
         }
 
+    }
+
+    private fun calculatePrice() {
+        priceItems = 0
+        countItem = 0
+        for (item in dataBill) {
+            priceItems += item.totalPrice!!
+            countItem += item.quantity!!
+        }
+        binding.itemsPrice.text = "${String.format("%,d", priceItems)}đ"
+
+        // giao hang
+        val shipFee = 15000
+        binding.totalAmountItems.text = "$countItem sản phẩm"
+        binding.pricePayFinal.text = "${String.format("%,d", (priceItems+shipFee))}đ"
+        binding.totalPay.text = "${String.format("%,d", (priceItems+shipFee))}đ"
     }
 
 
