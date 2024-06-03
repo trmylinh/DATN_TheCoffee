@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.graphics.Color
 import android.icu.util.Calendar
 import android.util.Log
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -39,6 +40,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 import kotlin.coroutines.resume
@@ -105,46 +107,101 @@ class ManageStatisticAdminFragment : Fragment() {
                 datePicker.show()
             }
 
+            // bar chart
+            // spinner year
+            val years = ArrayList<String>()
+            val thisYear = Calendar.getInstance().get(Calendar.YEAR)
+            for (i in 2022..thisYear) {
+                years.add(i.toString())
+            }
+            val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, years)
+            binding.spinnerYear.adapter = adapter
+            binding.spinnerYear.setSelection(adapter.count - 1)
+
+            binding.spinnerYear.onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    val selectedItem = parent?.getItemAtPosition(position).toString().toInt()
+                    getYearFromDate(selectedItem)
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                }
+
+            }
         }
 
+    }
 
-        // bar chart
-        val years = ArrayList<String>()
-        val thisYear = Calendar.getInstance().get(Calendar.YEAR)
-        for (i in 2022..thisYear) {
-            years.add(i.toString())
+    private suspend fun getBills(): List<Bill> =
+        suspendCoroutine { continuation ->
+            billViewModel.getBills.observe(viewLifecycleOwner) {
+                continuation.resume(it)
+            }
         }
 
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, years)
-        binding.spinnerYear.adapter = adapter
-        binding.spinnerYear.setSelection(adapter.count - 1)
-        val defaultNoOfBarsInViewport = 5f // so luong cot muon hien thi moi khi cuon
+    private fun getDateOnly(): Date {
+        val calendar = java.util.Calendar.getInstance()
+        calendar.time = Date()
+        calendar.set(java.util.Calendar.HOUR_OF_DAY, 0)
+        calendar.set(java.util.Calendar.MINUTE, 0)
+        calendar.set(java.util.Calendar.SECOND, 0)
+        calendar.set(java.util.Calendar.MILLISECOND, 0)
+        return calendar.time
+    }
+
+    private fun getYearFromDate(yearFind: Int){
+        val dates  = arrayListOf("22/04/2023", "15/04/2023", "07/05/2023", "19/12/2023", "03/06/2024", "12/05/2024");
+        val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val monthCounts = mutableMapOf<Pair<Int, Int>, Int>()
+        bills .forEach { bill   ->
+            val dateOnly = bill.time?.substring(9)
+            val date = dateOnly?.let { format.parse(it) }
+//            val date = format.parse(dateString)
+            date?.let {
+                val calendar = Calendar.getInstance()
+                calendar.time = it
+                val year = calendar.get(Calendar.YEAR)
+                val month = calendar.get(Calendar.MONTH) + 1
+                val yearMonthKey = Pair(year, month)
+                monthCounts[yearMonthKey] = (monthCounts[yearMonthKey] ?: 0) + 1
+            }
+        }
+        val years = monthCounts.keys.map { it.first }.toSet()
+        for (year in years) {
+            for (month in 1..12) {
+                val yearMonthKey = Pair(year, month)
+                monthCounts.putIfAbsent(yearMonthKey, 0)
+            }
+        }
         val list: ArrayList<BarEntry> = ArrayList()
+        var x = 100
+        monthCounts.toSortedMap(compareBy({ it.first }, { it.second })).forEach { (yearMonth, count) ->
+            if(yearMonth.first == yearFind){
+                list.add(BarEntry(x.toFloat(), count.toFloat()))
+                x++
+            }
+        }
+        showListDataBarChart(list)
+    }
 
-        list.add(BarEntry(100f, 100f))
-        list.add(BarEntry(101f, 200f))
-        list.add(BarEntry(102f, 300f))
-        list.add(BarEntry(103f, 400f))
-        list.add(BarEntry(104f, 500f))
-        list.add(BarEntry(105f, 450f))
-        list.add(BarEntry(106f, 600f))
-        list.add(BarEntry(107f, 550f))
-        list.add(BarEntry(108f, 50f))
-        list.add(BarEntry(109f, 750f))
-        list.add(BarEntry(110f, 220f))
-        list.add(BarEntry(111f, 480f))
-
+    private fun showListDataBarChart(list: ArrayList<BarEntry>) {
+        val defaultNoOfBarsInViewport = 5f // so luong cot muon hien thi moi khi cuon
         val dataSets = mutableListOf<IBarDataSet>()
         val labels =
             arrayOf("T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T12")
         val colorsSet = mutableListOf<Int>()
         colorsSet.add(resources.getColor(R.color.red_100, null))
-        colorsSet.add(resources.getColor(R.color.pink_100, null))
-        colorsSet.add(resources.getColor(R.color.purple_100, null))
-        colorsSet.add(resources.getColor(R.color.deep_purple_100, null))
-        colorsSet.add(resources.getColor(R.color.indigo_100, null))
+        colorsSet.add(resources.getColor(R.color.purple_A100, null))
+        colorsSet.add(resources.getColor(R.color.pink_800, null))
+        colorsSet.add(resources.getColor(R.color.indigo_300, null))
         colorsSet.add(resources.getColor(R.color.cyan_300, null))
         colorsSet.add(resources.getColor(R.color.orange_500, null))
+        colorsSet.add(resources.getColor(R.color.deep_purple_500, null))
         colorsSet.add(resources.getColor(R.color.green_100, null))
         colorsSet.add(resources.getColor(R.color.blue_300, null))
         colorsSet.add(resources.getColor(R.color.brown_300, null))
@@ -177,40 +234,19 @@ class ManageStatisticAdminFragment : Fragment() {
             setVisibleXRangeMaximum(defaultNoOfBarsInViewport)
             setExtraOffsets(0f, 0f, 0f, 10f)
             animateY(2000)
+            notifyDataSetChanged()
             invalidate()
         }
-
     }
 
-    private suspend fun getBills(): List<Bill> =
-        suspendCoroutine { continuation ->
-            billViewModel.getBills.observe(viewLifecycleOwner) {
-                continuation.resume(it)
-            }
-        }
-
-    private fun getDateOnly(): Date {
-        val calendar = java.util.Calendar.getInstance()
-        calendar.time = Date()
-        calendar.set(java.util.Calendar.HOUR_OF_DAY, 0)
-        calendar.set(java.util.Calendar.MINUTE, 0)
-        calendar.set(java.util.Calendar.SECOND, 0)
-        calendar.set(java.util.Calendar.MILLISECOND, 0)
-        return calendar.time
-    }
-
-    private fun stringToLocalDate(dateString: String): Date? {
-        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        return try {
-            sdf.parse(dateString)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-    }
-
-    private fun showFilterDataPieChart(statusCancel: Int, statusWaitConfirm: Int, statusConfirmed: Int, statusDelivering: Int, statusDone: Int, totalCount: Int) {
-        Log.d("TAG", "statusCancel: $statusCancel - statusWaitConfirm: $statusWaitConfirm - statusConfirmed: $statusConfirmed - statusDelivering: $statusDelivering - statusDone: $statusDone - totalCount: $totalCount")
+    private fun showFilterDataPieChart(
+        statusCancel: Int,
+        statusWaitConfirm: Int,
+        statusConfirmed: Int,
+        statusDelivering: Int,
+        statusDone: Int,
+        totalCount: Int
+    ) {
         binding.pieChart.apply {
             setUsePercentValues(true) // hien thi gia tri tre bieu do duoi dang %
             description.isEnabled =
@@ -259,11 +295,11 @@ class ManageStatisticAdminFragment : Fragment() {
         }
 
         val entries: ArrayList<PieEntry> = ArrayList()
-            entries.add(PieEntry(statusWaitConfirm.toFloat(), "Chờ xác nhận"))
-            entries.add(PieEntry(statusConfirmed.toFloat(), "Đã xác nhận"))
-            entries.add(PieEntry(statusDelivering.toFloat(), "Đang giao"))
-            entries.add(PieEntry(statusDone.toFloat(), "Đã giao"))
-            entries.add(PieEntry(statusCancel.toFloat(), "Đã hủy"))
+        entries.add(PieEntry(statusWaitConfirm.toFloat(), "Chờ xác nhận"))
+        entries.add(PieEntry(statusConfirmed.toFloat(), "Đã xác nhận"))
+        entries.add(PieEntry(statusDelivering.toFloat(), "Đang giao"))
+        entries.add(PieEntry(statusDone.toFloat(), "Đã giao"))
+        entries.add(PieEntry(statusCancel.toFloat(), "Đã hủy"))
 
         val dataSet = PieDataSet(entries, "Trạng thái đơn hàng")
         dataSet.setDrawIcons(true) // hien thi icon cho moi phan cua bieu do, voi dieu kien la da set icon cho moi PieEntry
@@ -301,7 +337,6 @@ class ManageStatisticAdminFragment : Fragment() {
     }
 
     private fun filterDataPieChart(date: String) {
-        Log.d("TAG", "date: $date")
         statusCancel = 0  //-1
         statusWaitConfirm = 0  //0
         statusConfirmed = 0   //1
@@ -340,7 +375,6 @@ class ManageStatisticAdminFragment : Fragment() {
         }
         totalCount =
             statusCancel + statusWaitConfirm + statusConfirmed + statusDelivering + statusDone
-        Log.d("TAG", "statusCancel: $statusCancel - statusWaitConfirm: $statusWaitConfirm - statusConfirmed: $statusConfirmed - statusDelivering: $statusDelivering - statusDone: $statusDone - totalCount: $totalCount")
         showFilterDataPieChart(statusCancel, statusWaitConfirm, statusConfirmed, statusDelivering, statusDone, totalCount)
     }
 }
