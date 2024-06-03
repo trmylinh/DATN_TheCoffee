@@ -1,6 +1,10 @@
 package com.example.thecoffee.admin.manage.chart.view
 
+import android.Manifest
 import android.app.DatePickerDialog
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Typeface
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,10 +12,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.pdf.PdfDocument
+import android.graphics.pdf.PdfDocument.PageInfo
 import android.icu.util.Calendar
+import android.os.Build
+import android.os.Environment
 import android.util.Log
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.thecoffee.R
@@ -38,6 +52,9 @@ import com.github.mikephil.charting.utils.MPPointF
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
@@ -54,12 +71,26 @@ class ManageStatisticAdminFragment : Fragment() {
     private lateinit var billViewModel: BillViewModel
     private var bills = mutableListOf<Bill>()
 
-    var statusCancel = 0  //-1
-    var statusWaitConfirm = 0  //0
-    var statusConfirmed = 0   //1
-    var statusDelivering = 0  //2
-    var statusDone = 0      //3
-    var totalCount = 0
+    private var statusCancel = 0  //-1
+    private var statusWaitConfirm = 0  //0
+    private var statusConfirmed = 0   //1
+    private var statusDelivering = 0  //2
+    private var statusDone = 0      //3
+    private var totalCount = 0
+
+    private var pageWidth = 720
+    private var pageHeight = 1200
+    private var imageBitmap: Bitmap? =  null
+    private var scaledImageBitmap: Bitmap? = null
+
+    private var times = 0
+    private var countOrder: MutableList<Int> = mutableListOf()
+    private var totalMoneyOrder = mutableListOf<Long>()
+    private var totalShipOrder = mutableListOf<Long>()
+
+    companion object{
+        val REQUEST_CODE = 100
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,8 +111,71 @@ class ManageStatisticAdminFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val requestPermissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ){permissions ->
+            permissions.entries.forEach {entry ->
+                when (entry.key) {
+                    Manifest.permission.READ_MEDIA_IMAGES -> {
+                        if (entry.value) {
+                            Toast.makeText(requireContext(), "Permission READ_MEDIA_IMAGES Granted", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(requireContext(), "Permission READ_MEDIA_IMAGES denied", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    Manifest.permission.READ_EXTERNAL_STORAGE -> {
+                        if (entry.value) {
+                            Toast.makeText(requireContext(), "Permission READ_EXTERNAL_STORAGE Granted", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(requireContext(), "Permission READ_EXTERNAL_STORAGE denied", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE -> {
+                        if (entry.value) {
+                            Toast.makeText(requireContext(), "Permission WRITE_EXTERNAL_STORAGE Granted", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(requireContext(), "Permission WRITE_EXTERNAL_STORAGE denied", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        }
+
         binding.iconBack.setOnClickListener {
             findNavController().popBackStack()
+        }
+
+        imageBitmap = BitmapFactory.decodeResource(resources, R.drawable.logo_splash)
+        scaledImageBitmap = imageBitmap?.let { Bitmap.createScaledBitmap(it, 100, 100, false) }
+        binding.iconPrint.setOnClickListener {
+            Log.d("TAG", "print click")
+            requestPermissionLauncher.launch(arrayOf(
+                Manifest.permission.READ_MEDIA_IMAGES,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ))
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                if(ContextCompat.checkSelfPermission(
+                        requireContext(), Manifest.permission.READ_MEDIA_IMAGES
+                        ) == PackageManager.PERMISSION_GRANTED){
+                    createPdf()
+                } else {
+                    requestAllPermission()
+                }
+            } else {
+                if(ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                ) == PackageManager.PERMISSION_GRANTED
+                    && ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) == PackageManager.PERMISSION_GRANTED){
+                    createPdf()
+                } else {
+                    requestAllPermission()
+                }
+            }
         }
 
         CoroutineScope(Dispatchers.Main).launch {
@@ -137,6 +231,111 @@ class ManageStatisticAdminFragment : Fragment() {
 
     }
 
+    private fun createPdf(){
+        val dateFormat = SimpleDateFormat("ddMMyyyy", Locale.getDefault())
+        val today = dateFormat.format(Date())
+        val pdfDocument = PdfDocument()
+        val titlePaint = Paint()
+        val myPaint = Paint()
+        val pageInfo = PageInfo.Builder(pageWidth, pageHeight, 1).create()
+        val page = pdfDocument.startPage(pageInfo)
+        val canvas = page.canvas
+
+        // logo
+        canvas.drawBitmap(scaledImageBitmap!!, 10f, 10f, titlePaint)
+
+        // title
+        titlePaint.textAlign = Paint.Align.CENTER
+        titlePaint.textSize = 40f
+        titlePaint.color = resources.getColor(R.color.black_900, null)
+        titlePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD))
+        canvas.drawText("Thống kê doanh thu", pageWidth / 2f, 170f, titlePaint)
+
+        // address
+        myPaint.color = resources.getColor(R.color.black_900, null)
+        myPaint.textSize = 20f
+        myPaint.textAlign = Paint.Align.RIGHT
+        canvas.drawText("Địa chỉ: 165 Cầu Giấy, Dịch Vọng, Hà Nội", 700f, 50f, myPaint)
+        canvas.drawText("Điện thoại: 0987654321", 700f, 80f, myPaint)
+
+        // nam X
+        myPaint.textAlign = Paint.Align.CENTER
+        myPaint.textSize = 22f
+        myPaint.color = resources.getColor(R.color.black_900, null)
+        myPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.ITALIC))
+        canvas.drawText("Năm 2024", pageWidth / 2f, 200f, myPaint)
+
+        //table
+        myPaint.textAlign = Paint.Align.LEFT
+        myPaint.style = Paint.Style.FILL
+        canvas.drawText("STT", 40f, 250f, myPaint)
+        canvas.drawText("Tháng", 100f, 250f, myPaint)
+        canvas.drawText("Doanh thu", 220f, 250f, myPaint)
+        canvas.drawText("Số đơn", 420f, 250f, myPaint)
+        canvas.drawText("Chi phí vận chuyển", 510f, 250f, myPaint)
+
+        // line ke doc
+        canvas.drawLine(90f, 230f, 90f, 260f, myPaint)
+        canvas.drawLine(210f, 230f, 210f, 260f, myPaint)
+        canvas.drawLine(410f, 230f, 410f, 260f, myPaint)
+        canvas.drawLine(500f, 230f, 500f, 260f, myPaint)
+
+        // item
+        var space = 0
+        for (month in 0..11) {
+            canvas.drawText("${month+1}", 40f, (290+space).toFloat(), myPaint)
+            canvas.drawText("Tháng ${month+1}", 100f, (290+space).toFloat(), myPaint)
+            canvas.drawText("${String.format("%,d", totalMoneyOrder[month])} VND", 220f, (290+space).toFloat(), myPaint)
+            canvas.drawText("${countOrder[month]}", 430f, (290+space).toFloat(), myPaint)
+            canvas.drawText("${String.format("%,d", totalShipOrder[month])} VND", 520f, (290+space).toFloat(), myPaint)
+            space += 40
+        }
+
+        //total
+        canvas.drawText("Tổng", 100f, 800f, myPaint)
+        canvas.drawText("${String.format("%,d", totalMoneyOrder.sum())} VND", 220f, 800f, myPaint)
+        canvas.drawText("${countOrder.sum()}", 430f, 800f, myPaint)
+        canvas.drawText("${String.format("%,d", totalShipOrder.sum())} VND", 520f, 800f, myPaint)
+
+        pdfDocument.finishPage(page)
+        times++
+        val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+            "/TKDT_${today}($times)"+".pdf")
+        try{
+            pdfDocument.writeTo(FileOutputStream(file))
+            Toast.makeText(requireContext(), "PDF saved to ${file.absolutePath}", Toast.LENGTH_SHORT).show()
+        } catch (e: IOException){
+            e.printStackTrace()
+        }
+        pdfDocument.close()
+    }
+
+    private fun requestAllPermission(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.READ_MEDIA_IMAGES),
+                REQUEST_CODE
+            )
+        } else {
+            ActivityCompat.requestPermissions(
+                requireActivity(), arrayOf(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ), REQUEST_CODE
+            )
+        }
+    }
+
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
     private suspend fun getBills(): List<Bill> =
         suspendCoroutine { continuation ->
             billViewModel.getBills.observe(viewLifecycleOwner) {
@@ -158,7 +357,10 @@ class ManageStatisticAdminFragment : Fragment() {
         val dates  = arrayListOf("22/04/2023", "15/04/2023", "07/05/2023", "19/12/2023", "03/06/2024", "12/05/2024");
         val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         val monthCounts = mutableMapOf<Pair<Int, Int>, Int>()
-        bills .forEach { bill   ->
+        val moneyMonthCounts = mutableMapOf<Pair<Int, Int>, Long>()
+        val shipMonthCounts = mutableMapOf<Pair<Int, Int>, Long>()
+
+        bills.forEach { bill   ->
             val dateOnly = bill.time?.substring(9)
             val date = dateOnly?.let { format.parse(it) }
 //            val date = format.parse(dateString)
@@ -169,6 +371,12 @@ class ManageStatisticAdminFragment : Fragment() {
                 val month = calendar.get(Calendar.MONTH) + 1
                 val yearMonthKey = Pair(year, month)
                 monthCounts[yearMonthKey] = (monthCounts[yearMonthKey] ?: 0) + 1
+                if(monthCounts[yearMonthKey] != 0){
+                    bill.drinks?.forEach {item ->
+                        moneyMonthCounts[yearMonthKey] = (moneyMonthCounts[yearMonthKey] ?: 0) + item.totalPrice!!
+                    }
+                    shipMonthCounts[yearMonthKey] = (shipMonthCounts[yearMonthKey] ?: 0) + bill.shipFee!!
+                }
             }
         }
         val years = monthCounts.keys.map { it.first }.toSet()
@@ -176,14 +384,27 @@ class ManageStatisticAdminFragment : Fragment() {
             for (month in 1..12) {
                 val yearMonthKey = Pair(year, month)
                 monthCounts.putIfAbsent(yearMonthKey, 0)
+                moneyMonthCounts.putIfAbsent(yearMonthKey, 0)
+                shipMonthCounts.putIfAbsent(yearMonthKey, 0)
             }
         }
         val list: ArrayList<BarEntry> = ArrayList()
         var x = 100
         monthCounts.toSortedMap(compareBy({ it.first }, { it.second })).forEach { (yearMonth, count) ->
             if(yearMonth.first == yearFind){
+                countOrder.add(count)
                 list.add(BarEntry(x.toFloat(), count.toFloat()))
                 x++
+            }
+        }
+        moneyMonthCounts.toSortedMap(compareBy({ it.first }, { it.second })).forEach { (yearMonth, count) ->
+            if(yearMonth.first == yearFind){
+                totalMoneyOrder.add(count)
+            }
+        }
+        shipMonthCounts.toSortedMap(compareBy({ it.first }, { it.second })).forEach { (yearMonth, count) ->
+            if(yearMonth.first == yearFind){
+                totalShipOrder.add(count)
             }
         }
         showListDataBarChart(list)
@@ -222,7 +443,7 @@ class ManageStatisticAdminFragment : Fragment() {
             legend.orientation = Legend.LegendOrientation.VERTICAL
             legend.verticalAlignment = Legend.LegendVerticalAlignment.TOP
             legend.isEnabled = true
-            legend.textSize = 12f
+            legend.textSize = 15f
             legend.xEntrySpace = 5f // Khoảng cách giữa chú thích
             legend.setDrawInside(false)
             legend.form = Legend.LegendForm.DEFAULT // Hình dạng của chú thích
