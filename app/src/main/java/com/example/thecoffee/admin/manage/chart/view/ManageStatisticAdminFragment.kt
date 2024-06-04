@@ -24,6 +24,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
@@ -84,6 +85,7 @@ class ManageStatisticAdminFragment : Fragment() {
     private var scaledImageBitmap: Bitmap? = null
 
     private var times = 0
+    private var  yearFind = 0
     private var countOrder: MutableList<Int> = mutableListOf()
     private var totalMoneyOrder = mutableListOf<Long>()
     private var totalShipOrder = mutableListOf<Long>()
@@ -108,6 +110,7 @@ class ManageStatisticAdminFragment : Fragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -147,36 +150,7 @@ class ManageStatisticAdminFragment : Fragment() {
 
         imageBitmap = BitmapFactory.decodeResource(resources, R.drawable.logo_splash)
         scaledImageBitmap = imageBitmap?.let { Bitmap.createScaledBitmap(it, 100, 100, false) }
-        binding.iconPrint.setOnClickListener {
-            Log.d("TAG", "print click")
-            requestPermissionLauncher.launch(arrayOf(
-                Manifest.permission.READ_MEDIA_IMAGES,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ))
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                if(ContextCompat.checkSelfPermission(
-                        requireContext(), Manifest.permission.READ_MEDIA_IMAGES
-                        ) == PackageManager.PERMISSION_GRANTED){
-                    createPdf()
-                } else {
-                    requestAllPermission()
-                }
-            } else {
-                if(ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                ) == PackageManager.PERMISSION_GRANTED
-                    && ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                ) == PackageManager.PERMISSION_GRANTED){
-                    createPdf()
-                } else {
-                    requestAllPermission()
-                }
-            }
-        }
+
 
         CoroutineScope(Dispatchers.Main).launch {
             bills = getBills() as MutableList<Bill>
@@ -211,6 +185,7 @@ class ManageStatisticAdminFragment : Fragment() {
             val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, years)
             binding.spinnerYear.adapter = adapter
             binding.spinnerYear.setSelection(adapter.count - 1)
+            yearFind = binding.spinnerYear.selectedItem.toString().toInt()
 
             binding.spinnerYear.onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
                 override fun onItemSelected(
@@ -219,13 +194,49 @@ class ManageStatisticAdminFragment : Fragment() {
                     position: Int,
                     id: Long
                 ) {
+                    countOrder.clear()
+                    totalMoneyOrder.clear()
+                    totalShipOrder.clear()
                     val selectedItem = parent?.getItemAtPosition(position).toString().toInt()
+                    yearFind = selectedItem
                     getYearFromDate(selectedItem)
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
                 }
 
+            }
+
+            binding.iconPrint.setOnClickListener {
+                requestPermissionLauncher.launch(arrayOf(
+                    Manifest.permission.READ_MEDIA_IMAGES,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ))
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                    if(ContextCompat.checkSelfPermission(
+                            requireContext(), Manifest.permission.READ_MEDIA_IMAGES
+                        ) == PackageManager.PERMISSION_GRANTED){
+                        createPdf()
+                        Log.d("check", "year: $yearFind, totalMoneyOrder: $totalMoneyOrder, totalShipOrder: $totalShipOrder countOrder: $countOrder")
+                    } else {
+                        requestAllPermission()
+                    }
+                } else {
+                    if(ContextCompat.checkSelfPermission(
+                            requireContext(),
+                            Manifest.permission.READ_EXTERNAL_STORAGE
+                        ) == PackageManager.PERMISSION_GRANTED
+                        && ContextCompat.checkSelfPermission(
+                            requireContext(),
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        ) == PackageManager.PERMISSION_GRANTED){
+                        createPdf()
+                        Log.d("check", "year: $yearFind, totalMoneyOrder: $totalMoneyOrder, totalShipOrder: $totalShipOrder countOrder: $countOrder")
+                    } else {
+                        requestAllPermission()
+                    }
+                }
             }
         }
 
@@ -263,7 +274,7 @@ class ManageStatisticAdminFragment : Fragment() {
         myPaint.textSize = 22f
         myPaint.color = resources.getColor(R.color.black_900, null)
         myPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.ITALIC))
-        canvas.drawText("Năm 2024", pageWidth / 2f, 200f, myPaint)
+        canvas.drawText("Năm $yearFind", pageWidth / 2f, 200f, myPaint)
 
         //table
         myPaint.textAlign = Paint.Align.LEFT
@@ -327,15 +338,6 @@ class ManageStatisticAdminFragment : Fragment() {
         }
     }
 
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
-
     private suspend fun getBills(): List<Bill> =
         suspendCoroutine { continuation ->
             billViewModel.getBills.observe(viewLifecycleOwner) {
@@ -393,13 +395,13 @@ class ManageStatisticAdminFragment : Fragment() {
         monthCounts.toSortedMap(compareBy({ it.first }, { it.second })).forEach { (yearMonth, count) ->
             if(yearMonth.first == yearFind){
                 countOrder.add(count)
-                list.add(BarEntry(x.toFloat(), count.toFloat()))
-                x++
             }
         }
         moneyMonthCounts.toSortedMap(compareBy({ it.first }, { it.second })).forEach { (yearMonth, count) ->
             if(yearMonth.first == yearFind){
                 totalMoneyOrder.add(count)
+                list.add(BarEntry(x.toFloat(), count.toFloat()))
+                x++
             }
         }
         shipMonthCounts.toSortedMap(compareBy({ it.first }, { it.second })).forEach { (yearMonth, count) ->
@@ -411,7 +413,7 @@ class ManageStatisticAdminFragment : Fragment() {
     }
 
     private fun showListDataBarChart(list: ArrayList<BarEntry>) {
-        val defaultNoOfBarsInViewport = 5f // so luong cot muon hien thi moi khi cuon
+        val defaultNoOfBarsInViewport = 3f // so luong cot muon hien thi moi khi cuon
         val dataSets = mutableListOf<IBarDataSet>()
         val labels =
             arrayOf("T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T12")
@@ -433,6 +435,8 @@ class ManageStatisticAdminFragment : Fragment() {
             val entryList = mutableListOf(barEntry)
             val set = BarDataSet(entryList, labels[index])
             set.color = colorsSet[index]
+            set.valueTextColor = Color.BLACK
+            set.valueTextSize = 15f
             dataSets.add(set)
         }
 
