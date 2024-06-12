@@ -218,7 +218,7 @@ class ManageStatisticAdminFragment : Fragment() {
                             requireContext(), Manifest.permission.READ_MEDIA_IMAGES
                         ) == PackageManager.PERMISSION_GRANTED){
                         createPdf()
-                        Log.d("check", "year: $yearFind, totalMoneyOrder: $totalMoneyOrder, totalShipOrder: $totalShipOrder countOrder: $countOrder")
+//                        Log.d("check", "year: $yearFind, totalMoneyOrder: $totalMoneyOrder, totalShipOrder: $totalShipOrder countOrder: $countOrder")
                     } else {
                         requestAllPermission()
                     }
@@ -232,7 +232,7 @@ class ManageStatisticAdminFragment : Fragment() {
                             Manifest.permission.WRITE_EXTERNAL_STORAGE
                         ) == PackageManager.PERMISSION_GRANTED){
                         createPdf()
-                        Log.d("check", "year: $yearFind, totalMoneyOrder: $totalMoneyOrder, totalShipOrder: $totalShipOrder countOrder: $countOrder")
+//                        Log.d("check", "year: $yearFind, totalMoneyOrder: $totalMoneyOrder, totalShipOrder: $totalShipOrder countOrder: $countOrder")
                     } else {
                         requestAllPermission()
                     }

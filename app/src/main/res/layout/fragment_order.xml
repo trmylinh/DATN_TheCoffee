@@ -9,10 +9,12 @@
 
     <!--    header-->
     <RelativeLayout
+        android:id="@+id/view_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/_10sdp"
-        android:layout_marginVertical="@dimen/_10sdp">
+        android:layout_marginVertical="@dimen/_10sdp"
+        android:visibility="visible">
 
         <ImageView
             android:id="@+id/icon_category"
@@ -66,6 +68,37 @@
             android:focusable="true"
             android:src="@drawable/icon_heart" />
 
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/view_search"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/edtSearch"
+            android:hint="Tìm kiếm..."
+            android:textSize="@dimen/_12sdp"
+            android:padding="@dimen/_8sdp"
+            android:singleLine="true"
+            android:layout_toStartOf="@+id/btnCancel"
+            android:layout_margin="@dimen/_10sdp"
+            android:background="@drawable/custom_default_border"
+            />
+        <TextView
+            android:id="@+id/btnCancel"
+            android:text="Hủy"
+            android:textColor="@color/orange_900"
+            android:textSize="@dimen/_12sdp"
+            android:textStyle="bold"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"

@@ -64,6 +64,7 @@
     <string name="btn_status_done_delivery">Hoàn thành</string>
     <string name="btn_status_cancel">Hủy</string>
     <string name="items">Sản phẩm</string>
+    <string name="hint_otp_message">Một mã xác thực gồm 6 số đã được gửi đến số điện thoại</string>
     <string-array name="voucherUnit">
         <item>%</item>
         <item>đồng</item>

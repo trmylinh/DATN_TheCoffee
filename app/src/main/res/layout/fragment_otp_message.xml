@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rounded_bg_login"
+    tools:context=".other.login.view.OtpMessageFragment">
+    <LinearLayout
+        android:id="@+id/layout_container"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_gravity="end"
+            android:layout_margin="@dimen/_10sdp"
+            android:id="@+id/btn_close"
+            android:src="@drawable/icon_close_dark"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"/>
+        <TextView
+            android:textAlignment="center"
+            android:layout_marginVertical="@dimen/_10sdp"
+            android:textColor="@color/black_900"
+            android:textSize="@dimen/_20sdp"
+            android:textStyle="bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Xác nhận mã OTP" />
+
+        <TextView
+            android:id="@+id/hint_otp_message"
+            android:textAlignment="center"
+            android:layout_margin="@dimen/_10sdp"
+            android:textColor="@color/black_900"
+            android:textSize="@dimen/_12sdp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/hint_otp_message" />
+
+        <TextView
+            android:textAlignment="center"
+            android:layout_margin="@dimen/_10sdp"
+            android:textColor="@color/black_900"
+            android:textSize="@dimen/_12sdp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nhập mã để tiếp tục" />
+
+        <EditText
+            android:id="@+id/edtTextEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/view_edtName"
+            android:layout_margin="@dimen/_10sdp"
+            android:background="@drawable/custom_default_border"
+            android:backgroundTint="@color/grey_200"
+            android:singleLine="true"
+            android:inputType="number"
+            android:hint="Nhập mã OTP"
+            android:textSize="@dimen/_12sdp"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:paddingVertical="@dimen/_10sdp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnContinue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginVertical="@dimen/_20sdp"
+            android:background="@drawable/custom_button"
+            android:enabled="false"
+            android:text="Xác nhận"
+            android:textColor="@color/white_900"
+            android:textSize="@dimen/_12sdp"
+            app:backgroundTint="@null" />
+
+        <LinearLayout
+            android:layout_marginVertical="@dimen/_10sdp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+            <TextView
+                android:textAlignment="center"
+                android:layout_marginHorizontal="@dimen/_10sdp"
+                android:textColor="@color/black_900"
+                android:textSize="@dimen/_12sdp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bạn không nhận được mã?" />
+
+            <TextView
+                android:textAlignment="center"
+                android:layout_marginHorizontal="@dimen/_5sdp"
+                android:textColor="@color/black_900"
+                android:textSize="@dimen/_12sdp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gửi lại" />
+            <TextView
+                android:textAlignment="center"
+                android:layout_marginHorizontal="@dimen/_2sdp"
+                android:textColor="@color/black_900"
+                android:textSize="@dimen/_12sdp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="(178s)" />
+
+        </LinearLayout>
+    </LinearLayout>
+    <ProgressBar
+        android:id="@+id/progressBarGG"
+        android:layout_centerVertical="true"
+        android:layout_width="@dimen/_35sdp"
+        android:layout_height="@dimen/_35sdp"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
+
+</RelativeLayout>

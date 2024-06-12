@@ -141,6 +141,8 @@ class BillRepository(_application: Application) {
                     "address" to bill.address!!,
                     "drinks" to bill.drinks!!,
                     "status" to bill.status!!,
+                    "userReceiver" to bill.userReceiver!!,
+                    "phoneReceiver" to bill.phoneReceiver!!,
                     "shipFee" to bill.shipFee!!,
                     "time" to bill.time!!
                 )
@@ -210,6 +212,8 @@ class BillRepository(_application: Application) {
                         val shipFee = element["shipFee"] as Long
                         val time = element["time"] as String
                         val drinks = element["drinks"]  as List<*>
+                        val userReceiver = element["userReceiver"] as String
+                        val phoneReceiver = element["phoneReceiver"] as String
 
                         val drink = mutableListOf<Cart>()
                         drinks.forEach { element ->
@@ -223,7 +227,7 @@ class BillRepository(_application: Application) {
 
                             drink.add(Cart(totalPrice, quantity, drinkName, drinkSize, drinkTopping, note))
                         }
-                        bill.add(Bill(billId, userId, address, drink, status, shipFee, time))
+                        bill.add(Bill(billId, userId, address, drink, status, userReceiver, phoneReceiver, shipFee, time))
                     }
 
                     billsUser.postValue(bill)
@@ -249,6 +253,8 @@ class BillRepository(_application: Application) {
                             val shipFee = element["shipFee"] as Long
                             val time = element["time"] as String
                             val drinks = element["drinks"]  as List<*>
+                            val userReceiver = element["userReceiver"] as String
+                            val phoneReceiver = element["phoneReceiver"] as String
 
                             val drink = mutableListOf<Cart>()
                             drinks.forEach { element ->
@@ -262,7 +268,7 @@ class BillRepository(_application: Application) {
 
                                 drink.add(Cart(totalPrice, quantity, drinkName, drinkSize, drinkTopping, note))
                             }
-                            bill = Bill(id, userId, address, drink, status, shipFee, time)
+                            bill = Bill(id, userId, address, drink, status,userReceiver, phoneReceiver, shipFee, time)
                         }
                     }
                     billUserById.postValue(bill)
@@ -290,6 +296,8 @@ class BillRepository(_application: Application) {
                             val shipFee = element["shipFee"] as Long
                             val time = element["time"] as String
                             val drinks = element["drinks"] as List<*>
+                            val userReceiver = element["userReceiver"] as String
+                            val phoneReceiver = element["phoneReceiver"] as String
 
                             val drink = mutableListOf<Cart>()
                             drinks.forEach { element ->
@@ -312,7 +320,7 @@ class BillRepository(_application: Application) {
                                     )
                                 )
                             }
-                            bill.add(Bill(billId, userId, address, drink, status, shipFee, time))
+                            bill.add(Bill(billId, userId, address, drink, status, userReceiver, phoneReceiver,shipFee, time))
                         }
                     }
 
@@ -341,6 +349,8 @@ class BillRepository(_application: Application) {
                         val status = element["status"] as Long
                         val time = element["time"] as String
                         val drinks = element["drinks"]  as List<*>
+                        val userReceiver = element["userReceiver"] as String
+                        val phoneReceiver = element["phoneReceiver"] as String
 
                         val drink = mutableListOf<Cart>()
                         drinks.forEach { element ->
@@ -355,9 +365,9 @@ class BillRepository(_application: Application) {
                             drink.add(Cart(totalPrice, quantity, drinkName, drinkSize, drinkTopping, note))
                         }
                         bill = if(element["billId"] == idBill){
-                            Bill(idBill, userId, address, drink, statusBill, shipFee, time)
+                            Bill(idBill, userId, address, drink, statusBill, userReceiver, phoneReceiver,shipFee, time)
                         } else {
-                            Bill(billId, userId, address, drink, status, shipFee, time)
+                            Bill(billId, userId, address, drink, status,  userReceiver, phoneReceiver, shipFee, time)
                         }
                         updates.add(bill)
                     }

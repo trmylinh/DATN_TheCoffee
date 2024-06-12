@@ -151,7 +151,6 @@ class ManageAddVoucherFragment : Fragment() {
                             } else {
                                 supportItems.remove(drinks[position].drinkId!!)
                             }
-                            Log.d("TAG", "supportItems: $supportItems")
                             checkEnableBtn()
                         }
                         binding.rvDrinkSpinner.adapter = supportItemsAdapter
@@ -212,7 +211,6 @@ class ManageAddVoucherFragment : Fragment() {
                             } else {
                                 supportItems.remove(categories[position].categoryId!!)
                             }
-                            Log.d("TAG", "supportItems: $supportItems")
                             checkEnableBtn()
                         }
 

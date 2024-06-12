@@ -152,7 +152,6 @@ class ManageUpdateVoucherFragment : Fragment() {
                                 } else {
                                     supportItems.remove(drinks[position].drinkId!!)
                                 }
-                                Log.d("TAG", "supportItems: $supportItems")
                                 checkEnableBtn()
                             }
                             binding.rvDrinkSpinner.adapter = supportItemsAdapter
@@ -213,7 +212,6 @@ class ManageUpdateVoucherFragment : Fragment() {
                                 } else {
                                     supportItems.remove(categories[position].categoryId!!)
                                 }
-                                Log.d("TAG", "supportItems: $supportItems")
                                 checkEnableBtn()
                             }
 
@@ -281,13 +279,10 @@ class ManageUpdateVoucherFragment : Fragment() {
                 type = detailVoucher.type
                 binding.radioGroup.check(if (detailVoucher.type?.lowercase() == "drink") binding.typeDrink.id else binding.typeCategory.id)
                 if (detailVoucher.type?.lowercase() == "drink") {
-                    Log.d("TAG", "detailVoucherDrinks ${detailVoucher.supportIdItems}")
                     drinks.forEachIndexed { index, drink ->
-                        Log.d("TAG", "drink ${drink.drinkId}")
                         checkedStatesDrink[index] =
                             detailVoucher.supportIdItems?.contains(drink.drinkId) == true
                     }
-                    Log.d("TAG", "drink check: $checkedStatesDrink")
                     supportItemsAdapter = SupportItemsVoucherAdapter(
                         drinks,
                         checkedStatesDrink
@@ -306,13 +301,10 @@ class ManageUpdateVoucherFragment : Fragment() {
                         false
                     )
                 } else {
-                    Log.d("TAG", "detailVoucherDrinks ${detailVoucher.supportIdItems}")
                     categories.forEachIndexed { index, category ->
-                        Log.d("TAG", "category ${category.categoryId}")
                         checkedStatesCategory[index] =
                             detailVoucher.supportIdItems?.contains(category.categoryId) == true
                     }
-                    Log.d("TAG", "category check: $checkedStatesCategory")
                     supportItemsAdapter = SupportItemsVoucherAdapter(
                         categories,
                         checkedStatesCategory
@@ -353,7 +345,6 @@ class ManageUpdateVoucherFragment : Fragment() {
                         supportIdItems = supportItems,
                         type = type
                     )
-                    Log.d("TAG", "voucher: $voucher")
 //                    findNavController().popBackStack(R.id.manageVoucherAdminFragment, false)
                     voucherViewModel.updateVoucher(detailVoucher.voucherId!!, voucher)
                     voucherViewModel.loadingUpdateVoucher.observe(viewLifecycleOwner) { loading ->

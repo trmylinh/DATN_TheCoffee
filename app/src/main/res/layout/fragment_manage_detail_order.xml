@@ -156,11 +156,32 @@
                                 android:src="@drawable/icon_check_nobg" />
                         </LinearLayout>
                     </LinearLayout>
-                    <Button
-                        android:id="@+id/push"
-                        android:text="Push"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+<!--                    <View-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="@dimen/_1sdp"-->
+<!--                        android:layout_marginVertical="@dimen/_10sdp"-->
+<!--                        android:background="@color/grey_500" />-->
+                    <LinearLayout
+                        android:id="@+id/layout_btn_print_bill"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:visibility="gone">
+                        <ImageView
+                            android:src="@drawable/icon_print"
+                            android:layout_width="@dimen/_22sdp"
+                            android:layout_height="@dimen/_22sdp"/>
+                        <TextView
+                            android:layout_gravity="center_vertical"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Xuất hóa đơn"
+                            android:layout_marginStart="@dimen/_5sdp"
+                            android:textColor="@color/light_blue_900"
+                            android:textSize="@dimen/_12sdp"/>
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
 

@@ -32,7 +32,6 @@ import com.google.firebase.auth.auth
 class UserInfoFragment : Fragment() {
     private lateinit var binding: FragmentUserInfoBinding
     private lateinit var authenticationViewModel: AuthenticationViewModel
-    private lateinit var firebaseUser: FirebaseUser
     private lateinit var loggedCheck: MutableLiveData<Boolean>
     private var imageUri: Uri? = null
     private var loadingDialog: AlertDialog? = null
@@ -43,8 +42,6 @@ class UserInfoFragment : Fragment() {
         authenticationViewModel =
             ViewModelProvider(this, viewModelFactory)[AuthenticationViewModel::class.java]
 //        get data user
-        firebaseUser = Firebase.auth.currentUser!!
-        authenticationViewModel.getUserDetail(firebaseUser.uid)
     }
 
 
@@ -57,14 +54,17 @@ class UserInfoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // fill data user from db
-        authenticationViewModel.getLoadingState.observe(viewLifecycleOwner) { isLoading ->
-            if (isLoading) {
-                binding.loadingUserInfo.visibility = View.VISIBLE // Hiển thị ProgressBar
-            } else {
-                binding.loadingUserInfo.visibility = View.GONE // Ẩn ProgressBar
-                getDatUser()
+        val user = Firebase.auth.currentUser
+        if (user != null) {
+            authenticationViewModel.getUserDetail(user.uid)
+            // fill data user from db
+            authenticationViewModel.getLoadingState.observe(viewLifecycleOwner) { isLoading ->
+                if (isLoading) {
+                    binding.loadingUserInfo.visibility = View.VISIBLE // Hiển thị ProgressBar
+                } else {
+                    binding.loadingUserInfo.visibility = View.GONE // Ẩn ProgressBar
+                    getDatUser()
+                }
             }
         }
 
@@ -73,7 +73,6 @@ class UserInfoFragment : Fragment() {
             binding.edtTextFirstName.isFocusable = true;
             binding.edtTextFirstName.isCursorVisible = true
             binding.edtTextFirstName.requestFocus()
-            Log.e("press", "edit")
         }
 
         binding.btnEdtPhone.setOnClickListener {
@@ -81,20 +80,11 @@ class UserInfoFragment : Fragment() {
             binding.edtTextPhone.isFocusable = true;
             binding.edtTextPhone.isCursorVisible = true
             binding.edtTextPhone.requestFocus()
-            Log.e("press", "edit")
         }
 
         binding.edtTextFirstName.addTextChangedListener(editTextUserNameWatcher)
         binding.edtTextPhone.addTextChangedListener(editTextPhoneWatcher)
 
-        binding.checkedtName.setOnClickListener {
-            Log.e("update", "name")
-            onChangeUserName()
-        }
-
-        binding.checkedtPhone.setOnClickListener {
-            onChangeUserPhone()
-        }
 
         binding.btnBack.setOnClickListener {
             findNavController().popBackStack();
@@ -111,13 +101,20 @@ class UserInfoFragment : Fragment() {
 
 
     private fun getDatUser() {
-        authenticationViewModel.getUserDetail.observe(viewLifecycleOwner) {
-            if (it != null) {
-                binding.loadingUserInfo.visibility = View.GONE
-                binding.edtTextFirstName.setText(it.name)
-                binding.edtTextEmail.setText(it.email)
-                binding.edtTextPhone.setText(it.phone)
-                Glide.with(requireActivity()).load(it.avt).into(binding.imgAvt)
+        authenticationViewModel.getUserDetail.observe(viewLifecycleOwner) {user ->
+            if (user != null) {
+                binding.edtTextFirstName.setText(user.name)
+                binding.edtTextEmail.setText(user.email)
+                binding.edtTextPhone.setText(user.phone)
+                Glide.with(requireActivity()).load(user.avt).into(binding.imgAvt)
+
+                binding.checkedtName.setOnClickListener {
+                    onChangeUserName(user.uid!!)
+                }
+
+                binding.checkedtPhone.setOnClickListener {
+                    onChangeUserPhone(user.uid!!)
+                }
             }
         }
 
@@ -207,11 +204,10 @@ class UserInfoFragment : Fragment() {
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
-    private fun onChangeUserName() {
+    private fun onChangeUserName(userId: String) {
         val txtUsername = binding.edtTextFirstName.text.toString()
         if (txtUsername.isNotEmpty()) {
-            Log.e("check", firebaseUser.uid)
-            authenticationViewModel.updateUserName(firebaseUser.uid, txtUsername)
+            authenticationViewModel.updateUserName(userId, txtUsername)
             binding.edtTextFirstName.setOnFocusChangeListener { v, hasFocus ->
                 if (!hasFocus) {
                     hideKeyboard(v);
@@ -235,10 +231,10 @@ class UserInfoFragment : Fragment() {
         }
     }
 
-    private fun onChangeUserPhone() {
+    private fun onChangeUserPhone(userId: String) {
         val txtPhone = binding.edtTextPhone.text.toString()
         if (txtPhone.isNotEmpty()) {
-            authenticationViewModel.updateUserPhone(firebaseUser.uid, txtPhone)
+            authenticationViewModel.updateUserPhone(userId, txtPhone)
             binding.edtTextPhone.setOnFocusChangeListener { v, hasFocus ->
                 if (!hasFocus) {
                     hideKeyboard(v);

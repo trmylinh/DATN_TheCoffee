@@ -84,7 +84,6 @@ class ManageVoucherAdminFragment : Fragment() {
             }
 
             if(createVoucherMessage != null){
-                Log.d("TAG", "createVoucherMessage: $createVoucherMessage")
                 showAlert(createVoucherMessage)
             }
 

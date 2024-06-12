@@ -133,11 +133,9 @@ class ProductRepository(_application: Application) {
                         val size = mutableListOf<Size>()
                         val topping = mutableListOf<Topping>()
                         if (sizeList != null) {
-                            Log.e("sizeList", sizeList.toString())
                             for (item in sizeList) {
                                 val name = item["name"].toString()
                                 val price = item["price"] as? Long
-                                Log.e("itemsize", (name to price).toString())
                                 size.add(Size(name, price))
                             }
                         }
@@ -146,7 +144,6 @@ class ProductRepository(_application: Application) {
                             for (item in toppingList) {
                                 val name = item["name"].toString()
                                 val price = item["price"] as? Long
-                                Log.e("itemsize", (name to price).toString())
                                 topping.add(Topping(name, price))
                             }
                         }
