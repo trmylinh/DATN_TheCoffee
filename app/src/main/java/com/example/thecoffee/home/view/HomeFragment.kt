@@ -23,6 +23,7 @@ import com.example.thecoffee.home.adapter.ItemDrinkHomeRecyclerInterface
 import com.example.thecoffee.order.model.Drink
 import com.example.thecoffee.databinding.FragmentHomeBinding
 import com.example.thecoffee.base.MyViewModelFactory
+import com.example.thecoffee.base.SharedNotificationBadgeViewModel
 import com.example.thecoffee.base.SharedViewModel
 import com.example.thecoffee.databinding.ActivityMainBinding
 import com.example.thecoffee.order.model.Cart
@@ -80,7 +81,9 @@ class HomeFragment : Fragment() {
     private val bottomSheetConfirmBill = ConfirmOrderBillFragment()
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
+    private val sharedNotificationBadgeViewModel: SharedNotificationBadgeViewModel by activityViewModels()
     private var dataObserver: Observer<List<String>>? = null
+    private var badgeObserver: Observer<Int>? = null
 
     private var listValue= mutableListOf<String>()
 
@@ -164,18 +167,19 @@ class HomeFragment : Fragment() {
             switchToTab(R.id.historyOrderFragment)
         }
 
-
-
-
         dataObserver = Observer { data ->
             listValue = data.toMutableList()
             if(listValue.isNotEmpty()){
                 showCartView()
-
             }
         }
 
+        badgeObserver = Observer {
+            Log.d("badge", "badge: $it")
+        }
+
         sharedViewModel.sharedData.observe(viewLifecycleOwner, dataObserver!!)
+        sharedNotificationBadgeViewModel.notificationBadge.observe(viewLifecycleOwner, badgeObserver!!)
 
 
 

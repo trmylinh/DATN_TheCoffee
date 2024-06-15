@@ -20,6 +20,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,6 +30,8 @@ import com.android.volley.toolbox.Volley
 import com.example.thecoffee.R
 import com.example.thecoffee.admin.manage.chart.view.ManageStatisticAdminFragment
 import com.example.thecoffee.base.MyViewModelFactory
+import com.example.thecoffee.base.SharedNotificationBadgeViewModel
+import com.example.thecoffee.base.SharedViewModel
 import com.example.thecoffee.databinding.FragmentConfirmOrderBillBinding
 import com.example.thecoffee.databinding.FragmentManageDetailOrderBinding
 import com.example.thecoffee.fcm.MyFirebaseMessagingService.Companion.FCM_TOKEN
@@ -80,11 +83,14 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
     var priceItems: Long = 0
     var countItem: Long = 0
 
+    private val sharedNotificationBadgeViewModel: SharedNotificationBadgeViewModel by activityViewModels()
+
     companion object {
         private const val BARE_URL = "https://fcm.googleapis.com/fcm/send"
         private const val USER = "user"
         private const val ADMIN = "admin"
-        private const val SERVER_KEY = ""
+        private const val TOKEN = ""
+        private const val SERVER_KEY = "" // paste server key zo dey
 
     }
 
@@ -303,7 +309,9 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
                             }
                         }
                     }
+
                 }
+                sendNotification(binding.statusBill.text.toString())
             }
 
 //            binding.push.setOnClickListener {
@@ -431,73 +439,74 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
             .show()
     }
 
-    private fun sendNotification(token: String, title: String, message: String) {
-//        val requestBody = """
-//{
-//    "data": {
-//        "body":"This is an FCM notification message order status 5 update!",
-//        "title":"FCM Message Order 20 Status"
-//    },
-//    "to" : "$FCM_TOKEN"
-//}
-//""".toRequestBody("application/json".toMediaTypeOrNull())
-//
-//        val request = Request.Builder()
-//            .url("https://fcm.googleapis.com/fcm/send")
-//            .post(requestBody)
-//            .addHeader("Authorization", "key=$SERVER_KEY")
-//            .addHeader("Content-Type", "application/json")
-//            .build()
-//
-//        client.newCall(request).enqueue(object : okhttp3.Callback {
-//            override fun onFailure(call: Call, e: IOException) {
-//                Log.d("error", "$e")
-//                e.printStackTrace()
-//            }
-//
-//            override fun onResponse(call: Call, response: Response) {
-//                response.use {
-//                    if (!response.isSuccessful) throw IOException("Unexpected code $response")
-//
-//                    val responseString = response.body?.string()
-//                    Log.d("response", responseString ?: "Response body is null")
-//                }
-//            }
-//        })
+    private fun sendNotification(status: String) {
+        val requestBody = """
+{
+    "data": {
+        "body":"Đơn hàng của bạn: ${status}",
+        "title":"Thông báo cập nhật đơn hàng"
+    },
+    "to" : "$FCM_TOKEN"
+}
+""".toRequestBody("application/json".toMediaTypeOrNull())
 
-        val queue: RequestQueue = Volley.newRequestQueue(requireContext())
-        try {
-            val json: JSONObject = JSONObject()
-            json.put("to", token)
+        val request = Request.Builder()
+            .url("https://fcm.googleapis.com/fcm/send")
+            .post(requestBody)
+            .addHeader("Authorization", "key=$SERVER_KEY")
+            .addHeader("Content-Type", "application/json")
+            .build()
 
-            val notification: JSONObject = JSONObject()
-            notification.put("title", title)
-            notification.put("body", message)
-
-            json.put("notification", notification)
-
-            val jsonObjectRequest = object: JsonObjectRequest(
-                Method.POST, BARE_URL, json,
-                com.android.volley.Response.Listener{ response ->
-                    Log.d("response", "$response")
-                },
-                com.android.volley.Response.ErrorListener{ error ->
-                    Log.d("response", "$error")
-                }
-            ){
-                override fun getHeaders(): MutableMap<String, String> {
-                    val headers = HashMap<String, String>()
-                    headers["Authorization"] = "key=${SERVER_KEY}"
-                    headers["Content-Type"] = "application/json"
-                    // Thêm các headers tùy chỉnh ở đây
-                    return headers
-                }
+        client.newCall(request).enqueue(object : okhttp3.Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.d("error", "$e")
+                e.printStackTrace()
             }
 
-            queue.add(jsonObjectRequest)
-        } catch (e: JSONException){
-            e.printStackTrace()
-        }
+            override fun onResponse(call: Call, response: Response) {
+                response.use {
+                    if (!response.isSuccessful) throw IOException("Unexpected code $response")
+
+                    val responseString = response.body?.string()
+                    sharedNotificationBadgeViewModel.incrementBadge()
+                    Log.d("response", responseString ?: "Response body is null")
+                }
+            }
+        })
+
+//        val queue: RequestQueue = Volley.newRequestQueue(requireContext())
+//        try {
+//            val json = JSONObject()
+//            json.put("to", token)
+//
+//            val notification = JSONObject()
+//            notification.put("title", title)
+//            notification.put("body", message)
+//
+//            json.put("notification", notification)
+//
+//            val jsonObjectRequest = object: JsonObjectRequest(
+//                Method.POST, BARE_URL, json,
+//                com.android.volley.Response.Listener{ response ->
+//                    Log.d("response", "$response")
+//                },
+//                com.android.volley.Response.ErrorListener{ error ->
+//                    Log.d("response", "$error")
+//                }
+//            ){
+//                override fun getHeaders(): MutableMap<String, String> {
+//                    val headers = HashMap<String, String>()
+//                    headers["Authorization"] = "key=${SERVER_KEY}"
+//                    headers["Content-Type"] = "application/json"
+//                    // Thêm các headers tùy chỉnh ở đây
+//                    return headers
+//                }
+//            }
+//
+//            queue.add(jsonObjectRequest)
+//        } catch (e: JSONException){
+//            e.printStackTrace()
+//        }
 
 
     }

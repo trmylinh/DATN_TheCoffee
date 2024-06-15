@@ -5,6 +5,7 @@ import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
+import com.example.thecoffee.order.model.Drink
 import com.example.thecoffee.other.user.model.User
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
@@ -29,7 +30,16 @@ class AuthenticationRepository(_application: Application) {
     private val storageReference: StorageReference
     private val db: FirebaseFirestore
 
+    private val _loadingAllUserResult: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    private var userList: MutableLiveData<ArrayList<User>> = MutableLiveData<ArrayList<User>>()
+
     //    private val usersRef: CollectionReference = rootRef.collection("Users");
+
+    val loadingAllUserResult: MutableLiveData<Boolean>
+        get() = _loadingAllUserResult
+
+    val getUserList: MutableLiveData<ArrayList<User>>
+        get() = userList
 
     val getFirebaseUser: MutableLiveData<User>
         get() = firebaseUserMutableLiveData
@@ -87,10 +97,10 @@ class AuthenticationRepository(_application: Application) {
                 val useRef = db.collection("Users").document(auth.currentUser!!.uid)
                 db.collection("Users").whereEqualTo("email", auth.currentUser!!.email)
                     .get()
-                    .addOnCompleteListener { task->
-                        if(task.isSuccessful){
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
                             val documents = task.result
-                            if(documents.isEmpty){
+                            if (documents.isEmpty) {
                                 // chua co tai khoan voi email nay -> tao tkhoan moi
                                 isNewUser.postValue(true)
                                 val uid = auth.currentUser!!.uid
@@ -98,21 +108,35 @@ class AuthenticationRepository(_application: Application) {
                                 val email = auth.currentUser!!.email
                                 val phone = auth.currentUser!!.phoneNumber
                                 val avt = auth.currentUser!!.photoUrl.toString()
-                                val user = User(uid = uid, name = name, email = email, phone = phone, avt = avt)
+                                val user = User(
+                                    uid = uid,
+                                    name = name,
+                                    email = email,
+                                    phone = phone,
+                                    avt = avt
+                                )
                                 uidUser.postValue(uid)
                                 firebaseUserMutableLiveData.postValue(user)
                                 useRef.set(user).addOnCompleteListener {
                                     if (it.isSuccessful) {
-                                        Log.d("Firestore","create user's profile successfully")
+                                        Log.d("Firestore", "create user's profile successfully")
                                     } else {
-                                        Toast.makeText(application, it.exception.toString(), Toast.LENGTH_SHORT)
+                                        Toast.makeText(
+                                            application,
+                                            it.exception.toString(),
+                                            Toast.LENGTH_SHORT
+                                        )
                                             .show()
-                                        Log.e("Firestore", "Error create user's profile", it.exception)
+                                        Log.e(
+                                            "Firestore",
+                                            "Error create user's profile",
+                                            it.exception
+                                        )
                                     }
                                 }
-                                Log.d("Firestore","Sign in with Google successfully")
-                            }else {
-                                for(document in documents){
+                                Log.d("Firestore", "Sign in with Google successfully")
+                            } else {
+                                for (document in documents) {
                                     val user = document.toObject(User::class.java)
                                     val userRefUpdated = db.collection("Users").document(user.uid!!)
                                     userRefUpdated.update("uid", auth.currentUser!!.uid)
@@ -123,15 +147,15 @@ class AuthenticationRepository(_application: Application) {
                             }
                         }
                     }
-            }else {
+            } else {
                 userLoggedMutableLiveData.postValue(false)
                 Toast.makeText(application, authTask.exception?.message, Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    fun firebaseSignInWithPhone(credential: PhoneAuthCredential){
-        auth.signInWithCredential(credential).addOnCompleteListener{authTask ->
+    fun firebaseSignInWithPhone(credential: PhoneAuthCredential) {
+        auth.signInWithCredential(credential).addOnCompleteListener { authTask ->
             if (authTask.isSuccessful) {
                 userLoggedMutableLiveData.postValue(true)
                 val useRef = db.collection("Users").document(auth.currentUser!!.uid)
@@ -143,7 +167,7 @@ class AuthenticationRepository(_application: Application) {
                 db.collection("Users").whereEqualTo("phone", originalNumber)
                     .get()
                     .addOnCompleteListener { task ->
-                        if(task.isSuccessful) {
+                        if (task.isSuccessful) {
                             val documents = task.result
                             if (documents.isEmpty) {
                                 // chua co tai khoan voi sdt nay -> tao tkhoan moi
@@ -165,7 +189,7 @@ class AuthenticationRepository(_application: Application) {
                                 useRef.set(user)
                                     .addOnCompleteListener {
                                         if (it.isSuccessful) {
-                                            Log.d("phone","Update user's profile successfully" )
+                                            Log.d("phone", "Update user's profile successfully")
                                         } else {
                                             Log.e(
                                                 "Firestore",
@@ -176,7 +200,7 @@ class AuthenticationRepository(_application: Application) {
                                     }
 
                             } else {
-                                for(document in documents){
+                                for (document in documents) {
                                     val user = document.toObject(User::class.java)
                                     val userRefUpdated = db.collection("Users").document(user.uid!!)
                                     userRefUpdated.update("uid", auth.currentUser!!.uid)
@@ -187,8 +211,7 @@ class AuthenticationRepository(_application: Application) {
                             }
                         }
                     }
-            }
-            else {
+            } else {
                 userLoggedMutableLiveData.postValue(false)
                 Toast.makeText(application, authTask.exception?.message, Toast.LENGTH_SHORT).show()
             }
@@ -208,6 +231,31 @@ class AuthenticationRepository(_application: Application) {
         }.addOnCompleteListener {
             loadingStateMutableLiveData.postValue(false) // Ẩn ProgressBar khi truy vấn hoàn thành
         }
+    }
+
+    fun getAllUser() {
+        _loadingAllUserResult.postValue(true)
+        db.collection("Users").get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful && task.result != null) {
+                    val list = ArrayList<User>()
+                    for (document in task.result) {
+                        val userId = document.getString("uid")
+                        val name = document.getString("name")
+                        val avt = document.getString("avt")
+                        val phone = document.getString("phone")
+                        val email = document.getString("email")
+                        val user = User(
+                            uid = userId,
+                            name = name,
+                            avt = avt,
+                            phone = phone, email = email)
+                        list.add(user)
+                    }
+                    userList.postValue(list)
+                }
+                _loadingAllUserResult.postValue(false)
+            }
     }
 
     fun updateUserName(userId: String, newName: String) {

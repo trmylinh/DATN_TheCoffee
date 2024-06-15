@@ -53,11 +53,15 @@ class ManageDetailVoucherAdminFragment : Fragment() {
             val args = ManageDetailVoucherAdminFragmentArgs.fromBundle(it)
             val result = args.detailVoucher
             val drinks = args.detailVoucherDrinks
+            val isUser = args.isUser
             val data: MutableList<DrinksByCategory> = mutableListOf()
             drinks.forEach {drink ->
                 data.add(DrinksByCategory.TypeEmpty(drink))
             }
-
+            if(isUser){
+                binding.btnDelete.visibility = View.GONE
+                binding.btnEditVoucher.visibility = View.GONE
+            }
             binding.nameVoucher.text = result.name
             binding.voucherEndDate.text = result.end_date
             binding.voucherTimeline.text = "- Áp dụng từ ngày ${result.start_date} đến hết ${result.end_date}"

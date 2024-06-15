@@ -19,6 +19,9 @@ class AuthenticationViewModel (application: Application) : AndroidViewModel(appl
     private var uidUser: MutableLiveData<String>
     private var user:MutableLiveData<User>
 
+    private var _loadingAllUserResult: MutableLiveData<Boolean>
+    private var userList: MutableLiveData<ArrayList<User>>
+
     init {
         repository = AuthenticationRepository(application)
         userData = repository.getFirebaseUser
@@ -27,7 +30,16 @@ class AuthenticationViewModel (application: Application) : AndroidViewModel(appl
         user = repository.getUserDetail
         isNewUser = repository.getIsNewUser
         uidUser = repository.getUidUser
+        _loadingAllUserResult = repository.loadingAllUserResult
+        userList = repository.getUserList
     }
+
+    val loadingAllUserResult: MutableLiveData<Boolean>
+        get() = _loadingAllUserResult
+
+    val getUserList: MutableLiveData<ArrayList<User>>
+        get() = userList
+
     val getLoggedStatus: MutableLiveData<Boolean>
         get() = loggedStatus
 
@@ -66,6 +78,10 @@ class AuthenticationViewModel (application: Application) : AndroidViewModel(appl
 
     fun getUserDetail(userId: String){
         repository.getUserDetail(userId)
+    }
+
+    fun  getAllUser(){
+        repository.getAllUser()
     }
 
     fun updateUserName(userId: String, newName: String){
