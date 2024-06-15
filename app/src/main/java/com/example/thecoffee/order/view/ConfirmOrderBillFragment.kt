@@ -242,8 +242,10 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
         val status: Long = statusBill
         val shipFee: Long = 18000
         val time = SimpleDateFormat("HH:mm:ss dd/MM/yyyy").format(Calendar.getInstance().time)
+        val userReceiver = "MyLinh"
+        val phoneReceiver = "0862861396"
 
-        billViewModel.order(Bill(id, userId, address, dataBill, status, shipFee, time))
+        billViewModel.order(Bill(id, userId, address, dataBill, status, userReceiver, phoneReceiver, shipFee, time))
         billViewModel.loadingResult.observe(viewLifecycleOwner) { loading ->
             if (loading) {
                 binding.progressBar.visibility = View.VISIBLE
@@ -277,10 +279,11 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
         binding.itemsPrice.text = "${String.format("%,d", priceItems)}đ"
 
         // giao hang
-        val shipFee = 15000
+        val shipFee = 18000
         binding.totalAmountItems.text = "$countItem sản phẩm"
         binding.pricePayFinal.text = "${String.format("%,d", (priceItems+shipFee))}đ"
         binding.totalPay.text = "${String.format("%,d", (priceItems+shipFee))}đ"
+        binding.priceShip.text = "${String.format("%,d", (shipFee))}đ"
     }
 
 

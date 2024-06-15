@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.thecoffee.R
@@ -27,6 +28,8 @@ import com.example.thecoffee.voucher.model.Voucher
 import com.example.thecoffee.voucher.viewmodel.VoucherViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import java.util.UUID
 
@@ -41,7 +44,7 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
     private var totalPrice: Long = 0
     private var amount: Long = 1
     private var listOption = mutableMapOf<String, Long>()
-    private var auth = FirebaseAuth.getInstance()
+//    private var auth = FirebaseAuth.getInstance()
     private var listTopping = emptyList<String>()
     private var drinkSize: String = ""
     var listener: BottomSheetListener? = null
@@ -94,14 +97,18 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
             }
         }
 
+        val auth = Firebase.auth
+        val user = auth.currentUser
+
         binding.viewAddBtn.setOnClickListener {
-            if (auth.currentUser != null) {
+            if (user != null) {
                 val cart = Cart((totalPrice * amount), amount, drinkDetail.name, drinkSize, listTopping,
                     note = if(binding.edtTextNote.text.isEmpty()) "" else binding.edtTextNote.text.toString())
                 addToCartSharedPrefer(cart)
             } else {
                 // handle login - here ---> navigation sang screen Login
                 Toast.makeText(requireContext(), "Log In required", Toast.LENGTH_LONG).show()
+                findNavController().navigate(R.id.action_orderFragment_to_loginFragment)
             }
             reset()
             dismiss()

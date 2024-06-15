@@ -1,5 +1,6 @@
 package com.example.thecoffee.order.model
 
+import android.content.BroadcastReceiver
 import java.io.Serializable
 
 data class Bill(
@@ -8,6 +9,8 @@ data class Bill(
     val address: String? = null,
     val drinks: List<Cart>? = emptyList(), // cac spham trong don hang
     var status: Long? = null,  // trang thai don hang
+    var userReceiver: String? = null,
+    var phoneReceiver: String? = null,
     /*
     -1 - huy -> do user huy (trong vong 1 khoang tgian nhat dinh)
     0 - dang cho xac nhan

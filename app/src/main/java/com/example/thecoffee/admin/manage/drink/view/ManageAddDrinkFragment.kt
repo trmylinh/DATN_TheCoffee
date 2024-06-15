@@ -353,7 +353,6 @@ class ManageAddDrinkFragment : Fragment() {
         val price = data["price"]
         val image = data["image"]
         val id = data["id"]
-        Log.d("img", "sendDialogDataToFragment: $id $image")
         when (type) {
             "size" -> {
                 binding.rvSize.visibility = View.VISIBLE
@@ -427,7 +426,6 @@ class ManageAddDrinkFragment : Fragment() {
         if (result.resultCode == Activity.RESULT_OK) {
             if (result.data != null) {
                 imageCategoryUri = result.data!!.data
-                Log.d("img", "pickImageCategory: $imageCategoryUri")
 
                 viewAddImgCategory.visibility = View.GONE
                 viewImgCategory.visibility = View.VISIBLE

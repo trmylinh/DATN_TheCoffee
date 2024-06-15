@@ -8,13 +8,19 @@ import com.example.thecoffee.other.user.model.User
 import com.example.thecoffee.other.login.repository.AuthenticationRepository
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.PhoneAuthCredential
 
 class AuthenticationViewModel (application: Application) : AndroidViewModel(application) {
     private var repository: AuthenticationRepository
-    private var userData: MutableLiveData<FirebaseUser>
+    private var userData: MutableLiveData<User>
     private var loggedStatus: MutableLiveData<Boolean>
     private val loadingState: MutableLiveData<Boolean>
+    private var isNewUser: MutableLiveData<Boolean>
+    private var uidUser: MutableLiveData<String>
     private var user:MutableLiveData<User>
+
+    private var _loadingAllUserResult: MutableLiveData<Boolean>
+    private var userList: MutableLiveData<ArrayList<User>>
 
     init {
         repository = AuthenticationRepository(application)
@@ -22,14 +28,31 @@ class AuthenticationViewModel (application: Application) : AndroidViewModel(appl
         loggedStatus = repository.checkLogged
         loadingState = repository.checkLoadingState
         user = repository.getUserDetail
+        isNewUser = repository.getIsNewUser
+        uidUser = repository.getUidUser
+        _loadingAllUserResult = repository.loadingAllUserResult
+        userList = repository.getUserList
     }
+
+    val loadingAllUserResult: MutableLiveData<Boolean>
+        get() = _loadingAllUserResult
+
+    val getUserList: MutableLiveData<ArrayList<User>>
+        get() = userList
+
     val getLoggedStatus: MutableLiveData<Boolean>
         get() = loggedStatus
+
+    val getIsNewUser: MutableLiveData<Boolean>
+        get() = isNewUser
+
+    val getUidUser: MutableLiveData<String>
+        get() = uidUser
 
     val getLoadingState: MutableLiveData<Boolean>
         get() = loadingState
 
-    val getUserData: MutableLiveData<FirebaseUser>
+    val getUserData: MutableLiveData<User>
         get() = userData
 
     val getUserDetail: MutableLiveData<User>
@@ -49,8 +72,16 @@ class AuthenticationViewModel (application: Application) : AndroidViewModel(appl
         repository.firebaseSignInWithGoogle(googleAuthCredential)
     }
 
+    fun signInWithPhone(credential: PhoneAuthCredential) {
+        repository.firebaseSignInWithPhone(credential)
+    }
+
     fun getUserDetail(userId: String){
         repository.getUserDetail(userId)
+    }
+
+    fun  getAllUser(){
+        repository.getAllUser()
     }
 
     fun updateUserName(userId: String, newName: String){
@@ -59,6 +90,10 @@ class AuthenticationViewModel (application: Application) : AndroidViewModel(appl
 
     fun updateUserPhone(userId: String, newPhone: String){
         repository.updateUserPhone(userId, newPhone)
+    }
+
+    fun updateUserEmail(userId: String, newEmail: String){
+        repository.updateUserEmail(userId, newEmail)
     }
 
     fun updateUserImage(imageUri: Uri){

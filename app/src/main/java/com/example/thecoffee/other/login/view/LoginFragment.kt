@@ -12,8 +12,11 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
+import com.example.thecoffee.MainActivity
 import com.example.thecoffee.R
+import com.example.thecoffee.admin.manage.voucher.view.ManageVoucherAdminFragmentDirections
 import com.example.thecoffee.databinding.FragmentLoginBinding
 import com.example.thecoffee.other.login.viewmodel.AuthenticationViewModel
 import com.example.thecoffee.base.MyViewModelFactory
@@ -22,14 +25,29 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.firebase.FirebaseException
 import com.google.firebase.auth.AuthCredential
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.PhoneAuthCredential
+import com.google.firebase.auth.PhoneAuthOptions
+import com.google.firebase.auth.PhoneAuthProvider
+import java.util.concurrent.TimeUnit
 
 class LoginFragment : Fragment() {
     private lateinit var binding: FragmentLoginBinding
     private lateinit var loggedCheck: MutableLiveData<Boolean>
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var authenticationViewModel: AuthenticationViewModel
+    private val bottomOtpMessageFragment = OtpMessageFragment()
+
+    // create instance of firebase auth
+    private lateinit var auth: FirebaseAuth
+
+    // we will use this to match the sent otp from firebase
+    private lateinit var storedVerificationId:String
+    private lateinit var resendToken: PhoneAuthProvider.ForceResendingToken
+
     companion object {
         private const val RC_SIGN_IN = 9001
         private const val USERID_ADMIN = "wFBO2VxN5lfkGBCndiH4rdT9wX33"
@@ -50,6 +68,7 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        auth = FirebaseAuth.getInstance()
 
         loggedCheck = authenticationViewModel.getLoggedStatus
 
@@ -74,9 +93,32 @@ class LoginFragment : Fragment() {
         })
 
         initGoogleSignInClient()
-
         binding.btnLogInGG.setOnClickListener {
             signInUsingGoogle()
+        }
+
+        binding.edtPhoneNumber.setText("0123456789")
+
+        binding.btnLogIn.setOnClickListener {
+            val number = binding.edtPhoneNumber.text.toString()
+            var phoneNumber = "+84" + "${number.substring(1)}"
+            Log.d("TAG", "phoneNumber: $phoneNumber")
+
+            val testPhoneNumber = phoneNumber
+            val testVerificationCode = "160402"
+
+            val bundleVerificationId = Bundle()
+//            bundleVerificationId.putString("verificationId", storedVerificationId)
+            bundleVerificationId.putString("testPhoneNumber", testPhoneNumber)
+            bundleVerificationId.putString("testVerificationCode", testVerificationCode)
+            bottomOtpMessageFragment.arguments = bundleVerificationId
+            bottomOtpMessageFragment.show(
+                parentFragmentManager,
+                bottomOtpMessageFragment.tag
+            )
+
+            bottomOtpMessageFragment.isCancelable = false
+
         }
 
         binding.btnClose.setOnClickListener {
@@ -124,11 +166,26 @@ class LoginFragment : Fragment() {
     private fun signInWithGoogleAuthCredential(googleAuthCredential: AuthCredential) {
         loading(true)
         authenticationViewModel.signInWithGoogle(googleAuthCredential)
-        authenticationViewModel.getUserData.observe(viewLifecycleOwner){
-                user ->
-            loggedCheck.observe(this){
-                loading(false)
-                findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+        authenticationViewModel.getUserData.observe(viewLifecycleOwner){ user ->
+            authenticationViewModel.getIsNewUser.observe(viewLifecycleOwner){isNew->
+                if(isNew){
+                    val action = LoginFragmentDirections
+                        .actionLoginFragmentToCreateUserInfoFragment(user)
+                    val navOptions = NavOptions.Builder()
+                        .setLaunchSingleTop(true)
+                        .build()
+                    findNavController().navigate(action, navOptions)
+                }else {
+                    loggedCheck.observe(this){
+                        loading(false)
+                        val action = LoginFragmentDirections
+                            .actionLoginFragmentToHomeFragment(user)
+                        val navOptions = NavOptions.Builder()
+                            .setLaunchSingleTop(true)
+                            .build()
+                        findNavController().navigate(action, navOptions)
+                    }
+                }
             }
         }
     }

@@ -8,8 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavOptions
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.thecoffee.R
+import com.example.thecoffee.admin.manage.voucher.view.ManageVoucherAdminFragmentDirections
 import com.example.thecoffee.voucher.viewmodel.VoucherViewModel
 import com.example.thecoffee.base.MyViewModelFactory
 import com.example.thecoffee.voucher.adapter.ChangeBeanRecyclerAdapter
@@ -18,6 +21,8 @@ import com.example.thecoffee.voucher.adapter.VoucherRecyclerAdapter
 import com.example.thecoffee.voucher.adapter.VoucherRecyclerInterface
 import com.example.thecoffee.voucher.model.Bean
 import com.example.thecoffee.databinding.FragmentVoucherBinding
+import com.example.thecoffee.order.model.Drink
+import com.example.thecoffee.order.viewmodel.ProductViewModel
 import com.example.thecoffee.voucher.model.Voucher
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -29,16 +34,19 @@ import java.util.Locale
 class VoucherFragment : Fragment() {
     private lateinit var binding: FragmentVoucherBinding
     private lateinit var voucherViewModel: VoucherViewModel
+    private lateinit var productViewModel: ProductViewModel
 
     private var voucherList = mutableListOf<Voucher>()
 
     private lateinit var voucherAdapter: VoucherRecyclerAdapter
+    private var drinkList = mutableListOf<Drink>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val viewModelFactory = MyViewModelFactory(requireActivity().application)
         voucherViewModel = ViewModelProvider(this, viewModelFactory)[VoucherViewModel::class.java]
-
+        productViewModel = ViewModelProvider(this, viewModelFactory)[ProductViewModel::class.java]
+        voucherViewModel.getVoucherList()
         voucherViewModel.getVoucherList()
     }
 
@@ -70,6 +78,7 @@ class VoucherFragment : Fragment() {
     private fun getVouchers(){
         voucherViewModel.getVoucherList.observe(viewLifecycleOwner){
             voucherList = it
+            getDrink()
             binding.swipeRefreshLayout.isRefreshing = false
             if(voucherList.isNotEmpty()){
                 binding.emptyView.visibility = View.GONE
@@ -78,6 +87,23 @@ class VoucherFragment : Fragment() {
             } else {
                 binding.emptyView.visibility = View.VISIBLE
                 binding.swipeRefreshLayout.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun getDrink() {
+        productViewModel.getDrinkList.observe(viewLifecycleOwner) { drinks ->
+            drinkList = drinks
+            if (drinkList.isNotEmpty()) {
+                binding.swipeRefreshLayout.isRefreshing = false
+                if (voucherList.isNotEmpty()) {
+                    binding.emptyView.visibility = View.GONE
+                    binding.swipeRefreshLayout.visibility = View.VISIBLE
+                    showVouchers()
+                } else {
+                    binding.emptyView.visibility = View.VISIBLE
+                    binding.swipeRefreshLayout.visibility = View.GONE
+                }
             }
         }
     }
@@ -91,7 +117,30 @@ class VoucherFragment : Fragment() {
 
         voucherAdapter = VoucherRecyclerAdapter(requireContext(), object: VoucherRecyclerInterface{
             override fun onClickItemVoucher(voucher: Voucher) {
-
+                val drinkFilterVoucher = mutableListOf<String>()
+                if(voucher.type?.lowercase() == "drink"){
+                    drinkList.forEach { drink ->
+                        if(voucher.supportIdItems?.contains(drink.drinkId) == true){
+                            drinkFilterVoucher.add(drink.name!!)
+                        }
+                    }
+                } else if(voucher.type?.lowercase() == "category"){
+                    drinkList.forEach { drink ->
+                        if(voucher.supportIdItems?.contains(drink.categoryId) == true){
+                            drinkFilterVoucher.add(drink.name!!)
+                        }
+                    }
+                }
+                val action = VoucherFragmentDirections
+                    .actionVoucherFragmentToManageDetailVoucherAdminFragment(
+                        voucher,
+                        drinkFilterVoucher.toTypedArray(),
+                        true
+                    )
+                val navOptions = NavOptions.Builder()
+                    .setLaunchSingleTop(true)
+                    .build()
+                findNavController().navigate(action, navOptions)
             }
         }, false)
 

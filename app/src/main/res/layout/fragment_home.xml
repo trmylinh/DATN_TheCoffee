@@ -78,7 +78,8 @@
                 android:background="@drawable/round_circle"
                 android:backgroundTint="@color/red_600"
                 app:layout_constraintEnd_toEndOf="@id/btn_voucher"
-                app:layout_constraintTop_toTopOf="@id/btn_voucher">
+                app:layout_constraintTop_toTopOf="@id/btn_voucher"
+                android:visibility="gone">
                 <TextView
                     android:id="@+id/voucher_number"
                     android:layout_gravity="center"
@@ -119,7 +120,8 @@
                 android:background="@drawable/round_circle"
                 android:backgroundTint="@color/red_600"
                 app:layout_constraintEnd_toEndOf="@id/btn_noti"
-                app:layout_constraintTop_toTopOf="@id/btn_noti">
+                app:layout_constraintTop_toTopOf="@id/btn_noti"
+                android:visibility="gone">
                 <TextView
                     android:id="@+id/noti_number"
                     android:layout_gravity="center"
@@ -182,6 +184,8 @@
 
                     <RelativeLayout
                         android:id="@+id/delivery_view"
+                        android:clickable="true"
+                        android:focusable="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/_10sdp"
@@ -206,6 +210,8 @@
 
                     <RelativeLayout
                         android:id="@+id/takeaway_view"
+                        android:clickable="true"
+                        android:focusable="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/_12sdp">
@@ -253,6 +259,8 @@
 
                     <RelativeLayout
                         android:id="@+id/order_view"
+                        android:clickable="true"
+                        android:focusable="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/_12sdp">

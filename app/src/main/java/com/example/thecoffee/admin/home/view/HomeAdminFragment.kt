@@ -53,6 +53,10 @@ class HomeAdminFragment : Fragment() {
         binding.qlDashboard.setOnClickListener {
             findNavController().navigate(R.id.action_homeAdminFragment_to_manageStatisticAdminFragment)
         }
+
+        binding.qlCustomer.setOnClickListener {
+            findNavController().navigate(R.id.action_homeAdminFragment_to_manageUserFragment)
+        }
     }
 
 

@@ -23,6 +23,7 @@ import com.example.thecoffee.home.adapter.ItemDrinkHomeRecyclerInterface
 import com.example.thecoffee.order.model.Drink
 import com.example.thecoffee.databinding.FragmentHomeBinding
 import com.example.thecoffee.base.MyViewModelFactory
+import com.example.thecoffee.base.SharedNotificationBadgeViewModel
 import com.example.thecoffee.base.SharedViewModel
 import com.example.thecoffee.databinding.ActivityMainBinding
 import com.example.thecoffee.order.model.Cart
@@ -33,19 +34,28 @@ import com.example.thecoffee.order.view.ConfirmOrderBillFragmentListener
 import com.example.thecoffee.order.view.ItemDrinkDetailFragment
 import com.example.thecoffee.order.view.OrderFragment
 import com.example.thecoffee.order.viewmodel.ProductViewModel
+import com.example.thecoffee.other.login.viewmodel.AuthenticationViewModel
+import com.example.thecoffee.other.user.model.User
 import com.example.thecoffee.voucher.model.Voucher
 import com.example.thecoffee.voucher.view.VoucherFragment
 import com.example.thecoffee.voucher.viewmodel.VoucherViewModel
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.auth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Date
 import java.util.UUID
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
@@ -71,9 +81,14 @@ class HomeFragment : Fragment() {
     private val bottomSheetConfirmBill = ConfirmOrderBillFragment()
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
+    private val sharedNotificationBadgeViewModel: SharedNotificationBadgeViewModel by activityViewModels()
     private var dataObserver: Observer<List<String>>? = null
+    private var badgeObserver: Observer<Int>? = null
 
     private var listValue= mutableListOf<String>()
+
+    private lateinit var authenticationViewModel: AuthenticationViewModel
+    private var firebaseUser: FirebaseUser? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,6 +97,7 @@ class HomeFragment : Fragment() {
         productViewModel =
             ViewModelProvider(this, viewModelFactory)[ProductViewModel::class.java]
         voucherViewModel = ViewModelProvider(this, viewModelFactory)[VoucherViewModel::class.java]
+        authenticationViewModel = ViewModelProvider(this, viewModelFactory)[AuthenticationViewModel::class.java]
 
         productViewModel.getDataDrinkList()
         //voucher
@@ -99,12 +115,15 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         navController = Navigation.findNavController(view)
+
         val auth = Firebase.auth
         val user = auth.currentUser
         if (user != null) {
-            binding.textHelloUser.text = "Xin chào, ${user.displayName}"
+            authenticationViewModel.getUserDetail(user.uid)
+            authenticationViewModel.getUserDetail.observe(viewLifecycleOwner){
+                userInfo -> binding.textHelloUser.text = "Xin chào, ${userInfo.name}"
+            }
         }
 
         // image slide show
@@ -136,16 +155,33 @@ class HomeFragment : Fragment() {
         // xem them - text underline
         binding.more.paintFlags = android.graphics.Paint.UNDERLINE_TEXT_FLAG
 
+        binding.deliveryView.setOnClickListener {
+            switchToTab(R.id.orderFragment)
+        }
+
+        binding.takeawayView.setOnClickListener {
+            switchToTab(R.id.orderFragment)
+        }
+
+        binding.orderView.setOnClickListener {
+            switchToTab(R.id.historyOrderFragment)
+        }
 
         dataObserver = Observer { data ->
             listValue = data.toMutableList()
             if(listValue.isNotEmpty()){
                 showCartView()
-
             }
         }
 
+        badgeObserver = Observer {
+            Log.d("badge", "badge: $it")
+        }
+
         sharedViewModel.sharedData.observe(viewLifecycleOwner, dataObserver!!)
+        sharedNotificationBadgeViewModel.notificationBadge.observe(viewLifecycleOwner, badgeObserver!!)
+
+
 
         // push notification
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
@@ -162,6 +198,17 @@ class HomeFragment : Fragment() {
         })
 
     }
+
+    private fun switchToTab(tabId: Int) {
+        navController.navigate(tabId)
+    }
+
+    private suspend fun getUidUser(): String =
+        suspendCoroutine { continuation ->
+            authenticationViewModel.getUidUser.observe(viewLifecycleOwner) {
+                continuation.resume(it)
+            }
+        }
 
     private fun getVoucher() {
         voucherViewModel.getVoucherList.observe(viewLifecycleOwner) { vouchers ->
@@ -359,19 +406,24 @@ class HomeFragment : Fragment() {
                                 sharedViewModel.clearData()
                             }
 
-                            override fun onBottomSheetClose(newList: List<Cart>?) {
-                                if (newList != null) {
-                                    listCartItem = newList.toMutableList()
-                                    total = 0
-                                    countItem = 0
-                                    for (item in listCartItem) {
-                                        total += item.totalPrice!!
-                                        countItem += item.quantity!!
+                            override fun onBottomSheetClose(newList: List<Cart>?, event: String?) {
+                                if(event != null){
+                                    sharedViewModel.clearData()
+                                } else {
+                                    if (newList != null) {
+                                        listCartItem = newList.toMutableList()
+                                        total = 0
+                                        countItem = 0
+                                        for (item in listCartItem) {
+                                            total += item.totalPrice!!
+                                            countItem += item.quantity!!
+                                        }
+                                        binding.viewCart.visibility = View.VISIBLE
+                                        binding.amount.text = countItem.toString()
+                                        binding.totalPrice.text = "${String.format("%,d", total)}đ"
                                     }
-                                    binding.viewCart.visibility = View.VISIBLE
-                                    binding.amount.text = countItem.toString()
-                                    binding.totalPrice.text = "${String.format("%,d", total)}đ"
                                 }
+
                             }
                         }
                     // hien thi confirm bill ui

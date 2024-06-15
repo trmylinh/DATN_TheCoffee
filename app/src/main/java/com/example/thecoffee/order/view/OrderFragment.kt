@@ -2,6 +2,8 @@ package com.example.thecoffee.order.view
 
 import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -35,6 +37,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.util.Date
+import java.util.Locale
 import java.util.UUID
 
 class OrderFragment : Fragment() {
@@ -64,6 +67,8 @@ class OrderFragment : Fragment() {
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private var dataObserver: Observer<List<String>>? = null
+
+    private var itemListFilter = mutableListOf<DrinksByCategory>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -258,6 +263,7 @@ class OrderFragment : Fragment() {
 
             count++
         }
+
         drinkList.clear()
 
         adapterListDrink.submitList(itemList)
@@ -267,6 +273,39 @@ class OrderFragment : Fragment() {
         )
         binding.rvItemDrink.layoutManager = linearLayoutManager
 
+        binding.iconSearch.setOnClickListener {
+            binding.viewHeader.visibility = View.GONE
+            binding.viewSearch.visibility = View.VISIBLE
+        }
+
+        binding.btnCancel.setOnClickListener{
+            binding.viewHeader.visibility = View.VISIBLE
+            binding.viewSearch.visibility = View.GONE
+        }
+
+        binding.edtSearch.addTextChangedListener(object: TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if(binding.edtSearch.text.isNullOrEmpty()){
+                    itemListFilter = itemList
+                } else {
+                    itemListFilter = itemList.filter {
+                        it is DrinksByCategory.TypeDrink && it.drink.name!!.lowercase(Locale.getDefault()).contains(
+                                    binding.edtSearch.text.toString()
+                                        .lowercase(Locale.getDefault())
+                                )
+                    } as MutableList
+
+                }
+                adapterListDrink.submitList(itemListFilter)
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+            }
+
+        })
     }
 
     private fun showCartView() {

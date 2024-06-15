@@ -9,4 +9,4 @@ data class User (
     val email: String? = null,
     val phone: String? = null,
     val avt: String? = null,
-)
+): Serializable{}

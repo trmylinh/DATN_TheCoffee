@@ -21,8 +21,10 @@ class MyFirebaseMessagingService: FirebaseMessagingService()  {
     // attach the notification created with the custom layout
     // show the notification
 
+    // ncl de nhan tbao thi van set token cua admin - token cua user =)) duma -> lam sau
+    // lam spham yeu thich z
     companion object{
-        var FCM_TOKEN = ""
+        var FCM_TOKEN = "" // dien token device cho admin va user
     }
 
     override fun onMessageReceived(reomoteMessage: RemoteMessage) {
