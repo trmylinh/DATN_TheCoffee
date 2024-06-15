@@ -35,7 +35,8 @@
                 android:focusable="true"
                 android:textAlignment="textEnd"
                 android:textColor="@color/black_900"
-                android:textSize="@dimen/_15sdp"/>
+                android:textSize="@dimen/_15sdp"
+                android:visibility="visible"/>
         </LinearLayout>
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"

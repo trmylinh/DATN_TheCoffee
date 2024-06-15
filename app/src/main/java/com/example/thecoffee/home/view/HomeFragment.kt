@@ -139,7 +139,10 @@ class HomeFragment : Fragment() {
 
         dataObserver = Observer { data ->
             listValue = data.toMutableList()
-            showCartView()
+            if(listValue.isNotEmpty()){
+                showCartView()
+
+            }
         }
 
         sharedViewModel.sharedData.observe(viewLifecycleOwner, dataObserver!!)
@@ -275,7 +278,6 @@ class HomeFragment : Fragment() {
 
     private fun showCartView() {
         listCartItem = mutableListOf()
-        Log.d("check", "showCartView ${listValue.size} ${listValue}")
         // luu cart vao sharedPreferences
         val sharedPreferences = requireContext().getSharedPreferences(
             "cart",
@@ -352,7 +354,9 @@ class HomeFragment : Fragment() {
                             override fun onBottomSheetClear() {
                                 binding.viewCart.visibility = View.GONE
                                 listCartItem.removeAll(listCartItem)
-                                sharedViewModel.sharedData.value.orEmpty().toMutableList().clear()
+//                                sharedViewModel.sharedData.value.orEmpty().toMutableList().clear()
+                                listValue.clear()
+                                sharedViewModel.clearData()
                             }
 
                             override fun onBottomSheetClose(newList: List<Cart>?) {
@@ -381,7 +385,6 @@ class HomeFragment : Fragment() {
         }
 
         listValue.clear()
-        Log.d("check", "clear: $listValue")
     }
 
     override fun onDestroyView() {

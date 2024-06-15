@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".admin.manage.chart.view.ManageStatisticAdminFragment"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/deep_purple_100"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="@dimen/_10sdp">
+
+        <ImageView
+            android:id="@+id/icon_back"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/icon_back" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:text="Thống kê doanh thu"
+            android:textAlignment="center"
+            android:textColor="@color/light_blue_900"
+            android:textSize="@dimen/_16sdp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/icon_print"
+            android:layout_width="@dimen/_32sdp"
+            android:layout_height="@dimen/_32sdp"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="@dimen/_5sdp"
+            android:src="@drawable/icon_print" />
+    </LinearLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_marginVertical="@dimen/_10sdp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:text="Biểu đồ trạng thái đơn hàng"
+                    android:layout_marginHorizontal="@dimen/_10sdp"
+                    android:textSize="@dimen/_15sdp"
+                    android:textColor="@color/black_900"
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <LinearLayout
+                    android:layout_marginVertical="@dimen/_5sdp"
+                    android:layout_marginHorizontal="@dimen/_10sdp"
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:id="@+id/btn_pick_date"
+                        android:src="@drawable/icon_calendar"
+                        android:layout_width="@dimen/_22sdp"
+                        android:layout_height="@dimen/_22sdp"
+                        android:clickable="true"
+                        android:focusable="true"/>
+                    <TextView
+                        android:id="@+id/tv_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="28/05/2024"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:layout_gravity="center_vertical"
+                        android:textColor="@color/black_900"
+                        android:textSize="@dimen/_12sdp" />
+                </LinearLayout>
+                <com.github.mikephil.charting.charts.PieChart
+                    android:id="@+id/pieChart"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="@dimen/_5sdp"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_200sdp" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginVertical="@dimen/_10sdp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:text="Thống kê doanh thu"
+                    android:layout_marginHorizontal="@dimen/_10sdp"
+                    android:textSize="@dimen/_15sdp"
+                    android:textColor="@color/black_900"
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <LinearLayout
+                    android:layout_marginVertical="@dimen/_10sdp"
+                    android:layout_marginHorizontal="@dimen/_10sdp"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+<!--                    <LinearLayout-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_weight="1"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginEnd="@dimen/_5sdp">-->
+<!--                        <TextView-->
+<!--                            android:id="@+id/tv_month"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:text="Tháng"-->
+<!--                            android:layout_gravity="center_vertical"-->
+<!--                            android:textColor="@color/black_900"-->
+<!--                            android:textSize="@dimen/_12sdp" />-->
+<!--                        <ImageView-->
+<!--                            android:id="@+id/btn_pick_month"-->
+<!--                            android:src="@drawable/icon_calendar"-->
+<!--                            android:layout_width="@dimen/_22sdp"-->
+<!--                            android:layout_height="@dimen/_22sdp"-->
+<!--                            android:clickable="true"-->
+<!--                            android:focusable="true"/>-->
+<!--                    </LinearLayout>-->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_5sdp">
+                        <TextView
+                            android:id="@+id/tv_year"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Năm"
+                            android:layout_gravity="center_vertical"
+                            android:textColor="@color/black_900"
+                            android:textSize="@dimen/_12sdp"
+                            android:layout_marginEnd="@dimen/_10sdp"/>
+<!--                        <ImageView-->
+<!--                            android:id="@+id/btn_pick_year"-->
+<!--                            android:src="@drawable/icon_calendar"-->
+<!--                            android:layout_width="@dimen/_22sdp"-->
+<!--                            android:layout_height="@dimen/_22sdp"-->
+<!--                            android:clickable="true"-->
+<!--                            android:focusable="true"/>-->
+                        <Spinner
+                            android:id="@+id/spinner_year"
+                            android:layout_width="@dimen/_100sdp"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+                <com.github.mikephil.charting.charts.BarChart
+                    android:id="@+id/bar_chart"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_400sdp">
+
+                </com.github.mikephil.charting.charts.BarChart>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

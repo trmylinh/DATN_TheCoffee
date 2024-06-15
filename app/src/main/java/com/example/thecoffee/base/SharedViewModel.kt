@@ -1,6 +1,5 @@
 package com.example.thecoffee.base
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
@@ -19,4 +18,9 @@ class SharedViewModel : ViewModel() {
             _sharedData.value = currentData
         }
     }
+
+    fun clearData() {
+        _sharedData.value = emptyList()
+    }
+
 }

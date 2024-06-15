@@ -94,6 +94,9 @@
         <action
             android:id="@+id/action_homeAdminFragment_to_manageVoucherAdminFragment"
             app:destination="@id/manageVoucherAdminFragment" />
+        <action
+            android:id="@+id/action_homeAdminFragment_to_manageStatisticAdminFragment"
+            app:destination="@id/manageStatisticAdminFragment" />
     </fragment>
     <fragment
         android:id="@+id/manageOrderAdminFragment"
@@ -176,4 +179,9 @@
             android:id="@+id/action_manageUpdateVoucherFragment_to_manageVoucherAdminFragment"
             app:destination="@id/manageVoucherAdminFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/manageStatisticAdminFragment"
+        android:name="com.example.thecoffee.admin.manage.chart.view.ManageStatisticAdminFragment"
+        android:label="fragment_manage_statistic_admin"
+        tools:layout="@layout/fragment_manage_statistic_admin" />
 </navigation>
