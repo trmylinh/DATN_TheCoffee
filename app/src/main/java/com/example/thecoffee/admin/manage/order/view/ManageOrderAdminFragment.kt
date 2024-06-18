@@ -151,8 +151,10 @@ class ManageOrderAdminFragment : Fragment() {
     private fun getBills(){
         billViewModel.getBills.observe(viewLifecycleOwner){ items ->
             bills = items
+            val dateFormat = SimpleDateFormat("HH:mm:ss dd/MM/yyyy", Locale.getDefault())
+            val sortedItems = bills?.sortedByDescending  { item -> dateFormat.parse(item.time!!) }
             binding.swipeRefreshLayout.isRefreshing = false
-            if(bills?.isNotEmpty() == true){
+            if(sortedItems?.isNotEmpty() == true){
                 binding.emptyView.visibility = View.GONE
                 binding.swipeRefreshLayout.visibility = View.VISIBLE
                 binding.layoutFilterStatus.visibility = View.VISIBLE
@@ -161,7 +163,7 @@ class ManageOrderAdminFragment : Fragment() {
                 displayBottomSheetDialogFilterStatus()
 
                 // noi dung
-                showRecyclerView(bills!!)
+                showRecyclerView(sortedItems)
             }
             else {
                 binding.swipeRefreshLayout.visibility = View.GONE

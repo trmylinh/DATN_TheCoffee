@@ -89,9 +89,10 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
         private const val BARE_URL = "https://fcm.googleapis.com/fcm/send"
         private const val USER = "user"
         private const val ADMIN = "admin"
-        private const val TOKEN = ""
-        private const val SERVER_KEY = "" // paste server key zo dey
 
+        // may that
+        private const val TOKEN_DEVICE_USER = ""
+        private const val SERVER_KEY = "" // paste server key zo dey
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -165,7 +166,7 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
             priceItems += item.totalPrice!!
             countItem += item.quantity!!
         }
-        binding.itemsPrice.text = "${String.format("%,d", priceItems+shipFee)}đ"
+        binding.itemsPrice.text = "${String.format("%,d", priceItems)}đ"
         binding.totalPay.text = "${String.format("%,d", priceItems+shipFee)}đ"
         binding.priceShip.text = "${String.format("%,d", shipFee)}đ"
 
@@ -209,6 +210,8 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
 
         if (role == ADMIN) {
             binding.itemsTitle.text = "${getString(R.string.items)} ($countItem)"
+            countItem = 0
+            priceItems = 0
             if(billDetail.status == 3L){
                 binding.layoutBtnPrintBill.visibility = View.VISIBLE
                 binding.layoutBtnPrintBill.setOnClickListener {
@@ -265,6 +268,7 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
                                 binding.statusBill.visibility = View.GONE
                             }
                         }
+                        sendNotification( binding.statusBill.text.toString())
                     }
 
                     1L -> {
@@ -287,6 +291,7 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
                                 binding.statusBill.visibility = View.GONE
                             }
                         }
+                        sendNotification( binding.statusBill.text.toString())
                     }
 
                     2L -> {
@@ -308,10 +313,11 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
                                 binding.statusBill.visibility = View.GONE
                             }
                         }
+                        sendNotification( binding.statusBill.text.toString())
                     }
 
                 }
-                sendNotification(binding.statusBill.text.toString())
+
             }
 
 //            binding.push.setOnClickListener {
@@ -325,6 +331,10 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
     }
 
     private fun createPdf(){
+        for (item in billDetail.drinks!!) {
+            priceItems += item.totalPrice!!
+            countItem += item.quantity!!
+        }
         imageBitmap = BitmapFactory.decodeResource(resources, R.drawable.logo_splash)
         scaledImageBitmap = imageBitmap?.let { Bitmap.createScaledBitmap(it, 100, 100, false) }
         val pdfDocument = PdfDocument()
@@ -394,8 +404,6 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
         // title
         canvas.drawText("Phí giao hàng: ${String.format("%,d", billDetail.shipFee!!)} VND", 40f, (450+spaceLastest).toFloat(), titlePaint)
         canvas.drawText("Tổng hóa đơn: ${String.format("%,d", priceItems+billDetail.shipFee!!)} VND", 40f, (490+spaceLastest).toFloat(), titlePaint)
-
-
         pdfDocument.finishPage(page)
         val file = File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
@@ -446,7 +454,7 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
         "body":"Đơn hàng của bạn: ${status}",
         "title":"Thông báo cập nhật đơn hàng"
     },
-    "to" : "$FCM_TOKEN"
+    "to" : "$TOKEN_DEVICE_USER"
 }
 """.toRequestBody("application/json".toMediaTypeOrNull())
 
@@ -468,7 +476,7 @@ class ManageDetailOrderFragment : BottomSheetDialogFragment() {
                     if (!response.isSuccessful) throw IOException("Unexpected code $response")
 
                     val responseString = response.body?.string()
-                    sharedNotificationBadgeViewModel.incrementBadge()
+//                    sharedNotificationBadgeViewModel.incrementBadge()
                     Log.d("response", responseString ?: "Response body is null")
                 }
             }

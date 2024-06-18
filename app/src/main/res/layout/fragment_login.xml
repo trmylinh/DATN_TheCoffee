@@ -15,7 +15,7 @@
         android:src="@drawable/image_login_screen"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent=".30"
+        app:layout_constraintHeight_percent=".25"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -49,15 +49,15 @@
 
         <ImageView
             android:id="@+id/imageView2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/_285sdp"
+            android:layout_height="@dimen/_50sdp"
             android:src="@drawable/logo_line"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_bias="0.4"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.2"
+            app:layout_constraintVertical_bias="0.245"
             app:layout_constraintWidth_percent=".7" />
 
         <LinearLayout
@@ -68,7 +68,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.6"
+            app:layout_constraintVertical_bias="0.65"
             app:layout_constraintWidth_percent=".85">
 
             <LinearLayout

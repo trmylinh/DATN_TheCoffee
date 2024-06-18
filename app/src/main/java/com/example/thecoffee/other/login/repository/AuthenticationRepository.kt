@@ -44,6 +44,8 @@ class AuthenticationRepository(_application: Application) {
     val getFirebaseUser: MutableLiveData<User>
         get() = firebaseUserMutableLiveData
 
+
+
     val checkLoadingState: MutableLiveData<Boolean>
         get() = loadingStateMutableLiveData
 
@@ -141,7 +143,7 @@ class AuthenticationRepository(_application: Application) {
                                     val userRefUpdated = db.collection("Users").document(user.uid!!)
                                     userRefUpdated.update("uid", auth.currentUser!!.uid)
                                     uidUser.postValue(user.uid!!)
-                                    firebaseUserMutableLiveData.postValue(user)
+                                    firebaseUserMutableLiveData.postValue(User(auth.currentUser!!.uid, user.name, user.avt, user.phone, user.email))
                                 }
                                 isNewUser.postValue(false)
                             }
@@ -205,7 +207,7 @@ class AuthenticationRepository(_application: Application) {
                                     val userRefUpdated = db.collection("Users").document(user.uid!!)
                                     userRefUpdated.update("uid", auth.currentUser!!.uid)
                                     uidUser.postValue(user.uid!!)
-                                    firebaseUserMutableLiveData.postValue(user)
+                                    firebaseUserMutableLiveData.postValue(User(auth.currentUser!!.uid, user.name, user.avt, user.phone, user.email))
                                 }
                                 isNewUser.postValue(false)
                             }
@@ -220,12 +222,22 @@ class AuthenticationRepository(_application: Application) {
 
     fun getUserDetail(userId: String) {
         loadingStateMutableLiveData.postValue(true) // Hiển thị ProgressBar
-        val reference = db.collection("Users").document(userId)
-        reference.get().addOnSuccessListener { documentSnapshot ->
-            if (documentSnapshot.exists()) {
-                val user = documentSnapshot.toObject(User::class.java)
-                userMutableLiveData.postValue(user!!)
-            }
+        db.collection("Users").whereEqualTo("uid", userId)
+            .get().addOnSuccessListener { documents ->
+                for (document in documents) {
+                    val uid = document.getString("uid")
+                    val name = document.getString("name")
+                    val avt = document.getString("avt")
+                    val phone = document.getString("phone")
+                    val email = document.getString("email")
+                    val user = User(
+                        uid = userId,
+                        name = name,
+                        avt = avt,
+                        phone = phone, email = email)
+                    Log.d("getUserDetail", "User detail: $user")
+                    userMutableLiveData.postValue(user)
+                }
         }.addOnFailureListener { exception ->
             Log.d("getUserDetail", "Error getting user detail: $exception")
         }.addOnCompleteListener {

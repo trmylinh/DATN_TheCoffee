@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.thecoffee.R
+import com.example.thecoffee.admin.manage.order.view.ManageDetailOrderFragment
 import com.example.thecoffee.base.MyViewModelFactory
 import com.example.thecoffee.base.SharedViewModel
 import com.example.thecoffee.databinding.FragmentConfirmOrderBillBinding
@@ -25,16 +26,26 @@ import com.example.thecoffee.order.model.Bill
 import com.example.thecoffee.order.model.Cart
 import com.example.thecoffee.order.viewmodel.BillViewModel
 import com.example.thecoffee.order.viewmodel.ProductViewModel
+import com.example.thecoffee.other.login.viewmodel.AuthenticationViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okhttp3.Call
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.UUID
@@ -48,6 +59,7 @@ interface ConfirmOrderBillFragmentListener {
 class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
     private lateinit var binding: FragmentConfirmOrderBillBinding
     private lateinit var billViewModel: BillViewModel
+    private lateinit var authenticationViewModel: AuthenticationViewModel
     private var dataBill = emptyList<Cart>()
     var listener: ConfirmOrderBillFragmentListener? = null
     private var priceItems: Long = 0
@@ -65,10 +77,23 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private var event: String? = null
 
+    private var client = OkHttpClient()
+
+    companion object {
+        private const val BARE_URL = "https://fcm.googleapis.com/fcm/send"
+        private const val USER = "user"
+        private const val ADMIN = "admin"
+
+        // may ao
+        private const val TOKEN_DEVICE_ADMIN = ""
+        private const val SERVER_KEY = "" // paste server key zo dey
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val viewModelFactory = MyViewModelFactory(requireActivity().application)
         billViewModel = ViewModelProvider(this, viewModelFactory)[BillViewModel::class.java]
+        authenticationViewModel = ViewModelProvider(this, viewModelFactory)[AuthenticationViewModel::class.java]
 
         // data order -> confirm
         val jsonListCartItem = arguments?.getString("dataBill")
@@ -89,6 +114,18 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val auth = Firebase.auth
+        val user = auth.currentUser
+        if (user != null) {
+            authenticationViewModel.getUserDetail(user.uid)
+            authenticationViewModel.getUserDetail.observe(viewLifecycleOwner){
+                    userInfo ->
+                        binding.edtReceiver.setText(userInfo.name)
+                        binding.noteTimeDelivery.setText(userInfo.phone)
+            }
+        }
+
         val sharedPreferences = requireContext().getSharedPreferences(
             "cart",
             Context.MODE_PRIVATE
@@ -132,7 +169,7 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
         // luu bill -> database
         binding.orderBtn.setOnClickListener {
             val idOrder = sharedPreferences.getString("idCart", null)
-            timeSelected = 4
+            timeSelected = 6
             if (timeSelected > timeProgress) {
                 binding.viewBottom.visibility = View.GONE
 
@@ -238,12 +275,12 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
 
     private fun order(id: String, statusBill: Long) {
         val userId: String = auth.currentUser?.uid!!
-        val address: String = "165 Cau Giay"
+        val address: String = binding.addressMap.text.toString()
         val status: Long = statusBill
         val shipFee: Long = 18000
         val time = SimpleDateFormat("HH:mm:ss dd/MM/yyyy").format(Calendar.getInstance().time)
-        val userReceiver = "MyLinh"
-        val phoneReceiver = "0862861396"
+        val userReceiver = binding.edtReceiver.text.toString()
+        val phoneReceiver = binding.noteTimeDelivery.text.toString()
 
         billViewModel.order(Bill(id, userId, address, dataBill, status, userReceiver, phoneReceiver, shipFee, time))
         billViewModel.loadingResult.observe(viewLifecycleOwner) { loading ->
@@ -264,6 +301,7 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
                 if(status == -1L){
                     binding.statusBill.text = getString(R.string.status_cancel)
                 }
+                sendNotification(id)
             }
         }
 
@@ -284,6 +322,78 @@ class ConfirmOrderBillFragment : BottomSheetDialogFragment() {
         binding.pricePayFinal.text = "${String.format("%,d", (priceItems+shipFee))}đ"
         binding.totalPay.text = "${String.format("%,d", (priceItems+shipFee))}đ"
         binding.priceShip.text = "${String.format("%,d", (shipFee))}đ"
+    }
+
+    private fun sendNotification(idBill: String) {
+        val requestBody = """
+{
+    "data": {
+        "body":"Đơn hàng mới: ${idBill}",
+        "title":"Thông báo đơn hàng mới"
+    },
+    "to" : "$TOKEN_DEVICE_ADMIN"
+}
+""".toRequestBody("application/json".toMediaTypeOrNull())
+
+        val request = Request.Builder()
+            .url("https://fcm.googleapis.com/fcm/send")
+            .post(requestBody)
+            .addHeader("Authorization", "key=$SERVER_KEY")
+            .addHeader("Content-Type", "application/json")
+            .build()
+
+        client.newCall(request).enqueue(object : okhttp3.Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.d("error", "$e")
+                e.printStackTrace()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                response.use {
+                    if (!response.isSuccessful) throw IOException("Unexpected code $response")
+
+                    val responseString = response.body?.string()
+//                    sharedNotificationBadgeViewModel.incrementBadge()
+                    Log.d("response", responseString ?: "Response body is null")
+                }
+            }
+        })
+
+//        val queue: RequestQueue = Volley.newRequestQueue(requireContext())
+//        try {
+//            val json = JSONObject()
+//            json.put("to", token)
+//
+//            val notification = JSONObject()
+//            notification.put("title", title)
+//            notification.put("body", message)
+//
+//            json.put("notification", notification)
+//
+//            val jsonObjectRequest = object: JsonObjectRequest(
+//                Method.POST, BARE_URL, json,
+//                com.android.volley.Response.Listener{ response ->
+//                    Log.d("response", "$response")
+//                },
+//                com.android.volley.Response.ErrorListener{ error ->
+//                    Log.d("response", "$error")
+//                }
+//            ){
+//                override fun getHeaders(): MutableMap<String, String> {
+//                    val headers = HashMap<String, String>()
+//                    headers["Authorization"] = "key=${SERVER_KEY}"
+//                    headers["Content-Type"] = "application/json"
+//                    // Thêm các headers tùy chỉnh ở đây
+//                    return headers
+//                }
+//            }
+//
+//            queue.add(jsonObjectRequest)
+//        } catch (e: JSONException){
+//            e.printStackTrace()
+//        }
+
+
     }
 
 

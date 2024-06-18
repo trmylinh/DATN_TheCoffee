@@ -28,6 +28,12 @@ class ProductViewModel (application: Application) : AndroidViewModel(application
     private val _messageDeleteDrink: MutableLiveData<String> = repository.getMessageDeleteDrink
     private val _messageCreateDrink: MutableLiveData<String> = repository.getMessageCreateDrink
     private val _messageUpdateDrink: MutableLiveData<String> = repository.getMessageUpdateDrink
+    private val _isFavorite: MutableLiveData<Boolean> = repository.isFavorite
+
+    private val listFavorite: MutableLiveData<ArrayList<String>> = repository.getListFavorite
+
+    val getListFavorite: MutableLiveData<ArrayList<String>>
+        get() = listFavorite
 
     val loadingDeleteData: MutableLiveData<Boolean>
         get() =  _loadingDeleteData
@@ -74,6 +80,9 @@ class ProductViewModel (application: Application) : AndroidViewModel(application
     val getMessageUpdateDrink: MutableLiveData<String>
         get() = _messageUpdateDrink
 
+    val isFavorite: MutableLiveData<Boolean>
+        get() = _isFavorite
+
     init {
         _categoryList = repository.getCategoryList
         _drinkList = repository.getDrinkList
@@ -114,6 +123,22 @@ class ProductViewModel (application: Application) : AndroidViewModel(application
 
     fun getDrinkByCategory(idCategory: String){
         repository.getDrinkByCategory(idCategory)
+    }
+
+    fun addToFavorite(isDrink: String){
+        repository.addToFavorite(isDrink)
+    }
+
+    fun getFavorite(isDrink: String){
+        repository.getFavorite(isDrink)
+    }
+
+    fun removeFavorite(isDrink: String){
+        repository.removeFavorite(isDrink)
+    }
+
+    fun getListFavorite(){
+        repository.getAllFavorite()
     }
 
 }

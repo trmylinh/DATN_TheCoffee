@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TheCoffee</string>
+    <string name="app_name">LinDrink</string>
     <string name="splashscreen">SplashScreen</string>
     <string name="backgroundloginscreen">BackgroundLoginScreen</string>
     <string name="iconclose">IconClose</string>

@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -27,30 +26,22 @@ import com.example.thecoffee.base.SharedNotificationBadgeViewModel
 import com.example.thecoffee.base.SharedViewModel
 import com.example.thecoffee.databinding.ActivityMainBinding
 import com.example.thecoffee.order.model.Cart
-import com.example.thecoffee.order.utils.DrinksByCategory
 import com.example.thecoffee.order.view.BottomSheetListener
 import com.example.thecoffee.order.view.ConfirmOrderBillFragment
 import com.example.thecoffee.order.view.ConfirmOrderBillFragmentListener
 import com.example.thecoffee.order.view.ItemDrinkDetailFragment
-import com.example.thecoffee.order.view.OrderFragment
 import com.example.thecoffee.order.viewmodel.ProductViewModel
 import com.example.thecoffee.other.login.viewmodel.AuthenticationViewModel
-import com.example.thecoffee.other.user.model.User
 import com.example.thecoffee.voucher.model.Voucher
 import com.example.thecoffee.voucher.view.VoucherFragment
 import com.example.thecoffee.voucher.viewmodel.VoucherViewModel
 import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.auth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Date
 import java.util.UUID
@@ -179,7 +170,7 @@ class HomeFragment : Fragment() {
         }
 
         sharedViewModel.sharedData.observe(viewLifecycleOwner, dataObserver!!)
-        sharedNotificationBadgeViewModel.notificationBadge.observe(viewLifecycleOwner, badgeObserver!!)
+//        sharedNotificationBadgeViewModel.notificationBadge.observe(viewLifecycleOwner, badgeObserver!!)
 
 
 

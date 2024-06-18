@@ -13,6 +13,7 @@ import android.widget.ImageView
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -117,6 +118,10 @@ class OrderFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.iconHeart.setOnClickListener {
+            findNavController().navigate(R.id.action_orderFragment_to_favoriteFragment)
+        }
 
         binding.swipeRefreshLayout.apply {
             setColorSchemeColors(resources.getColor(R.color.orange_700, null))

@@ -149,23 +149,26 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <EditText
                         android:id="@+id/addressMap"
-                        android:layout_width="@dimen/_280sdp"
+                        android:background="@drawable/custom_default_border"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_5sdp"
-                        android:text="2 P.Pham Van Bach, Yen Hoa, Cau Giay, Ha Noi 100000, Viet Nam"
+                        android:paddingHorizontal="@dimen/_10sdp"
+                        android:paddingVertical="@dimen/_10sdp"
+                        android:text="Số 3 phố Cầu Giấy, P.Láng Thượng, Q.Đống Đa, Hà Nội"
                         android:textColor="@color/grey_600"
                         android:textSize="@dimen/_11sdp" />
 
-                    <ImageView
-                        android:id="@+id/arrowRightDetail"
-                        android:layout_width="@dimen/_15sdp"
-                        android:layout_height="@dimen/_15sdp"
-                        android:layout_gravity="center"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:src="@drawable/icon_arrow_right" />
+<!--                    <ImageView-->
+<!--                        android:id="@+id/arrowRightDetail"-->
+<!--                        android:layout_width="@dimen/_15sdp"-->
+<!--                        android:layout_height="@dimen/_15sdp"-->
+<!--                        android:layout_gravity="center"-->
+<!--                        android:clickable="true"-->
+<!--                        android:focusable="true"-->
+<!--                        android:src="@drawable/icon_arrow_right" />-->
                 </LinearLayout>
 
                 <LinearLayout
@@ -191,13 +194,16 @@
                             android:textColor="@color/grey_600"
                             android:textSize="@dimen/_12sdp" />
 
-                        <TextView
-                            android:id="@+id/phone_receiver"
-                            android:layout_width="wrap_content"
+                        <EditText
+                            android:id="@+id/edt_receiver"
+                            android:background="@drawable/custom_default_border"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_5sdp"
-                            android:text="My Linh"
-                            android:textColor="@color/black_900"
+                            android:paddingHorizontal="@dimen/_10sdp"
+                            android:paddingVertical="@dimen/_10sdp"
+                            android:text=""
+                            android:textColor="@color/grey_600"
                             android:textSize="@dimen/_11sdp" />
 
                         <TextView
@@ -212,7 +218,7 @@
 
                     <View
                         android:layout_width="@dimen/_1sdp"
-                        android:layout_height="@dimen/_40sdp"
+                        android:layout_height="@dimen/_80sdp"
                         android:layout_marginHorizontal="@dimen/_10sdp"
                         android:background="@color/grey_300" />
 
@@ -233,13 +239,24 @@
                             android:textColor="@color/grey_600"
                             android:textSize="@dimen/_12sdp" />
 
-                        <TextView
+<!--                        <TextView-->
+<!--                            android:id="@+id/note_time_delivery"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_marginTop="@dimen/_5sdp"-->
+<!--                            android:text="0862861396"-->
+<!--                            android:textColor="@color/black_900"-->
+<!--                            android:textSize="@dimen/_11sdp" />-->
+                        <EditText
                             android:id="@+id/note_time_delivery"
-                            android:layout_width="wrap_content"
+                            android:background="@drawable/custom_default_border"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_5sdp"
-                            android:text="0862861396"
-                            android:textColor="@color/black_900"
+                            android:paddingHorizontal="@dimen/_10sdp"
+                            android:paddingVertical="@dimen/_10sdp"
+                            android:text=""
+                            android:textColor="@color/grey_600"
                             android:textSize="@dimen/_11sdp" />
 
                         <TextView
@@ -579,7 +596,7 @@
             <TextView
                 android:textColor="@color/red_900"
                 android:textSize="@dimen/_12sdp"
-                android:text="Đơn hàng sẽ được đặt sau 3 giây, hãy HỦY nếu bạn không muốn đặt nữa!"
+                android:text="Đơn hàng sẽ được đặt sau 5 giây, hãy HỦY nếu bạn không muốn đặt nữa!"
                 android:layout_gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

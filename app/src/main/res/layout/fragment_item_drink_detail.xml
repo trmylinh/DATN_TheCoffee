@@ -140,6 +140,8 @@
                     android:layout_width="@dimen/_22sdp"
                     android:layout_height="@dimen/_22sdp"
                     android:layout_below="@id/name_voucher"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="@dimen/_20sdp"
                     android:layout_marginEnd="@dimen/_10sdp"

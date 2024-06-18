@@ -97,7 +97,7 @@ class LoginFragment : Fragment() {
             signInUsingGoogle()
         }
 
-        binding.edtPhoneNumber.setText("0123456789")
+        binding.edtPhoneNumber.setText("0862861396")
 
         binding.btnLogIn.setOnClickListener {
             val number = binding.edtPhoneNumber.text.toString()
@@ -105,7 +105,7 @@ class LoginFragment : Fragment() {
             Log.d("TAG", "phoneNumber: $phoneNumber")
 
             val testPhoneNumber = phoneNumber
-            val testVerificationCode = "160402"
+            val testVerificationCode = "313706"
 
             val bundleVerificationId = Bundle()
 //            bundleVerificationId.putString("verificationId", storedVerificationId)
@@ -119,12 +119,58 @@ class LoginFragment : Fragment() {
 
             bottomOtpMessageFragment.isCancelable = false
 
+//            sendVerificationCode(testPhoneNumber)
+
         }
 
         binding.btnClose.setOnClickListener {
             // back lai other fragment
             findNavController().popBackStack();
         }
+    }
+
+    private fun sendVerificationCode(phoneNumber: String){
+        val options = PhoneAuthOptions.newBuilder(auth)
+            .setPhoneNumber(phoneNumber)
+            .setTimeout(60L, TimeUnit.SECONDS)
+            .setActivity(requireActivity())
+            .setCallbacks(callbacks) //OnVerificationStateChangedCallbacks
+            .build()
+        PhoneAuthProvider.verifyPhoneNumber(options)
+    }
+
+    private val callbacks = object:PhoneAuthProvider.OnVerificationStateChangedCallbacks(){
+        override fun onVerificationCompleted(credential: PhoneAuthCredential) {
+            // Xác thực thành công mà không cần mã
+            // Tự động nhập mã nếu cần
+            Log.d("phone" , "onVerificationCompleted Success $credential")
+//            storedVerificationId = verificationId
+//            resendToken = token
+
+        }
+
+        override fun onVerificationFailed(e: FirebaseException) {
+            // Xảy ra lỗi khi xác thực, thông báo cho người dùng
+            Log.d("phone", "error: ${e.message}")
+        }
+
+        override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken) {
+            // Mã đã được gửi, chuyển người dùng đến fragment hoặc screen nhập mã
+//            val fragment = CodeInputFragment.newInstance(verificationId, token)
+            // Điều hướng người dùng sang fragment nhập mã với verificationId
+            Log.d("phone","onCodeSent: $verificationId")
+            storedVerificationId = verificationId
+            resendToken = token
+            val bundleVerificationId = Bundle()
+            bundleVerificationId.putString("verificationId", storedVerificationId)
+            bottomOtpMessageFragment.arguments = bundleVerificationId
+            bottomOtpMessageFragment.show(
+                parentFragmentManager,
+                bottomOtpMessageFragment.tag
+            )
+            bottomOtpMessageFragment.isCancelable = false
+        }
+
     }
     private fun initGoogleSignInClient() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
