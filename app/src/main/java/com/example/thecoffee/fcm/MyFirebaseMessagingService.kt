@@ -82,7 +82,7 @@ class MyFirebaseMessagingService: FirebaseMessagingService()  {
     override fun onNewToken(token: String) {
         // token -> server se xac nhan xem device minh muon push noti la thang nao
         super.onNewToken(token)
-        Log.d("token", "Refreshed token: $token")
+        Log.d("token", "--Refreshed token: $token")
         FCM_TOKEN = token
     }
 }

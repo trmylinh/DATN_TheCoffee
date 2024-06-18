@@ -39,6 +39,13 @@ class ProductRepository(_application: Application) {
     private val messageCreateDrink: MutableLiveData<String> = MutableLiveData<String>()
     private val messageUpdateDrink: MutableLiveData<String> = MutableLiveData<String>()
 
+    private val _isFavorite: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+
+    private val listFavorite: MutableLiveData<ArrayList<String>> = MutableLiveData<ArrayList<String>>()
+
+    val getListFavorite: MutableLiveData<ArrayList<String>>
+        get() = listFavorite
+
     val getCategoryList: MutableLiveData<ArrayList<Category>>
         get() = categoryList
 
@@ -89,6 +96,9 @@ class ProductRepository(_application: Application) {
 
     val getMessageUpdateDrink: MutableLiveData<String>
         get() = messageUpdateDrink
+
+    val isFavorite: MutableLiveData<Boolean>
+        get() = _isFavorite
 
     fun getDataCategoryList() {
         _loadingCategoryResult.postValue(true)
@@ -377,9 +387,73 @@ class ProductRepository(_application: Application) {
                 _loadingAddDrinkResult.postValue(false)
             }
         }
-
-
     }
 
+    fun addToFavorite(idDrink: String){
 
+        db.collection("Favorites").add(
+            hashMapOf(
+            "idDrink" to idDrink)
+        )
+            .addOnCompleteListener {
+                Log.d("Firestore", "Favorite added!")
+            }
+            .addOnFailureListener {
+                Log.e("Firestore", "Error adding document", it)
+            }
+    }
+
+    fun getFavorite(idDrink: String){
+        db.collection("Favorites").whereEqualTo("idDrink", idDrink)
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    val idDrinkFavorite = document.getString("idDrink")
+                    if (idDrinkFavorite != null){
+                        isFavorite.postValue(true)
+                    } else {
+                        isFavorite.postValue(false)
+                    }
+                    Log.d("Firestore", "Document ID: ${document.id} => $idDrinkFavorite")
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.w("Firestore", "Error getting documents: ", exception)
+            }
+    }
+
+    fun removeFavorite(idDrink: String){
+        db.collection("Favorites").whereEqualTo("idDrink", idDrink)
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    db.collection("Favorites").document(document.id).delete()
+                        .addOnSuccessListener {
+                            Log.d("Firestore", "Favorite successfully deleted!")
+                        }
+                        .addOnFailureListener { e->
+                            Log.w("Firestore", "Error deleting favorite", e)
+                        }
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.w("Firestore", "Error getting documents: ", exception)
+            }
+    }
+
+    fun getAllFavorite(){
+        db.collection("Favorites").get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful && task.result != null){
+                    val list = ArrayList<String>()
+                    for (document in task.result){
+                        val idDrink = document.getString("idDrink")
+                        if (idDrink != null){
+                            list.add(idDrink)
+                        }
+                    }
+                    listFavorite.postValue(list)
+                }
+            }
+    }
 }

@@ -47,6 +47,7 @@ class OtpMessageFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         val testVerificationCode = arguments?.getString("testVerificationCode")
         val testPhoneNumber = arguments?.getString("testPhoneNumber")
+        val storedVerificationId = arguments?.getString("verificationId")
         auth = FirebaseAuth.getInstance()
 
         binding.btnClose.setOnClickListener {
@@ -55,6 +56,7 @@ class OtpMessageFragment : BottomSheetDialogFragment() {
 
         binding.hintOtpMessage.text = (getString(R.string.hint_otp_message) to "0${testPhoneNumber?.substring(3)}").toString()
         binding.edtTextEmail.setText(testVerificationCode)
+
         binding.btnContinue.isEnabled = binding.edtTextEmail.text.trim().toString().isNotEmpty()
 
         binding.edtTextEmail.addTextChangedListener(object: TextWatcher{
@@ -78,8 +80,31 @@ class OtpMessageFragment : BottomSheetDialogFragment() {
             val otp = binding.edtTextEmail.text.trim().toString()
 
 //            val credential: PhoneAuthCredential = PhoneAuthProvider.getCredential(
-//                storedVerificationId.toString(), otpTest)
+//                storedVerificationId.toString(), otp)
 //            val credential = PhoneAuthProvider.getCredential(verificationId, testVerificationCode)
+//            authenticationViewModel.signInWithPhone(credential)
+//            authenticationViewModel.getUserData.observe(viewLifecycleOwner){ user ->
+//                authenticationViewModel.getIsNewUser.observe(viewLifecycleOwner){isNew->
+//                    if(isNew){
+//                        val action = LoginFragmentDirections
+//                            .actionLoginFragmentToCreateUserInfoFragment(user)
+//                        val navOptions = NavOptions.Builder()
+//                            .setLaunchSingleTop(true)
+//                            .build()
+//                        findNavController().navigate(action, navOptions)
+//                        dismiss()
+//                    }else {
+//                        val action = LoginFragmentDirections
+//                            .actionLoginFragmentToHomeFragment(user)
+//                        val navOptions = NavOptions.Builder()
+//                            .setLaunchSingleTop(true)
+//                            .build()
+//                        findNavController().navigate(action, navOptions)
+//                        dismiss()
+//                    }
+//                    binding.progressBarGG.visibility = View.GONE
+//                }
+//            }
 
             if (testPhoneNumber != null) {
                 binding.progressBarGG.visibility = View.VISIBLE
@@ -137,10 +162,10 @@ class OtpMessageFragment : BottomSheetDialogFragment() {
             Log.d("phone", "error: ${e.message}")
         }
 
-//        override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken) {
-//            // Mã đã được gửi, chuyển người dùng đến fragment hoặc screen nhập mã
-////            val fragment = CodeInputFragment.newInstance(verificationId, token)
-//            // Điều hướng người dùng sang fragment nhập mã với verificationId
+        override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken) {
+            // Mã đã được gửi, chuyển người dùng đến fragment hoặc screen nhập mã
+//            val fragment = CodeInputFragment.newInstance(verificationId, token)
+            // Điều hướng người dùng sang fragment nhập mã với verificationId
 //            Log.d("phone","onCodeSent: $verificationId")
 //            storedVerificationId = verificationId
 //            resendToken = token
@@ -152,7 +177,7 @@ class OtpMessageFragment : BottomSheetDialogFragment() {
 //                bottomOtpMessageFragment.tag
 //            )
 //            bottomOtpMessageFragment.isCancelable = false
-//        }
+        }
 
     }
 

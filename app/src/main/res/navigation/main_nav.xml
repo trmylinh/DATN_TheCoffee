@@ -24,6 +24,9 @@
         <action
             android:id="@+id/action_orderFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_orderFragment_to_favoriteFragment"
+            app:destination="@id/favoriteFragment" />
     </fragment>
     <fragment
         android:id="@+id/storeFragment"
@@ -240,4 +243,9 @@
         android:name="com.example.thecoffee.admin.manage.user.view.ManageUserFragment"
         android:label="fragment_manage_user"
         tools:layout="@layout/fragment_manage_user" />
+    <fragment
+        android:id="@+id/favoriteFragment"
+        android:name="com.example.thecoffee.order.view.FavoriteFragment"
+        android:label="fragment_favorite"
+        tools:layout="@layout/fragment_favorite" />
 </navigation>

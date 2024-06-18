@@ -129,6 +129,8 @@
                                 android:text="@string/btn_status_confirm"
                                 android:layout_marginEnd="@dimen/_5sdp"
                                 android:textColor="@color/orange_900"
+                                android:background="@color/orange_100"
+                                android:padding="@dimen/_5sdp"
                                 android:textSize="@dimen/_13sdp"
                                 android:visibility="visible"/>
                             <TextView

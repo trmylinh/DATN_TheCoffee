@@ -38,7 +38,9 @@ class MainActivity : AppCompatActivity() {
                     R.id.manageStatisticAdminFragment,
                         R.id.userInfoFragment,
                         R.id.manageDrinkDetailAdminFragment,
-                        R.id.createUserInfoFragment
+                        R.id.createUserInfoFragment,
+                        R.id.favoriteFragment,
+                        R.id.manageUserFragment
                     -> View.GONE
 
                     else -> View.VISIBLE

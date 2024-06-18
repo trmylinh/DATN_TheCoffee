@@ -522,7 +522,7 @@
             <TextView
                 android:id="@+id/text_address"
                 android:layout_marginTop="@dimen/_2sdp"
-                android:text="2 P.Pham Van Bach, Yen Hoa, Cau Giay, Ha Noi"
+                android:text="Số 3 phố Cầu Giấy, P.Láng Thượng, Q.Đống Đa, Hà Nội"
                 android:textColor="@color/black_900"
                 android:textSize="@dimen/_9sdp"
                 android:maxLines="1"

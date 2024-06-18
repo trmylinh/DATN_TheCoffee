@@ -24,6 +24,7 @@ import com.example.thecoffee.order.adapter.ItemSizeRecyclerInterface
 import com.example.thecoffee.order.model.Bill
 import com.example.thecoffee.order.model.Cart
 import com.example.thecoffee.order.viewmodel.BillViewModel
+import com.example.thecoffee.order.viewmodel.ProductViewModel
 import com.example.thecoffee.voucher.model.Voucher
 import com.example.thecoffee.voucher.viewmodel.VoucherViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -52,14 +53,18 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
     private lateinit var voucherViewModel: VoucherViewModel
     private var voucherList = mutableListOf<Voucher>()
 
+    private lateinit var productViewModel: ProductViewModel
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val viewModelFactory = MyViewModelFactory(requireActivity().application)
         voucherViewModel = ViewModelProvider(this, viewModelFactory)[VoucherViewModel::class.java]
+        productViewModel = ViewModelProvider(this, viewModelFactory)[ProductViewModel::class.java]
 
         voucherViewModel.getVoucherList()
         drinkDetail = arguments?.getSerializable("dataDrink")!! as Drink
+        productViewModel.getFavorite(drinkDetail.drinkId!!)
     }
 
     override fun onCreateView(
@@ -72,7 +77,6 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         getVoucher()
 
         binding.btnBack.setOnClickListener {
@@ -114,12 +118,38 @@ class ItemDrinkDetailFragment : BottomSheetDialogFragment() {
             dismiss()
         }
 
+        var isClick = false
+        binding.favorite.setOnClickListener {
+            if(user != null){
+                isClick = !isClick
+                if(isClick){
+                    binding.favorite.setImageResource(R.drawable.icon_heart_fill)
+                    productViewModel.addToFavorite(drinkDetail.drinkId!!)
+                } else {
+                    binding.favorite.setImageResource(R.drawable.icon_heart)
+                    productViewModel.removeFavorite(drinkDetail.drinkId!!)
+                }
+
+            } else {
+                // handle login - here ---> navigation sang screen Login
+                Toast.makeText(requireContext(), "Log In required", Toast.LENGTH_LONG).show()
+                findNavController().navigate(R.id.action_orderFragment_to_loginFragment)
+            }
+        }
+
     }
 
     private fun getVoucher() {
         voucherViewModel.getVoucherList.observe(viewLifecycleOwner) { vouchers ->
             voucherList = vouchers
             getDataDetail()
+        }
+        productViewModel.isFavorite.observe(viewLifecycleOwner) {
+            if (it) {
+                binding.favorite.setImageResource(R.drawable.icon_heart_fill)
+            } else {
+                binding.favorite.setImageResource(R.drawable.icon_heart)
+            }
         }
     }
 
